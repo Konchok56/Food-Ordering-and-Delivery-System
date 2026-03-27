@@ -1,5 +1,22 @@
 <?php
 session_start();
+
+// ✅ Remember me functionality - Check before session check
+if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
+    include('includes/db.php');
+    
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE remember_token=?"); // Changed to remember_token
+    $stmt->execute([$_COOKIE['remember_token']]);
+    $user = $stmt->fetch();
+
+    if ($user) {
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['user_name'] = $user['name'];
+        $_SESSION['role'] = $user['role'];
+    }
+}
+
+// Cart count calculation
 $cartCount = 0;
 if (!empty($_SESSION['cart'])) {
     foreach ($_SESSION['cart'] as $item) {
