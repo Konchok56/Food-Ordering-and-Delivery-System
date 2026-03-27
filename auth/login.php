@@ -14,7 +14,17 @@
         <form action="../actions/login_action.php" method="POST">
             <input type="email" name="email" class="form-control mb-3" placeholder="Email" required>
             <input type="password" name="password" class="form-control mb-3" placeholder="Password" required>
-
+            
+            <div class="mb-3 d-flex justify-content-between align-items-center">
+                <div>
+                    <input type="checkbox" name="remember" id="remember">
+                    <label for="remember">Remember Me</label>
+                </div>
+                <div>
+                    <a href="forgot_password.php" class="text-decoration-none">Forgot Password?</a>
+                </div>
+            </div>
+        
             <button class="btn btn-success w-100">Login</button>
         </form>
 
