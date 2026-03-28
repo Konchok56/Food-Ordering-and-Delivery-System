@@ -19,7 +19,7 @@ if (!$user) {
 </head>
 <body>
 
-<form action="../actions/reset_password_action.php" method="POST">
+<form action="../actions/reset_password.php" method="POST">
     <input type="hidden" name="token" value="<?= $token ?>">
     <input type="password" name="password" placeholder="New Password" required>
     <button>Reset Password</button>
