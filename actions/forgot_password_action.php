@@ -16,11 +16,10 @@ if (!$user) {
 
 // Generate token
 $token = bin2hex(random_bytes(50));
-$expiry = date("Y-m-d H:i:s", strtotime("+1 hour"));
 
-// Update user with reset token (THIS WILL OVERWRITE REMEMBER ME TOKEN!)
-$stmt = $pdo->prepare("UPDATE users SET reset_token=?, token_expiry=? WHERE email=?");
-$stmt->execute([$token, $expiry, $email]);
+// Use MySQL's NOW() so the timezone matches the check in reset_password.php
+$stmt = $pdo->prepare("UPDATE users SET reset_token=?, token_expiry = NOW() + INTERVAL 1 HOUR WHERE email=?");
+$stmt->execute([$token, $email]);
 
 // Simulate email (IMPORTANT)
 echo "Reset Link: <br>";
