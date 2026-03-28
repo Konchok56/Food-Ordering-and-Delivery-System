@@ -62,15 +62,16 @@ if ($user['role'] !== 'admin') {
         <p class="welcome">Welcome, <strong>Admin (Hari)</strong>! You have full access.</p>
         
         <hr>
-        <h3>Available Actions (Coming Soon):</h3>
-        <ul>
-            <li>Manage Foods</li>
-            <li>View All Orders</li>
-            <li>Manage Users</li>
-            <li>View Reports</li>
-        </ul>
-        
-        <a href="../index.php" class="btn">← Back to Home</a>
+        <h3>Quick Actions:</h3>
+        <div style="display:flex; flex-wrap:wrap; gap:16px; justify-content:center; margin:30px 0;">
+            <a href="manage_foods.php" class="btn" style="background:linear-gradient(135deg,#ff4f00,#ff7340); font-size:1.1em; padding:16px 36px;">
+                🍔 Manage Menu
+            </a>
+            <a href="../index.php" class="btn" style="background:#1a1004;">
+                🏠 View Site
+            </a>
+        </div>
+        <h4 style="color:#888; margin-top:10px;">More features coming soon: Orders, Users, Reports</h4>
     </div>
 </body>
 </html>

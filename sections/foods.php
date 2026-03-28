@@ -10,14 +10,19 @@ $foods = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <div class="section-tag">Today's Picks</div>
       <div class="section-title">Most Popular<br />Right Now</div>
     </div>
-    <a href="#menu" class="view-all">View All →</a>
+    <a href="menu.php" class="view-all">View All →</a>
   </div>
 
   <div class="foods-grid">
     <?php foreach ($foods as $food): ?>
+      <a href="food_detail.php?id=<?php echo (int) $food['id']; ?>" class="food-card-link">
       <article class="food-card reveal-on-scroll">
         <div class="food-img">
-          <?php echo htmlspecialchars($food['emoji']); ?>
+          <?php if (!empty($food['image_path'])): ?>
+            <img src="<?php echo htmlspecialchars($food['image_path']); ?>" alt="<?php echo htmlspecialchars($food['name']); ?>" class="food-photo">
+          <?php else: ?>
+            <?php echo htmlspecialchars($food['emoji']); ?>
+          <?php endif; ?>
           <?php if (!empty($food['badge'])): ?>
             <span class="food-badge<?php echo $food['badge'] === 'New' ? ' new' : ''; ?>">
               <?php echo htmlspecialchars($food['badge']); ?>
@@ -41,13 +46,15 @@ $foods = $stmt->fetchAll(PDO::FETCH_ASSOC);
               <div class="food-price">Rs. <?php echo number_format((float) $food['price'], 2); ?></div>
             </div>
 
-            <form action="actions/add_to_cart.php" method="post">
-              <input type="hidden" name="food_id" value="<?php echo (int) $food['id']; ?>" />
-              <button class="add-btn" type="submit" aria-label="Add <?php echo htmlspecialchars($food['name']); ?> to cart">+</button>
+            <form action="actions/add_to_cart.php" method="post" onclick="event.stopPropagation();">
+              <input type="hidden" name="food_name" value="<?php echo htmlspecialchars($food['name']); ?>" />
+              <input type="hidden" name="price" value="<?php echo (float) $food['price']; ?>" />
+              <button class="add-btn" type="submit" aria-label="Add <?php echo htmlspecialchars($food['name']); ?> to cart" onclick="event.preventDefault(); event.stopPropagation(); this.closest('form').submit();">+</button>
             </form>
           </div>
         </div>
       </article>
+      </a>
     <?php endforeach; ?>
   </div>
 </section>

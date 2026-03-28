@@ -1,10 +1,11 @@
-<?php session_start(); ?>
+<?php if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
 <nav>
   <a class="logo" href="index.php">Swift<span>Bite</span></a>
 
   <ul class="nav-links">
-    <li><a href="#home">Home</a></li>
-    <li><a href="#menu">Menu</a></li>
+    <li><a href="index.php">Home</a></li>
+    <li><a href="restaurants.php">Restaurants</a></li>
+    <li><a href="menu.php">Menu</a></li>
     <li><a href="#categories">Categories</a></li>
     <li><a href="#offers">Offers</a></li>
     <li><a href="cart.php">Cart</a></li>

@@ -43,6 +43,7 @@ if (!empty($_SESSION['cart'])) {
     <?php include 'sections/hero.php'; ?>
     <?php include 'sections/search.php'; ?>
     <?php include 'sections/categories.php'; ?>
+    <?php include 'sections/restaurants.php'; ?>
     <?php include 'sections/foods.php'; ?>
     <?php include 'sections/howitworks.php'; ?>
     <?php include 'sections/promo.php'; ?>
