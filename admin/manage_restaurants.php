@@ -358,7 +358,11 @@ while ($row = $fcStmt->fetch(PDO::FETCH_ASSOC)) {
                                 <?php echo $r['is_open'] ? '● Open' : '● Closed'; ?>
                             </span>
                         </div>
-                        <div class="rest-admin-actions">
+                        <div class="rest-admin-actions" style="flex-wrap:wrap;">
+                            <a href="manage_foods.php?restaurant_id=<?php echo (int)$r['id']; ?>" class="action-btn" title="Manage Foods"
+                               style="background:rgba(52,199,89,0.12);color:#1a7a34;width:auto;padding:0 12px;font-size:0.78rem;font-weight:700;gap:4px;">
+                                🍽️ Foods (<?php echo $foodCounts[$r['id']] ?? 0; ?>)
+                            </a>
                             <a href="manage_restaurants.php?edit=<?php echo (int)$r['id']; ?>#restForm" class="action-btn action-edit" title="Edit">✏️</a>
                             <button type="button" class="action-btn action-delete" title="Delete"
                                     onclick="confirmDelete(<?php echo (int)$r['id']; ?>, '<?php echo htmlspecialchars(addslashes($r['name'])); ?>')">
