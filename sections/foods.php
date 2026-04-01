@@ -47,9 +47,10 @@ $foods = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
 
             <form action="actions/add_to_cart.php" method="post" onclick="event.stopPropagation();">
+              <input type="hidden" name="food_id" value="<?php echo (int) $food['id']; ?>" />
               <input type="hidden" name="food_name" value="<?php echo htmlspecialchars($food['name']); ?>" />
               <input type="hidden" name="price" value="<?php echo (float) $food['price']; ?>" />
-              <button class="add-btn" type="submit" aria-label="Add <?php echo htmlspecialchars($food['name']); ?> to cart" onclick="event.preventDefault(); event.stopPropagation(); this.closest('form').submit();">+</button>
+              <button class="add-btn" type="submit" aria-label="Add <?php echo htmlspecialchars($food['name']); ?> to cart" data-name="<?php echo htmlspecialchars($food['name']); ?>">+</button>
             </form>
           </div>
         </div>

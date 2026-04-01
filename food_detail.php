@@ -14,15 +14,10 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
     }
 }
 
-// Cart count
-$cartCount = 0;
-if (!empty($_SESSION['cart'])) {
-    foreach ($_SESSION['cart'] as $item) {
-        $cartCount += (int) $item['quantity'];
-    }
-}
-
+// Cart count from DB
 include('includes/db.php');
+include('includes/cart_helper.php');
+$cartCount = isset($_SESSION['user_id']) ? getCartCount($pdo, $_SESSION['user_id']) : 0;
 
 // Get food ID
 $foodId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
@@ -604,11 +599,11 @@ $cartSuccess = isset($_GET['added']) ? true : false;
                     </div>
 
                     <form action="actions/add_to_cart.php" method="POST" id="addToCartForm">
+                        <input type="hidden" name="food_id" value="<?php echo (int) $food['id']; ?>">
                         <input type="hidden" name="food_name" value="<?php echo htmlspecialchars($food['name']); ?>">
                         <input type="hidden" name="price" value="<?php echo (float) $food['price']; ?>">
                         <input type="hidden" name="quantity" id="qtyInput" value="1">
-                        <input type="hidden" name="redirect" value="food_detail.php?id=<?php echo (int) $food['id']; ?>&added=1">
-                        <button type="submit" class="detail-add-btn" id="addToCartBtn">
+                        <button type="submit" class="detail-add-btn" id="addToCartBtn" data-name="<?php echo htmlspecialchars($food['name']); ?>">
                             🛒 Add to Cart — <span class="detail-total" id="totalPrice">Rs. <?php echo number_format((float) $food['price'], 2); ?></span>
                         </button>
                     </form>
@@ -692,10 +687,7 @@ $cartSuccess = isset($_GET['added']) ? true : false;
 
     <?php include 'sections/footer.php'; ?>
 
-    <button class="cart-fab" type="button" aria-label="Open cart" onclick="window.location.href='cart.php'">
-        🛒
-        <span class="cart-count" id="cartCount"><?php echo $cartCount; ?></span>
-    </button>
+    <?php include 'sections/floating_menu.php'; ?>
 
     <script>
         // Quantity control
@@ -728,5 +720,6 @@ $cartSuccess = isset($_GET['added']) ? true : false;
         }
     </script>
     <script src="assets/js/script.js"></script>
+    <script src="assets/js/cart.js"></script>
 </body>
 </html>

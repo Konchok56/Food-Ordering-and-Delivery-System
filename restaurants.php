@@ -14,15 +14,10 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
     }
 }
 
-// Cart count
-$cartCount = 0;
-if (!empty($_SESSION['cart'])) {
-    foreach ($_SESSION['cart'] as $item) {
-        $cartCount += (int) $item['quantity'];
-    }
-}
-
+// Cart count from DB
 include('includes/db.php');
+include('includes/cart_helper.php');
+$cartCount = isset($_SESSION['user_id']) ? getCartCount($pdo, $_SESSION['user_id']) : 0;
 
 // Filters
 $activeCuisine = isset($_GET['cuisine']) ? trim($_GET['cuisine']) : 'all';
@@ -346,7 +341,9 @@ $cuisineEmojis = [
 
         <!-- Search -->
         <form class="rest-search" method="GET" action="restaurants.php">
-            <input type="text" name="q" placeholder="Search restaurants..." value="<?php echo htmlspecialchars($searchQuery); ?>">
+            <div class="ac-wrap" style="flex: 1; display: flex;">
+                <input style="flex: 1;" type="text" name="q" placeholder="Search restaurants..." value="<?php echo htmlspecialchars($searchQuery); ?>" autocomplete="off" data-autocomplete aria-label="Search restaurants" aria-autocomplete="list" aria-haspopup="listbox">
+            </div>
             <select name="city">
                 <option value="all">📍 All Cities</option>
                 <?php foreach ($cities as $c): ?>
@@ -442,11 +439,10 @@ $cuisineEmojis = [
 
     <?php include 'sections/footer.php'; ?>
 
-    <button class="cart-fab" type="button" aria-label="Open cart" onclick="window.location.href='cart.php'">
-        🛒
-        <span class="cart-count" id="cartCount"><?php echo $cartCount; ?></span>
-    </button>
+    <?php include 'sections/floating_menu.php'; ?>
 
     <script src="assets/js/script.js"></script>
+    <script src="assets/js/cart.js"></script>
+    <script src="assets/js/search_autocomplete.js"></script>
 </body>
 </html>

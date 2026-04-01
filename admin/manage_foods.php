@@ -27,8 +27,22 @@ if (isset($_GET['edit'])) {
     $editFood = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
-// Fetch all foods
-$foods = $pdo->query("SELECT * FROM foods ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
+// Fetch all restaurants for dropdown
+$restaurants = $pdo->query("SELECT id, name FROM restaurants ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
+
+// Fetch filter
+$filterRestId = isset($_GET['restaurant_id']) ? (int)$_GET['restaurant_id'] : 0;
+
+// Fetch all foods (with restaurant name)
+$foodQuery = "SELECT f.*, r.name AS restaurant_name FROM foods f
+              LEFT JOIN restaurants r ON f.restaurant_id = r.id";
+if ($filterRestId > 0) {
+    $foodStmt = $pdo->prepare($foodQuery . " WHERE f.restaurant_id = ? ORDER BY f.id DESC");
+    $foodStmt->execute([$filterRestId]);
+} else {
+    $foodStmt = $pdo->query($foodQuery . " ORDER BY f.id DESC");
+}
+$foods = $foodStmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -559,6 +573,7 @@ $foods = $pdo->query("SELECT * FROM foods ORDER BY id DESC")->fetchAll(PDO::FETC
         <div class="topbar-links">
             <a href="dashboard.php">📊 Dashboard</a>
             <a href="manage_foods.php" style="color:#fff; background:rgba(255,255,255,0.08);">🍔 Menu</a>
+            <a href="manage_restaurants.php">🏪 Restaurants</a>
             <a href="../index.php">🏠 View Site</a>
         </div>
     </div>
@@ -647,6 +662,19 @@ $foods = $pdo->query("SELECT * FROM foods ORDER BY id DESC")->fetchAll(PDO::FETC
                     </div>
 
                     <div class="form-group">
+                        <label for="restaurant_id">Restaurant (optional)</label>
+                        <select id="restaurant_id" name="restaurant_id">
+                            <option value="">— No restaurant —</option>
+                            <?php foreach ($restaurants as $rest): ?>
+                                <option value="<?php echo (int)$rest['id']; ?>"
+                                    <?php echo ($editFood && (int)$editFood['restaurant_id'] === (int)$rest['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($rest['name']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
                         <label>Options</label>
                         <div style="display:flex; gap:24px; padding-top:8px;">
                             <div class="toggle-row">
@@ -705,7 +733,22 @@ $foods = $pdo->query("SELECT * FROM foods ORDER BY id DESC")->fetchAll(PDO::FETC
         <div class="table-card">
             <div class="table-header">
                 <h2>📋 All Menu Items</h2>
-                <span class="item-count"><?php echo count($foods); ?> items</span>
+                <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                    <!-- Filter by restaurant -->
+                    <form method="GET" style="display:flex;gap:8px;align-items:center;">
+                        <select name="restaurant_id" onchange="this.form.submit()"
+                            style="padding:8px 14px;border:2px solid var(--cream2);border-radius:12px;font-size:0.82rem;font-weight:600;color:var(--text);background:var(--cream);font-family:'DM Sans',sans-serif;cursor:pointer;">
+                            <option value="">All Restaurants</option>
+                            <?php foreach ($restaurants as $rest): ?>
+                                <option value="<?php echo (int)$rest['id']; ?>"
+                                    <?php echo ($filterRestId === (int)$rest['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($rest['name']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </form>
+                    <span class="item-count"><?php echo count($foods); ?> items</span>
+                </div>
             </div>
 
             <?php if (empty($foods)): ?>
@@ -719,6 +762,7 @@ $foods = $pdo->query("SELECT * FROM foods ORDER BY id DESC")->fetchAll(PDO::FETC
                     <thead>
                         <tr>
                             <th>Food</th>
+                            <th>Restaurant</th>
                             <th>Price</th>
                             <th>Rating</th>
                             <th>Badge</th>
@@ -743,6 +787,15 @@ $foods = $pdo->query("SELECT * FROM foods ORDER BY id DESC")->fetchAll(PDO::FETC
                                             <div class="food-cell-cat"><?php echo htmlspecialchars($food['category']); ?></div>
                                         </div>
                                     </div>
+                                </td>
+                                <td data-label="Restaurant">
+                                    <?php if (!empty($food['restaurant_name'])): ?>
+                                        <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:rgba(255,79,0,0.08);border-radius:999px;font-size:0.78rem;font-weight:700;color:var(--orange);">
+                                            🏪 <?php echo htmlspecialchars($food['restaurant_name']); ?>
+                                        </span>
+                                    <?php else: ?>
+                                        <span style="color:var(--muted);font-size:0.8rem;">—</span>
+                                    <?php endif; ?>
                                 </td>
                                 <td data-label="Price" class="price-cell">Rs. <?php echo number_format((float)$food['price'], 2); ?></td>
                                 <td data-label="Rating" class="rating-cell">⭐ <?php echo htmlspecialchars($food['rating']); ?></td>

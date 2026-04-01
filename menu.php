@@ -14,31 +14,58 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
     }
 }
 
-// Cart count
-$cartCount = 0;
-if (!empty($_SESSION['cart'])) {
-    foreach ($_SESSION['cart'] as $item) {
-        $cartCount += (int) $item['quantity'];
-    }
-}
-
+// Cart count from DB
 include('includes/db.php');
+include('includes/cart_helper.php');
+$cartCount = isset($_SESSION['user_id']) ? getCartCount($pdo, $_SESSION['user_id']) : 0;
 
-// Get active category filter
-$activeCategory = isset($_GET['category']) ? trim($_GET['category']) : 'all';
+// ── Search / Filter params ──
+$keyword       = trim($_GET['keyword'] ?? '');
+$activeCategory = trim($_GET['category'] ?? '');
+$activeCity    = trim($_GET['city'] ?? '');
 
-// Get all distinct categories from database
+// Get all distinct categories
 $catStmt = $pdo->query("SELECT category, COUNT(*) as count FROM foods GROUP BY category ORDER BY category");
 $categories = $catStmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Fetch foods (filtered or all)
-if ($activeCategory !== 'all') {
-    $foodStmt = $pdo->prepare("SELECT * FROM foods WHERE category = ? ORDER BY is_featured DESC, id DESC");
-    $foodStmt->execute([$activeCategory]);
+// ── Build search query ──
+$where  = [];
+$params = [];
+
+if ($keyword !== '') {
+    $where[]  = "(f.name LIKE ? OR f.description LIKE ? OR f.category LIKE ?)";
+    $params[] = "%$keyword%";
+    $params[] = "%$keyword%";
+    $params[] = "%$keyword%";
+}
+if ($activeCategory !== '') {
+    $where[]  = "f.category = ?";
+    $params[] = $activeCategory;
+}
+
+// City filter needs a restaurant join
+$join = '';
+if ($activeCity !== '') {
+    $join     = "LEFT JOIN restaurants r ON f.restaurant_id = r.id";
+    $where[]  = "(r.city = ? OR f.restaurant_id IS NULL)";
+    $params[] = $activeCity;
+}
+
+$whereSQL = $where ? 'WHERE ' . implode(' AND ', $where) : '';
+$sql = "SELECT f.* FROM foods f $join $whereSQL ORDER BY f.is_featured DESC, f.id DESC";
+
+if ($params) {
+    $foodStmt = $pdo->prepare($sql);
+    $foodStmt->execute($params);
 } else {
-    $foodStmt = $pdo->query("SELECT * FROM foods ORDER BY is_featured DESC, id DESC");
+    $foodStmt = $pdo->query($sql);
 }
 $foods = $foodStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Build page title
+$pageTitle = 'Full Menu — SwiftBite';
+if ($keyword) $pageTitle = "Search: $keyword — SwiftBite";
+elseif ($activeCategory) $pageTitle = "$activeCategory — SwiftBite";
 
 // Category emoji map
 $catEmojis = [
@@ -53,7 +80,7 @@ $catEmojis = [
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><?php echo $activeCategory !== 'all' ? htmlspecialchars($activeCategory) . ' — ' : ''; ?>Full Menu — SwiftBite</title>
+    <title><?php echo htmlspecialchars($pageTitle); ?></title>
     <meta name="description" content="Browse the full SwiftBite menu. Order delicious food from our wide range of categories." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -83,6 +110,47 @@ $catEmojis = [
             max-width: 500px;
             margin: 0 auto 32px;
             line-height: 1.7;
+        }
+
+        /* ── Search Bar on menu page ── */
+        .menu-search-bar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            background: #fff;
+            border-radius: 20px;
+            padding: 16px 22px;
+            box-shadow: var(--shadow);
+            max-width: 780px;
+            margin: 0 auto 32px;
+            border: 2px solid var(--cream2);
+            transition: border-color 0.2s;
+        }
+        .menu-search-bar:focus-within { border-color: var(--orange); }
+        .menu-search-bar svg { color: var(--muted); flex-shrink: 0; }
+        .menu-search-bar input {
+            flex: 1; border: none; outline: none;
+            font-size: 1rem; color: var(--text);
+            background: none; font-family: 'DM Sans', sans-serif;
+        }
+        .menu-search-bar input::placeholder { color: var(--muted); }
+        .menu-search-clear {
+            background: var(--cream2); border: none;
+            width: 28px; height: 28px; border-radius: 50%;
+            cursor: pointer; font-size: 0.85rem; color: var(--muted);
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s; flex-shrink: 0;
+        }
+        .menu-search-clear:hover { background: var(--orange); color: #fff; }
+        .search-tag {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(255,79,0,0.1); color: var(--orange);
+            padding: 5px 14px; border-radius: 999px;
+            font-size: 0.82rem; font-weight: 700;
+            margin-left: 8px;
+        }
+        .city-tag {
+            background: rgba(52,199,89,0.1); color: #1a7a34;
         }
 
         /* ── Category Filter Tabs ── */
@@ -211,14 +279,38 @@ $catEmojis = [
             <p>Discover all the delicious dishes we have to offer. Filter by category to find exactly what you're craving.</p>
         </div>
 
+        <!-- Search bar (pre-filled if coming from search) -->
+        <form class="menu-search-bar ac-wrap" action="menu.php" method="GET" id="menuSearchForm">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <input type="text" name="keyword" id="menuSearchInput"
+                   value="<?php echo htmlspecialchars($keyword); ?>"
+                   placeholder="Search food, category, description…"
+                   autocomplete="off"
+                   data-autocomplete
+                   aria-label="Search menu"
+                   aria-autocomplete="list"
+                   aria-haspopup="listbox">
+            <?php if ($activeCategory): ?>
+                <input type="hidden" name="category" value="<?php echo htmlspecialchars($activeCategory); ?>">
+            <?php endif; ?>
+            <?php if ($activeCity): ?>
+                <input type="hidden" name="city" value="<?php echo htmlspecialchars($activeCity); ?>">
+            <?php endif; ?>
+            <?php if ($keyword): ?>
+                <button type="button" class="menu-search-clear" onclick="window.location='menu.php'" title="Clear search">✕</button>
+            <?php endif; ?>
+        </form>
+
         <!-- Category Filter Tabs -->
         <div class="menu-filters">
-            <a href="menu.php" class="filter-tab <?php echo $activeCategory === 'all' ? 'active' : ''; ?>">
+            <a href="menu.php<?php echo $keyword ? '?keyword='.urlencode($keyword) : ''; ?>" class="filter-tab <?php echo $activeCategory === '' ? 'active' : ''; ?>">
                 🍽️ All
                 <span class="tab-count"><?php echo array_sum(array_column($categories, 'count')); ?></span>
             </a>
             <?php foreach ($categories as $cat): ?>
-                <a href="menu.php?category=<?php echo urlencode($cat['category']); ?>"
+                <a href="menu.php?category=<?php echo urlencode($cat['category']); ?><?php echo $keyword ? '&keyword='.urlencode($keyword) : ''; ?>"
                    class="filter-tab <?php echo $activeCategory === $cat['category'] ? 'active' : ''; ?>">
                     <?php echo $catEmojis[$cat['category']] ?? '🍴'; ?>
                     <?php echo htmlspecialchars($cat['category']); ?>
@@ -231,13 +323,23 @@ $catEmojis = [
         <div class="menu-content">
             <div class="menu-results-info">
                 <div class="results-count">
-                    Showing <span><?php echo count($foods); ?></span> items
-                    <?php if ($activeCategory !== 'all'): ?>
-                        in <span><?php echo htmlspecialchars($activeCategory); ?></span>
+                    <?php if ($keyword || $activeCategory || $activeCity): ?>
+                        Found <span><?php echo count($foods); ?></span> result<?php echo count($foods) !== 1 ? 's' : ''; ?>
+                        <?php if ($keyword): ?>
+                            for <span>"<?php echo htmlspecialchars($keyword); ?>"</span>
+                        <?php endif; ?>
+                        <?php if ($activeCategory): ?>
+                            <span class="search-tag"><?php echo $catEmojis[$activeCategory] ?? '🍴'; ?> <?php echo htmlspecialchars($activeCategory); ?></span>
+                        <?php endif; ?>
+                        <?php if ($activeCity): ?>
+                            <span class="search-tag city-tag">📍 <?php echo htmlspecialchars($activeCity); ?></span>
+                        <?php endif; ?>
+                    <?php else: ?>
+                        Showing <span><?php echo count($foods); ?></span> items
                     <?php endif; ?>
                 </div>
-                <?php if ($activeCategory !== 'all'): ?>
-                    <a href="menu.php" class="view-all">View All →</a>
+                <?php if ($keyword || $activeCategory || $activeCity): ?>
+                    <a href="menu.php" class="view-all">Clear filters ✕</a>
                 <?php endif; ?>
             </div>
 
@@ -245,8 +347,15 @@ $catEmojis = [
                 <?php if (empty($foods)): ?>
                     <div class="menu-empty">
                         <div class="empty-icon">🔍</div>
-                        <h3>No items found</h3>
-                        <p>There are no food items in this category yet.</p>
+                        <h3>No results found</h3>
+                        <p>
+                            <?php if ($keyword): ?>
+                                Nothing matched "<strong><?php echo htmlspecialchars($keyword); ?></strong>".
+                                Try a different keyword or browse all items.
+                            <?php else: ?>
+                                There are no food items in this category yet.
+                            <?php endif; ?>
+                        </p>
                         <a href="menu.php">View All Items</a>
                     </div>
                 <?php else: ?>
@@ -283,9 +392,10 @@ $catEmojis = [
                                     </div>
 
                                     <form action="actions/add_to_cart.php" method="post" onclick="event.stopPropagation();">
+                                        <input type="hidden" name="food_id" value="<?php echo (int) $food['id']; ?>" />
                                         <input type="hidden" name="food_name" value="<?php echo htmlspecialchars($food['name']); ?>" />
                                         <input type="hidden" name="price" value="<?php echo (float) $food['price']; ?>" />
-                                        <button class="add-btn" type="submit" aria-label="Add <?php echo htmlspecialchars($food['name']); ?> to cart" onclick="event.preventDefault(); event.stopPropagation(); this.closest('form').submit();">+</button>
+                                        <button class="add-btn" type="submit" aria-label="Add <?php echo htmlspecialchars($food['name']); ?> to cart" data-name="<?php echo htmlspecialchars($food['name']); ?>">+</button>
                                     </form>
                                 </div>
                             </div>
@@ -299,11 +409,10 @@ $catEmojis = [
 
     <?php include 'sections/footer.php'; ?>
 
-    <button class="cart-fab" type="button" aria-label="Open cart" onclick="window.location.href='cart.php'">
-        🛒
-        <span class="cart-count" id="cartCount"><?php echo $cartCount; ?></span>
-    </button>
+    <?php include 'sections/floating_menu.php'; ?>
 
     <script src="assets/js/script.js"></script>
+    <script src="assets/js/cart.js"></script>
+    <script src="assets/js/search_autocomplete.js"></script>
 </body>
 </html>
