@@ -5,7 +5,7 @@ session_start();
 if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
     include('includes/db.php');
     
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE remember_token=?"); // Changed to remember_token
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE remember_token=?");
     $stmt->execute([$_COOKIE['remember_token']]);
     $user = $stmt->fetch();
 
@@ -16,13 +16,10 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
     }
 }
 
-// Cart count calculation
-$cartCount = 0;
-if (!empty($_SESSION['cart'])) {
-    foreach ($_SESSION['cart'] as $item) {
-        $cartCount += (int) $item['quantity'];
-    }
-}
+// Cart count from DB
+include('includes/db.php');
+include('includes/cart_helper.php');
+$cartCount = isset($_SESSION['user_id']) ? getCartCount($pdo, $_SESSION['user_id']) : 0;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -34,7 +31,6 @@ if (!empty($_SESSION['cart'])) {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
   <?php include 'sections/navbar.php'; ?>
@@ -52,11 +48,10 @@ if (!empty($_SESSION['cart'])) {
 
   <?php include 'sections/footer.php'; ?>
 
-  <button class="cart-fab" type="button" aria-label="Open cart" onclick="window.location.href='cart.php'">
-    🛒
-    <span class="cart-count" id="cartCount"><?php echo $cartCount; ?></span>
-  </button>
+  <?php include 'sections/floating_menu.php'; ?>
 
   <script src="assets/js/script.js"></script>
+  <script src="assets/js/cart.js"></script>
+  <script src="assets/js/search_autocomplete.js"></script>
 </body>
 </html>

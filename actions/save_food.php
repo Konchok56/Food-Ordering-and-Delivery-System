@@ -31,6 +31,7 @@ $badge         = trim($_POST['badge'] ?? '');
 $emoji         = trim($_POST['emoji'] ?? '🍽️');
 $is_featured   = isset($_POST['is_featured']) ? 1 : 0;
 $is_favorite   = isset($_POST['is_favorite']) ? 1 : 0;
+$restaurant_id = !empty($_POST['restaurant_id']) ? (int)$_POST['restaurant_id'] : null;
 
 // Validation
 if (empty($name) || empty($category) || empty($description) || $price <= 0 || empty($delivery_time)) {
@@ -109,23 +110,23 @@ try {
         // UPDATE existing food
         if ($image_path) {
             $stmt = $pdo->prepare("UPDATE foods SET name=?, category=?, description=?, price=?, delivery_time=?,
-                rating=?, badge=?, emoji=?, image_path=?, is_featured=?, is_favorite=? WHERE id=?");
+                rating=?, badge=?, emoji=?, image_path=?, is_featured=?, is_favorite=?, restaurant_id=? WHERE id=?");
             $stmt->execute([$name, $category, $description, $price, $delivery_time,
-                $rating, $badge, $emoji, $image_path, $is_featured, $is_favorite, $food_id]);
+                $rating, $badge, $emoji, $image_path, $is_featured, $is_favorite, $restaurant_id, $food_id]);
         } else {
             // Update without changing image
             $stmt = $pdo->prepare("UPDATE foods SET name=?, category=?, description=?, price=?, delivery_time=?,
-                rating=?, badge=?, emoji=?, is_featured=?, is_favorite=? WHERE id=?");
+                rating=?, badge=?, emoji=?, is_featured=?, is_favorite=?, restaurant_id=? WHERE id=?");
             $stmt->execute([$name, $category, $description, $price, $delivery_time,
-                $rating, $badge, $emoji, $is_featured, $is_favorite, $food_id]);
+                $rating, $badge, $emoji, $is_featured, $is_favorite, $restaurant_id, $food_id]);
         }
         header("Location: ../admin/manage_foods.php?success=Food item updated successfully!");
     } else {
         // INSERT new food
-        $stmt = $pdo->prepare("INSERT INTO foods (name, category, description, price, delivery_time, rating, badge, emoji, image_path, is_featured, is_favorite)
-                               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO foods (name, category, description, price, delivery_time, rating, badge, emoji, image_path, is_featured, is_favorite, restaurant_id)
+                               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $stmt->execute([$name, $category, $description, $price, $delivery_time,
-            $rating, $badge, $emoji, $image_path, $is_featured, $is_favorite]);
+            $rating, $badge, $emoji, $image_path, $is_featured, $is_favorite, $restaurant_id]);
         header("Location: ../admin/manage_foods.php?success=Food item added successfully!");
     }
 } catch (PDOException $e) {
