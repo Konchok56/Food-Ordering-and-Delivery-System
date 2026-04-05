@@ -51,6 +51,30 @@ foreach ($cart as $item) {
 $deliveryFee = $subtotal > 0 ? 50 : 0;
 $total = $subtotal + $deliveryFee;
 
+$promo_code = sanitize($_POST['promo_code'] ?? '');
+if (empty($promo_code)) {
+    $promo_code = null;
+}
+
+$discountAmount = 0;
+
+if ($promo_code !== null) {
+    $stmtPromo = $pdo->prepare("SELECT * FROM promo_codes WHERE code = ? AND is_active = 1");
+    $stmtPromo->execute([strtoupper($promo_code)]);
+    $promo = $stmtPromo->fetch(PDO::FETCH_ASSOC);
+    if ($promo && (empty($promo['expiry_date']) || strtotime($promo['expiry_date']) >= time())) {
+        if ($promo['type'] === 'percent') {
+            $discountAmount = ($promo['value'] / 100) * $subtotal;
+        } else {
+            $discountAmount = $promo['value'];
+        }
+        if ($discountAmount > $subtotal) $discountAmount = $subtotal;
+        $total -= $discountAmount;
+    } else {
+        $promo_code = null;
+    }
+}
+
 try {
     // 3. Begin Transaction
     $pdo->beginTransaction();
@@ -58,12 +82,12 @@ try {
     // 4. Insert Order
     $stmt = $pdo->prepare("
         INSERT INTO orders 
-        (user_id, customer_name, customer_email, customer_phone, delivery_address, delivery_city, payment_method, subtotal, delivery_fee, total, status, notes) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)
+        (user_id, customer_name, customer_email, customer_phone, delivery_address, delivery_city, payment_method, subtotal, delivery_fee, discount_amount, promo_code, total, status, notes) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)
     ");
     $stmt->execute([
         $user_id, $name, $email, $phone, $address, $city, $payment_method, 
-        $subtotal, $deliveryFee, $total, $notes
+        $subtotal, $deliveryFee, $discountAmount, $promo_code, $total, $notes
     ]);
     
     $order_id = $pdo->lastInsertId();
@@ -107,12 +131,16 @@ try {
     // Commit
     $pdo->commit();
 
-    // Redirect to confirmation
-    header("Location: ../order_confirmation.php?id=" . $order_id);
+    // Redirect to confirmation or Payment Gateway
+    if ($payment_method === 'esewa') {
+        header("Location: esewa_request.php?order_id=" . $order_id);
+    } else {
+        header("Location: ../order_confirmation.php?id=" . $order_id);
+    }
     exit;
 
 } catch (Exception $e) {
     $pdo->rollBack();
     // Log error in real app
-    die("<h2 style='color:red; text-align:center; margin-top:50px;'>Error placing order. Please try again.</h2>");
+    die("<h2 style='color:red; text-align:center; margin-top:50px;'>Error placing order: " . htmlspecialchars($e->getMessage()) . "</h2><p><a href='../cart.php'>Back to Cart</a></p>");
 }
