@@ -67,7 +67,10 @@ if ($user['role'] !== 'admin') {
             <a href="manage_foods.php" class="btn" style="background:linear-gradient(135deg,#ff4f00,#ff7340); font-size:1.1em; padding:16px 36px;">
                 🍔 Manage Menu
             </a>
-            <a href="../index.php" class="btn" style="background:#1a1004;">
+            <a href="manage_promos.php" class="btn" style="background:linear-gradient(135deg,#41a124,#2d7a18); font-size:1.1em; padding:16px 36px;">
+                💸 Promos
+            </a>
+            <a href="../index.php" class="btn" style="background:#1a1004; padding:16px 36px; font-size:1.1em;">
                 🏠 View Site
             </a>
         </div>

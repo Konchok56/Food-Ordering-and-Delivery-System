@@ -54,6 +54,19 @@ if (count($relatedFoods) < 4) {
 
 // Success message after add-to-cart
 $cartSuccess = isset($_GET['added']) ? true : false;
+$reviewSuccess = isset($_GET['review_added']) ? true : false;
+
+// Fetch Reviews
+$revStmt = $pdo->prepare("
+    SELECT r.*, u.name as user_name 
+    FROM reviews r 
+    JOIN users u ON r.user_id = u.id 
+    WHERE r.food_id = ? 
+    ORDER BY r.created_at DESC
+");
+$revStmt->execute([$foodId]);
+$reviews = $revStmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -112,6 +125,11 @@ $cartSuccess = isset($_GET['added']) ? true : false;
             align-items: center;
             gap: 10px;
             animation: toastIn 0.4s ease, toastOut 0.4s ease 2.6s forwards;
+        }
+        .review-toast {
+            top: 160px; /* lower than cart toast */
+            background: linear-gradient(135deg, var(--orange) 0%, #ff2400 100%);
+            box-shadow: 0 10px 40px rgba(255, 79, 0, 0.35);
         }
         @keyframes toastIn {
             from { opacity: 0; transform: translateX(40px); }
@@ -440,8 +458,8 @@ $cartSuccess = isset($_GET['added']) ? true : false;
             font-size: 0.88rem;
         }
 
-        /* ── Related Section ── */
-        .related-section {
+        /* ── Related & Reviews Sections ── */
+        .related-section, .reviews-section {
             padding: 40px 60px 80px;
         }
 
@@ -494,10 +512,15 @@ $cartSuccess = isset($_GET['added']) ? true : false;
     <?php include 'sections/navbar.php'; ?>
 
     <div class="detail-page">
-        <!-- Cart success toast -->
+        <!-- Cart & Review success toasts -->
         <?php if ($cartSuccess): ?>
             <div class="cart-toast" id="cartToast">
                 ✅ Added to cart successfully!
+            </div>
+        <?php endif; ?>
+        <?php if ($reviewSuccess): ?>
+            <div class="cart-toast review-toast" id="reviewToast">
+                ⭐ Review submitted successfully!
             </div>
         <?php endif; ?>
 
@@ -635,9 +658,72 @@ $cartSuccess = isset($_GET['added']) ? true : false;
             </div>
         </div>
 
+        <!-- Reviews Section -->
+        <section class="reviews-section">
+            <div class="section-header" style="margin-bottom: 32px;">
+                <div>
+                    <div class="section-tag">Customer Feedback</div>
+                    <div class="section-title">Reviews & Ratings</div>
+                </div>
+            </div>
+
+            <div style="display: grid; gap: 32px; grid-template-columns: 1fr; max-width: 800px; margin: 0 auto 40px;">
+                <!-- Review Form -->
+                <?php if (isset($_SESSION['user_id'])): ?>
+                <div class="review-form-card" style="background: var(--cream); border-radius: 24px; padding: 32px; border: 2px solid var(--cream2);">
+                    <h3 style="margin-bottom: 20px; font-family: 'Syne', sans-serif; font-size: 1.3rem;">Write a Review</h3>
+                    <form action="actions/add_review.php" method="POST">
+                        <input type="hidden" name="food_id" value="<?php echo (int) $food['id']; ?>">
+                        <div style="margin-bottom: 20px;">
+                            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Rating</label>
+                            <select name="rating" required style="width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--cream2); outline: none; background: #fff; font-family: 'DM Sans', sans-serif;">
+                                <option value="5">5 - Excellent! ⭐⭐⭐⭐⭐</option>
+                                <option value="4">4 - Very Good ⭐⭐⭐⭐</option>
+                                <option value="3">3 - Average ⭐⭐⭐</option>
+                                <option value="2">2 - Poor ⭐⭐</option>
+                                <option value="1">1 - Terrible ⭐</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Comment</label>
+                            <textarea name="comment" rows="3" placeholder="Share your experience format..." style="width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--cream2); outline: none; resize: vertical; font-family: 'DM Sans', sans-serif; background: #fff;"></textarea>
+                        </div>
+                        <button type="submit" style="padding: 14px 28px; background: var(--dark); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s;">Submit Review</button>
+                    </form>
+                </div>
+                <?php else: ?>
+                    <p style="padding: 24px; background: var(--cream); border-radius: 20px; text-align: center; color: var(--muted); font-weight: 600; border: 2px solid var(--cream2);">Please <a href="auth/login.php" style="color: var(--orange); text-decoration: underline;">log in</a> to drop a review.</p>
+                <?php endif; ?>
+
+                <!-- Reviews List -->
+                <div class="reviews-list" style="display: flex; flex-direction: column; gap: 20px;">
+                    <?php if (empty($reviews)): ?>
+                        <p style="color: var(--muted); text-align: center; padding: 20px;">No reviews yet. Be the first to review!</p>
+                    <?php else: ?>
+                        <?php foreach($reviews as $rev): ?>
+                            <div style="background: #fff; padding: 24px; border-radius: 20px; box-shadow: var(--shadow); border: 2px solid var(--cream2);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                                    <div style="font-weight: 700; color: var(--dark);"><?php echo htmlspecialchars($rev['user_name']); ?></div>
+                                    <div style="color: var(--yellow); letter-spacing: 1px;">
+                                        <?php echo str_repeat('★', $rev['rating']) . str_repeat('☆', 5 - $rev['rating']); ?>
+                                    </div>
+                                </div>
+                                <div style="color: var(--muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 12px;">
+                                    <?php echo nl2br(htmlspecialchars($rev['comment'])); ?>
+                                </div>
+                                <div style="font-size: 0.8rem; color: #a1a1aa; font-weight: 500;">
+                                    <?php echo date('M d, Y', strtotime($rev['created_at'])); ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </section>
+
         <!-- Related Items -->
         <?php if (!empty($relatedFoods)): ?>
-        <section class="related-section">
+        <section class="related-section" style="padding-top: 0;">
             <div class="section-header">
                 <div>
                     <div class="section-tag">You May Also Like</div>
@@ -717,6 +803,10 @@ $cartSuccess = isset($_GET['added']) ? true : false;
         const toast = document.getElementById('cartToast');
         if (toast) {
             setTimeout(() => toast.remove(), 3200);
+        }
+        const rToast = document.getElementById('reviewToast');
+        if (rToast) {
+            setTimeout(() => rToast.remove(), 3200);
         }
     </script>
     <script src="assets/js/script.js"></script>
