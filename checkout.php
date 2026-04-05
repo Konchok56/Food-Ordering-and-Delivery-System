@@ -114,6 +114,7 @@ $cartCount = getCartCount($pdo, $user_id);
             
             <form action="actions/place_order.php" method="POST" id="checkoutForm">
                 <?php echo csrfInput(); ?>
+                <input type="hidden" name="promo_code" id="hiddenPromoCode" value="">
                 
                 <!-- 1. Contact & Delivery -->
                 <div class="checkout-block">
@@ -171,7 +172,7 @@ $cartCount = getCartCount($pdo, $user_id);
             <div class="checkout-block summary-block">
                 <h2>🛒 Order Summary</h2>
                 
-                <div class="summary-items">
+                <div class="summary-items" style="margin-bottom: 20px;">
                     <?php foreach ($cart as $item): ?>
                         <?php 
                             $imgPath = !empty($item['food_image']) ? $item['food_image'] : (!empty($item['image_path']) ? $item['image_path'] : '');
@@ -194,6 +195,12 @@ $cartCount = getCartCount($pdo, $user_id);
                     <?php endforeach; ?>
                 </div>
 
+                <div class="promo-code-block" style="display: flex; gap: 8px; margin-bottom: 20px;">
+                    <input type="text" id="promoCode" placeholder="Promo Code" style="flex: 1; padding: 12px; border-radius: 12px; border: 2px solid var(--cream2); font-family: 'DM Sans', sans-serif; outline: none; transition: 0.2s;">
+                    <button type="button" id="applyPromoBtn" style="padding: 12px 20px; background: var(--dark); color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s;">Apply</button>
+                </div>
+                <div id="promoMessage" style="font-size: 0.85rem; margin-top: -12px; margin-bottom: 12px; font-weight: 600;"></div>
+
                 <div class="summary-totals">
                     <div class="summary-row">
                         <span>Subtotal</span>
@@ -203,9 +210,13 @@ $cartCount = getCartCount($pdo, $user_id);
                         <span>Delivery Fee</span>
                         <span>Rs. <?php echo number_format($deliveryFee, 2); ?></span>
                     </div>
+                    <div class="summary-row" id="discountRow" style="display: none; color: #34c759;">
+                        <span>Discount</span>
+                        <span>- Rs. <span id="discountValue">0.00</span></span>
+                    </div>
                     <div class="summary-row total">
                         <span>Total</span>
-                        <span>Rs. <?php echo number_format($total, 2); ?></span>
+                        <span id="finalTotalStr">Rs. <?php echo number_format($total, 2); ?></span>
                     </div>
                 </div>
 
@@ -217,5 +228,73 @@ $cartCount = getCartCount($pdo, $user_id);
 
     <?php include 'sections/footer.php'; ?>
     <script src="assets/js/script.js"></script>
+    <script>
+        const originalTotal = <?php echo $total; ?>;
+        const subtotal = <?php echo $subtotal; ?>;
+        const applyPromoBtn = document.getElementById('applyPromoBtn');
+        const promoCodeInput = document.getElementById('promoCode');
+        const promoMessage = document.getElementById('promoMessage');
+        const discountRow = document.getElementById('discountRow');
+        const discountValue = document.getElementById('discountValue');
+        const finalTotalStr = document.getElementById('finalTotalStr');
+        const hiddenPromoCode = document.getElementById('hiddenPromoCode');
+
+        applyPromoBtn.addEventListener('click', function() {
+            const code = promoCodeInput.value.trim().toUpperCase();
+            if (!code) return;
+
+            applyPromoBtn.disabled = true;
+            applyPromoBtn.textContent = '...';
+
+            const formData = new FormData();
+            formData.append('promo_code', code);
+            formData.append('subtotal', subtotal);
+
+            fetch('actions/apply_promo.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                applyPromoBtn.disabled = false;
+                applyPromoBtn.textContent = 'Apply';
+
+                if (data.success) {
+                    promoMessage.textContent = '✅ ' + data.message;
+                    promoMessage.style.color = '#34c759';
+                    
+                    hiddenPromoCode.value = data.code;
+                    
+                    const discount = parseFloat(data.discount_amount);
+                    const newTotal = originalTotal - discount;
+
+                    discountRow.style.display = 'flex';
+                    discountValue.textContent = discount.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    
+                    finalTotalStr.textContent = 'Rs. ' + Math.max(0, newTotal).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                } else {
+                    promoMessage.textContent = '❌ ' + data.message;
+                    promoMessage.style.color = '#ff2400';
+                    
+                    hiddenPromoCode.value = '';
+                    discountRow.style.display = 'none';
+                    finalTotalStr.textContent = 'Rs. ' + originalTotal.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                }
+            })
+            .catch(err => {
+                applyPromoBtn.disabled = false;
+                applyPromoBtn.textContent = 'Apply';
+                console.error(err);
+            });
+        });
+
+        // Add promo input focus styles
+        promoCodeInput.addEventListener('focus', () => {
+            promoCodeInput.style.borderColor = 'var(--orange)';
+        });
+        promoCodeInput.addEventListener('blur', () => {
+            promoCodeInput.style.borderColor = 'var(--cream2)';
+        });
+    </script>
 </body>
 </html>
