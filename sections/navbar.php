@@ -32,19 +32,30 @@ $nav_base_url = !file_exists('includes/db.php') ? '../' : '';
     <?php if(isset($_SESSION['user_name'])): ?>
         <!-- Logged-in user nav buttons -->
         <a class="nav-user-btn" href="<?php echo $nav_base_url; ?>profile.php" title="My Profile">
-            <span class="nav-user-icon">👤</span>
-            <span class="nav-user-label"><?php echo htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]); ?></span>
-        </a>
-        <a class="nav-user-btn" href="<?php echo $nav_base_url; ?>order_history.php" title="My Orders">
-            <span class="nav-user-icon">📦</span>
-            <span class="nav-user-label">Orders</span>
-        </a>
+    <span class="nav-user-icon">👤</span>
+    <span class="nav-user-label"><?php echo htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]); ?></span>
+</a>
+
+<a class="nav-user-btn" href="<?php echo $nav_base_url; ?>user_dashboard.php" title="My Dashboard">
+    <span class="nav-user-icon">📊</span>
+    <span class="nav-user-label">Dashboard</span>
+</a>
+
+<a class="nav-user-btn" href="<?php echo $nav_base_url; ?>order_history.php" title="My Orders">
+    <span class="nav-user-icon">📦</span>
+    <span class="nav-user-label">Orders</span>
+</a>
         <?php if ($nav_role === 'admin'): ?>
-            <a class="nav-user-btn nav-admin-btn" href="<?php echo $nav_base_url; ?>admin/dashboard.php" title="Admin Panel">
-                <span class="nav-user-icon">👨‍💼</span>
-                <span class="nav-user-label">Admin</span>
-            </a>
-        <?php endif; ?>
+    <a class="nav-user-btn nav-admin-btn" href="<?php echo $nav_base_url; ?>admin/dashboard.php" title="Admin Panel">
+        <span class="nav-user-icon">👨‍💼</span>
+        <span class="nav-user-label">Admin</span>
+    </a>
+
+    <a class="nav-user-btn nav-admin-btn" href="<?php echo $nav_base_url; ?>admin/delivery_partner.php" title="Delivery Partner Panel">
+        <span class="nav-user-icon">🚚</span>
+        <span class="nav-user-label">Delivery</span>
+    </a>
+<?php endif; ?>
         <a class="nav-user-btn nav-logout-btn" href="<?php echo $nav_base_url; ?>auth/logout.php" title="Logout">
             <span class="nav-user-icon">🚪</span>
             <span class="nav-user-label">Logout</span>

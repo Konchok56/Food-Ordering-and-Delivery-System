@@ -64,13 +64,18 @@ if ($user['role'] !== 'admin') {
         <hr>
         <h3>Quick Actions:</h3>
         <div style="display:flex; flex-wrap:wrap; gap:16px; justify-content:center; margin:30px 0;">
-            <a href="manage_foods.php" class="btn" style="background:linear-gradient(135deg,#ff4f00,#ff7340); font-size:1.1em; padding:16px 36px;">
-                🍔 Manage Menu
-            </a>
-            <a href="../index.php" class="btn" style="background:#1a1004;">
-                🏠 View Site
-            </a>
-        </div>
+    <a href="manage_foods.php" class="btn" style="background:linear-gradient(135deg,#ff4f00,#ff7340); font-size:1.1em; padding:16px 36px;">
+        🍔 Manage Menu
+    </a>
+
+    <a href="delivery_partner.php" class="btn" style="background:linear-gradient(135deg,#2d9cdb,#56ccf2); font-size:1.1em; padding:16px 36px;">
+        🚚 Delivery Partner Panel
+    </a>
+
+    <a href="../index.php" class="btn" style="background:#1a1004;">
+        🏠 View Site
+    </a>
+</div>
         <h4 style="color:#888; margin-top:10px;">More features coming soon: Orders, Users, Reports</h4>
     </div>
 </body>
