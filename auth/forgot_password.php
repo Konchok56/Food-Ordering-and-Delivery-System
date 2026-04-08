@@ -1,6 +1,5 @@
 <?php 
-session_start();
-include('../includes/csrf.php');
+require_once '../core/bootstrap.php';
 
 $error = $_SESSION['fp_error'] ?? '';
 $success = $_SESSION['fp_success'] ?? '';

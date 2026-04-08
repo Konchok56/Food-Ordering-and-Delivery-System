@@ -1,7 +1,7 @@
 <?php
 session_start();
-include('../includes/db.php');
-include('../includes/csrf.php');
+include('../core/db.php');
+include('../core/csrf.php');
 
 // Validate CSRF
 requireCsrf();
@@ -49,3 +49,4 @@ $_SESSION['login_success'] = 'Password reset successful! Please login with your 
 header('Location: ../auth/login.php');
 exit;
 ?>
+

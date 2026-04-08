@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('../includes/db.php');
+include('../core/db.php');
 
 // Admin check
 if (!isset($_SESSION['user_id'])) {
@@ -518,3 +518,4 @@ $promos = $pdo->query("SELECT * FROM promo_codes ORDER BY created_at DESC")->fet
 </body>
 
 </html>
+

@@ -1,8 +1,8 @@
 <?php
 session_start();
-include('../includes/db.php');
-include('../includes/csrf.php');
-include('../includes/validation.php');
+include('../core/db.php');
+include('../core/csrf.php');
+include('../core/validation.php');
 
 requireCsrf();
 
@@ -59,3 +59,4 @@ try {
 
 header('Location: ../admin/delivery_partner.php');
 exit;
+

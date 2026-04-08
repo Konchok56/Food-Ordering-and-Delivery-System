@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('../includes/db.php');
+include('../core/db.php');
 header('Content-Type: application/json');
 
 // Auth check
@@ -52,3 +52,4 @@ $pdo->prepare("UPDATE orders SET status = ? WHERE id = ?")
     ->execute([$newStatus, $order_id]);
 
 echo json_encode(['success' => true, 'new_status' => $newStatus]);
+

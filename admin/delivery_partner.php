@@ -1,7 +1,7 @@
 <?php
 session_start();
-include('../includes/db.php');
-include('../includes/csrf.php');
+include('../core/db.php');
+include('../core/csrf.php');
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../auth/login.php');
@@ -306,3 +306,4 @@ $counts = $countsStmt->fetch(PDO::FETCH_ASSOC) ?: [
     </script>
 </body>
 </html>
+

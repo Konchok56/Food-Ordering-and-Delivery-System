@@ -1,6 +1,5 @@
 <?php 
-session_start();
-include('../includes/csrf.php');
+require_once '../core/bootstrap.php';
 
 // Must have verified OTP
 if (!isset($_SESSION['otp_verified']) || $_SESSION['otp_verified'] !== true) {

@@ -1,7 +1,7 @@
 <?php
 session_start();
-include('../includes/db.php');
-include('../includes/csrf.php');
+include('../core/db.php');
+include('../core/csrf.php');
 
 // Validate CSRF
 requireCsrf();
@@ -64,3 +64,4 @@ $_SESSION['otp_attempts'] = 0;
 header('Location: ../auth/reset_password.php');
 exit;
 ?>
+
