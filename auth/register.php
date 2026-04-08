@@ -1,5 +1,5 @@
 <?php
-require_once '../includes/bootstrap.php';
+require_once '../core/bootstrap.php';
 
 // Redirect if already logged in
 if (isLoggedIn()) {

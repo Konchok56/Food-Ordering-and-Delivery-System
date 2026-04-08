@@ -4,7 +4,7 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
 // Fetch role if logged in
 $nav_role = '';
 if (isset($_SESSION['user_id'])) {
-    $nav_db_path = file_exists('core/db.php') ? 'core/db.php' : '../includes/db.php';
+    $nav_db_path = file_exists('core/db.php') ? 'core/db.php' : '../core/db.php';
     include_once($nav_db_path);
     $nav_stmt = $pdo->prepare("SELECT role FROM users WHERE id = ?");
     $nav_stmt->execute([$_SESSION['user_id']]);
@@ -82,3 +82,4 @@ $nav_base_url = !file_exists('core/db.php') ? '../' : '';
     ☰
   </button>
 </nav>
+

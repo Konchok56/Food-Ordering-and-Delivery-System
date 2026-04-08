@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('../includes/db.php');
+include('../core/db.php');
 
 $data = $_GET['data'] ?? '';
 if (empty($data)) {
@@ -36,3 +36,4 @@ echo "<p>Something went wrong with the payment validation. Your order is still p
 echo "<a href='../orders/cart.php' style='color:#ff4f00; font-weight:bold;'>Return to Cart</a>";
 echo "</div>";
 ?>
+

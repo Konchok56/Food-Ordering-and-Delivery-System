@@ -22,7 +22,7 @@ if (mb_strlen($q) < 2) {
     exit;
 }
 
-require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../core/db.php';
 
 $like = "%$q%";
 $results = ['foods' => [], 'restaurants' => [], 'categories' => []];
@@ -92,3 +92,4 @@ foreach ($stmt3->fetchAll(PDO::FETCH_ASSOC) as $row) {
 }
 
 echo json_encode($results, JSON_UNESCAPED_UNICODE);
+
