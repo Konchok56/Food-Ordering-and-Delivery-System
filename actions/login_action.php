@@ -1,55 +1,67 @@
 <?php
-session_start();
-include('../includes/db.php');
-include('../includes/csrf.php');
-include('../includes/validation.php');
+require_once '../includes/bootstrap.php';
 
 // Validate CSRF
 requireCsrf();
 
-$email = trim($_POST['email'] ?? '');
+$email    = trim($_POST['email'] ?? '');
 $password = $_POST['password'] ?? '';
+$remember = isset($_POST['remember']);
 
 // Validate inputs
-$errors = [];
-if (!validateEmail($email)) $errors[] = 'Invalid email address';
-if (empty($password)) $errors[] = 'Password is required';
+if (!validateEmail($email)) {
+    flash('error', 'Please enter a valid email address.');
+    redirect('auth/login.php');
+}
 
-if (!empty($errors)) {
-    $_SESSION['login_error'] = implode('. ', $errors);
-    header("Location: ../auth/login.php");
-    exit;
+if (empty($password)) {
+    flash('error', 'Password is required.');
+    redirect('auth/login.php');
 }
 
 // Get user
 $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
 $stmt->execute([$email]);
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
+$user = $stmt->fetch();
 
-if ($user && password_verify($password, $user['password'])) {
+// Check user and password
+if (!$user || !password_verify($password, $user['password'])) {
+    flash('error', 'Invalid email or password.');
+    redirect('auth/login.php');
+}
 
-    // ✅ Regenerate session ID to prevent session fixation
-    session_regenerate_id(true);
+// Block unapproved restaurant accounts
+if ($user['role'] === 'restaurant' && (isset($user['is_approved']) && $user['is_approved'] == 0)) {
+    flash('warning', 'Your restaurant account is pending admin approval.');
+    redirect('auth/login.php');
+}
 
-    // ✅ Create session
-    $_SESSION['user_id'] = $user['id'];
-    $_SESSION['user_name'] = $user['name'];
-    $_SESSION['role'] = $user['role'];
+// Login successful: Regenerate session ID
+session_regenerate_id(true);
 
-    // ✅ Remember me functionality
-    if (isset($_POST['remember'])) {
-        $token = bin2hex(random_bytes(50));
-        setcookie("remember_token", $token, time() + (86400 * 30), "/", "", false, true); // httpOnly
-        $stmt = $pdo->prepare("UPDATE users SET remember_token=? WHERE id=?");
-        $stmt->execute([$token, $user['id']]);
-    }
+// Create session
+$_SESSION['user_id']   = $user['id'];
+$_SESSION['user_name'] = $user['name'];
+$_SESSION['role']      = $user['role'];
 
-    // ✅ Redirect to homepage
-    header("Location: ../index.php");
-    exit;
+// Handle Remember Me
+if ($remember) {
+    $token = bin2hex(random_bytes(32));
+    $expiry = time() + (86400 * REMEMBER_ME_DAYS);
+    setcookie('remember_token', $token, $expiry, '/', '', false, true);
 
-} else {
-    $_SESSION['login_error'] = 'Invalid email or password';
-    header("Location: ../auth/login.php");
-    exit;
+    $stmt = $pdo->prepare("UPDATE users SET remember_token = ? WHERE id = ?");
+    $stmt->execute([$token, $user['id']]);
+}
+
+// Redirect based on role
+switch ($user['role']) {
+    case 'admin':
+        redirect('admin/dashboard.php');
+        break;
+    case 'restaurant':
+        redirect('owner/dashboard.php');
+        break;
+    default:
+        redirect('index.php');
 }
