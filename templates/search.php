@@ -1,6 +1,6 @@
 <?php
 // Fetch categories for dropdown
-if (!isset($pdo)) require_once __DIR__ . '/../includes/db.php';
+if (!isset($pdo)) require_once __DIR__ . '/../core/db.php';
 $searchCats = $pdo->query("SELECT DISTINCT category FROM foods ORDER BY category")->fetchAll(PDO::FETCH_COLUMN);
 ?>
 <section class="search-section">
@@ -46,3 +46,4 @@ $searchCats = $pdo->query("SELECT DISTINCT category FROM foods ORDER BY category
     <button class="search-btn" type="submit">Search</button>
   </form>
 </section>
+
