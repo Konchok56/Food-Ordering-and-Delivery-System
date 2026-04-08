@@ -3,7 +3,7 @@
  * Migration: Create restaurants table, alter foods table, seed sample data.
  * Run this file ONCE via browser: http://localhost/food/swiftbite_php_starter/migrate_restaurants.php
  */
-include('includes/db.php');
+include('core/db.php');
 
 $messages = [];
 

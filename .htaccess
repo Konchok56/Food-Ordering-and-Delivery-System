@@ -1,0 +1,51 @@
+# SwiftBite — Apache Configuration
+# Place this file at the project root.
+
+Options -Indexes
+Options -MultiViews
+
+# ── Error pages ───────────────────────────────────────────
+ErrorDocument 404 /food/swiftbite_php_starter/404.php
+ErrorDocument 403 /food/swiftbite_php_starter/404.php
+
+# ── PHP settings ─────────────────────────────────────────
+php_flag display_errors off
+php_value session.cookie_httponly 1
+php_value session.use_strict_mode 1
+
+# ── Security headers ──────────────────────────────────────
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options           "SAMEORIGIN"
+    Header always set X-Content-Type-Options    "nosniff"
+    Header always set X-XSS-Protection          "1; mode=block"
+    Header always set Referrer-Policy           "strict-origin-when-cross-origin"
+
+    # Cache static assets aggressively
+    <FilesMatch "\.(css|js|png|jpg|jpeg|gif|webp|svg|woff2?)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+</IfModule>
+
+# ── Block access to sensitive files ──────────────────────
+<FilesMatch "\.(env|json|lock|md|git|log|sql)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Block direct access to includes directory
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block direct access to includes/
+    RewriteRule ^includes/ - [F,L]
+
+    # Optional: remove .php extension (clean URLs)
+    # RewriteCond %{REQUEST_FILENAME} !-d
+    # RewriteCond %{REQUEST_FILENAME}\.php -f
+    # RewriteRule ^([^\.]+)$ $1.php [NC,L]
+</IfModule>
+
+# ── Gzip compression ─────────────────────────────────────
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json
+</IfModule>

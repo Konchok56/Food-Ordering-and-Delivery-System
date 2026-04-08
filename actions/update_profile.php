@@ -32,7 +32,7 @@ if ($phoneError) $errors[] = $phoneError;
 
 if (!empty($errors)) {
     $_SESSION['profile_error'] = implode('. ', $errors);
-    header("Location: ../profile.php");
+    header("Location: ../user/profile.php");
     exit;
 }
 
@@ -48,5 +48,5 @@ try {
     $_SESSION['profile_error'] = 'Failed to update profile. Please try again.';
 }
 
-header("Location: ../profile.php");
+header("Location: ../user/profile.php");
 exit;

@@ -3,7 +3,7 @@ session_start();
 
 // Remember me auto-login
 if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
-    include('includes/db.php');
+    include('core/db.php');
     $stmt = $pdo->prepare("SELECT * FROM users WHERE remember_token=?");
     $stmt->execute([$_COOKIE['remember_token']]);
     $user = $stmt->fetch();
@@ -15,8 +15,8 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
 }
 
 // Cart count from DB
-include('includes/db.php');
-include('includes/cart_helper.php');
+include('core/db.php');
+include('core/cart_helper.php');
 $cartCount = isset($_SESSION['user_id']) ? getCartCount($pdo, $_SESSION['user_id']) : 0;
 
 // Filters
@@ -330,7 +330,7 @@ $cuisineEmojis = [
     </style>
 </head>
 <body>
-    <?php include 'sections/navbar.php'; ?>
+    <?php include 'templates/navbar.php'; ?>
 
     <div class="rest-page">
         <div class="rest-hero">
@@ -437,9 +437,9 @@ $cuisineEmojis = [
         </div>
     </div>
 
-    <?php include 'sections/footer.php'; ?>
+    <?php include 'templates/footer.php'; ?>
 
-    <?php include 'sections/floating_menu.php'; ?>
+    <?php include 'templates/floating_menu.php'; ?>
 
     <script src="assets/js/script.js"></script>
     <script src="assets/js/cart.js"></script>

@@ -1,8 +1,10 @@
-<?php session_start();
-include('../includes/csrf.php');
-$error = $_SESSION['login_error'] ?? '';
-$success = $_SESSION['login_success'] ?? '';
-unset($_SESSION['login_error'], $_SESSION['login_success']);
+<?php 
+require_once '../includes/bootstrap.php';
+
+// Redirect if already logged in
+if (isLoggedIn()) {
+    redirect('index.php');
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,9 +27,16 @@ unset($_SESSION['login_error'], $_SESSION['login_success']);
         .auth-logo span { color: var(--dark); }
         .auth-title { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--dark); text-align: center; margin-bottom: 6px; }
         .auth-subtitle { color: var(--muted); text-align: center; font-size: 0.92rem; margin-bottom: 28px; }
-        .auth-alert { padding: 12px 18px; border-radius: 14px; font-size: 0.88rem; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
-        .auth-alert.error { background: rgba(255,59,48,0.08); color: #cc2d25; border: 1px solid rgba(255,59,48,0.15); }
-        .auth-alert.success { background: rgba(52,199,89,0.08); color: #1a7a34; border: 1px solid rgba(52,199,89,0.15); }
+        
+        /* Professional Flash Messages */
+        .flash-msg {
+            padding: 12px 18px; border-radius: 14px; font-size: 0.88rem; font-weight: 600; margin-bottom: 20px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .flash-error   { background: rgba(255,59,48,0.08); color: #cc2d25; border: 1px solid rgba(255,59,48,0.15); }
+        .flash-success { background: rgba(52,199,89,0.08); color: #1a7a34; border: 1px solid rgba(52,199,89,0.15); }
+        .flash-warning { background: rgba(255,184,48,0.12); color: #a06200; border: 1px solid rgba(255,184,48,0.2); }
+
         .auth-field { margin-bottom: 18px; }
         .auth-field label { display: block; font-weight: 600; font-size: 0.85rem; color: var(--dark); margin-bottom: 6px; }
         .auth-field input {
@@ -60,12 +69,7 @@ unset($_SESSION['login_error'], $_SESSION['login_success']);
         <div class="auth-title">Welcome Back</div>
         <div class="auth-subtitle">Sign in to your account</div>
 
-        <?php if ($error): ?>
-            <div class="auth-alert error">❌ <?php echo htmlspecialchars($error); ?></div>
-        <?php endif; ?>
-        <?php if ($success): ?>
-            <div class="auth-alert success">✅ <?php echo htmlspecialchars($success); ?></div>
-        <?php endif; ?>
+        <?php echo renderFlash(); ?>
 
         <form action="../actions/login_action.php" method="POST">
             <?php echo csrfInput(); ?>

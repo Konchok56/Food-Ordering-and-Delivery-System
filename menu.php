@@ -1,23 +1,5 @@
 <?php
-session_start();
-
-// Remember me auto-login
-if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
-    include('includes/db.php');
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE remember_token=?");
-    $stmt->execute([$_COOKIE['remember_token']]);
-    $user = $stmt->fetch();
-    if ($user) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_name'] = $user['name'];
-        $_SESSION['role'] = $user['role'];
-    }
-}
-
-// Cart count from DB
-include('includes/db.php');
-include('includes/cart_helper.php');
-$cartCount = isset($_SESSION['user_id']) ? getCartCount($pdo, $_SESSION['user_id']) : 0;
+require_once 'core/bootstrap.php';
 
 // ── Search / Filter params ──
 $keyword       = trim($_GET['keyword'] ?? '');
@@ -269,7 +251,7 @@ $catEmojis = [
     </style>
 </head>
 <body>
-    <?php include 'sections/navbar.php'; ?>
+    <?php include 'templates/navbar.php'; ?>
 
     <div class="menu-page">
         <!-- Hero Header -->
@@ -391,7 +373,7 @@ $catEmojis = [
                                         <div class="food-price">Rs. <?php echo number_format((float) $food['price'], 2); ?></div>
                                     </div>
 
-                                    <form action="actions/add_to_cart.php" method="post" onclick="event.stopPropagation();">
+                                    <form action="actions/add_to_orders/cart.php" method="post" onclick="event.stopPropagation();">
                                         <input type="hidden" name="food_id" value="<?php echo (int) $food['id']; ?>" />
                                         <input type="hidden" name="food_name" value="<?php echo htmlspecialchars($food['name']); ?>" />
                                         <input type="hidden" name="price" value="<?php echo (float) $food['price']; ?>" />
@@ -407,9 +389,9 @@ $catEmojis = [
         </div>
     </div>
 
-    <?php include 'sections/footer.php'; ?>
+    <?php include 'templates/footer.php'; ?>
 
-    <?php include 'sections/floating_menu.php'; ?>
+    <?php include 'templates/floating_menu.php'; ?>
 
     <script src="assets/js/script.js"></script>
     <script src="assets/js/cart.js"></script>

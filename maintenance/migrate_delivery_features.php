@@ -4,7 +4,7 @@
  * Run once: http://localhost/your-project-folder/migrate_delivery_features.php
  */
 session_start();
-include('includes/db.php');
+include('core/db.php');
 
 $results = [];
 

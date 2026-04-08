@@ -3,7 +3,7 @@ session_start();
 
 // Remember me auto-login
 if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
-    include('includes/db.php');
+    include('core/db.php');
     $stmt = $pdo->prepare("SELECT * FROM users WHERE remember_token=?");
     $stmt->execute([$_COOKIE['remember_token']]);
     $user = $stmt->fetch();
@@ -14,8 +14,8 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
     }
 }
 
-include('includes/db.php');
-include('includes/cart_helper.php');
+include('core/db.php');
+include('core/cart_helper.php');
 
 // Cart count from DB
 $cartCount = isset($_SESSION['user_id']) ? getCartCount($pdo, $_SESSION['user_id']) : 0;
@@ -487,7 +487,7 @@ $catEmojis = [
     </style>
 </head>
 <body>
-    <?php include 'sections/navbar.php'; ?>
+    <?php include 'templates/navbar.php'; ?>
 
     <div class="restd-page">
         <!-- Breadcrumb -->
@@ -658,7 +658,7 @@ $catEmojis = [
                                         <div class="menu-item-price">
                                             <small>Rs.</small> <?php echo number_format((float)$food['price'], 0); ?>
                                         </div>
-                                    <form action="actions/add_to_cart.php" method="post" class="menu-cart-form">
+                                    <form action="actions/add_to_orders/cart.php" method="post" class="menu-cart-form">
                                             <input type="hidden" name="food_id" value="<?php echo (int)$food['id']; ?>">
                                             <input type="hidden" name="food_name" value="<?php echo htmlspecialchars($food['name']); ?>">
                                             <input type="hidden" name="price" value="<?php echo (float)$food['price']; ?>">
@@ -677,9 +677,9 @@ $catEmojis = [
     </div>
 
 
-    <?php include 'sections/footer.php'; ?>
+    <?php include 'templates/footer.php'; ?>
 
-    <?php include 'sections/floating_menu.php'; ?>
+    <?php include 'templates/floating_menu.php'; ?>
 
     <script src="assets/js/script.js"></script>
     <script src="assets/js/cart.js"></script>
