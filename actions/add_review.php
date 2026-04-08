@@ -1,7 +1,7 @@
 <?php
 session_start();
-include('../includes/db.php');
-include('../includes/validation.php');
+include('../core/db.php');
+include('../core/validation.php');
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
@@ -49,3 +49,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header("Location: ../index.php");
     exit;
 }
+

@@ -1,6 +1,5 @@
 <?php 
-session_start();
-include('../includes/csrf.php');
+require_once '../core/bootstrap.php';
 
 // Make sure user came from step 1
 if (!isset($_SESSION['otp_email'])) {

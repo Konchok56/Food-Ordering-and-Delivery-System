@@ -1,8 +1,8 @@
 <?php
 session_start();
-include('../includes/db.php');
-include('../includes/csrf.php');
-include('../includes/validation.php');
+include('../core/db.php');
+include('../core/csrf.php');
+include('../core/validation.php');
 
 // Validate CSRF
 requireCsrf();
@@ -154,3 +154,4 @@ try {
     // Log error in real app
     die("<h2 style='color:red; text-align:center; margin-top:50px;'>Error placing order: " . htmlspecialchars($e->getMessage()) . "</h2><p><a href='../orders/cart.php'>Back to Cart</a></p>");
 }
+

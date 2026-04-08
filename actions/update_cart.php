@@ -2,8 +2,8 @@
 session_start();
 header('Content-Type: application/json');
 
-include('../includes/db.php');
-include('../includes/cart_helper.php');
+include('../core/db.php');
+include('../core/cart_helper.php');
 
 // 🔒 Check login
 if (!isset($_SESSION['user_id'])) {
@@ -78,3 +78,4 @@ echo json_encode([
     'cart_count'    => $cartCount,
     'is_empty'      => $cartCount === 0,
 ]);
+
