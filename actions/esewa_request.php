@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('../includes/db.php');
+include('../core/db.php');
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../index.php');
@@ -105,3 +105,4 @@ $failure_url = $base_url . $folder_path . "/esewa_failure.php";
 </body>
 
 </html>
+

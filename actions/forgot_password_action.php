@@ -1,7 +1,7 @@
 <?php
 session_start();
-include('../includes/db.php');
-include('../includes/csrf.php');
+include('../core/db.php');
+include('../core/csrf.php');
 
 // Validate CSRF
 requireCsrf();
@@ -62,7 +62,7 @@ $_SESSION['otp_email'] = $email;
 $_SESSION['otp_attempts'] = 0;
 
 // --- 📧 SEND REAL EMAIL ---
-include_once('../includes/mailer_helper.php');
+include_once('../core/mailer_helper.php');
 $subject = "Your SwiftBite Verification Code: $otp";
 $body = "
     <div style='background: #fff8f0; padding: 30px; font-family: sans-serif; border-radius: 12px;'>
@@ -88,3 +88,4 @@ if ($is_resend) {
 header('Location: ../auth/verify_otp.php');
 exit;
 ?>
+

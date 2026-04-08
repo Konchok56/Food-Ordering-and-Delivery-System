@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('../includes/db.php');
+include('../core/db.php');
 
 header('Content-Type: application/json');
 
@@ -54,3 +54,4 @@ try {
 } catch (PDOException $e) {
     echo json_encode(['success' => false, 'message' => 'Database error occurred']);
 }
+
