@@ -30,7 +30,8 @@ $stmt = $pdo->prepare("
     SELECT c.*, 
            f.image_path AS food_image, 
            f.emoji AS food_emoji,
-           f.id AS fid
+           f.id AS fid,
+           f.restaurant_id AS food_restaurant_id
     FROM cart c 
     LEFT JOIN foods f ON c.food_id = f.id 
     WHERE c.user_id = ?
@@ -39,8 +40,17 @@ $stmt->execute([$user_id]);
 $cart = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if (empty($cart)) {
-    header("Location: ../cart.php");
+    header("Location: ../orders/cart.php");
     exit;
+}
+
+// Detect restaurant_id from cart items
+$order_restaurant_id = null;
+foreach ($cart as $item) {
+    if (!empty($item['food_restaurant_id'])) {
+        $order_restaurant_id = (int)$item['food_restaurant_id'];
+        break;
+    }
 }
 
 // 2. Calculate Totals
@@ -82,12 +92,12 @@ try {
     // 4. Insert Order
     $stmt = $pdo->prepare("
         INSERT INTO orders 
-        (user_id, customer_name, customer_email, customer_phone, delivery_address, delivery_city, payment_method, subtotal, delivery_fee, discount_amount, promo_code, total, status, notes) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)
+        (user_id, customer_name, customer_email, customer_phone, delivery_address, delivery_city, payment_method, subtotal, delivery_fee, discount_amount, promo_code, total, status, restaurant_id, notes) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)
     ");
     $stmt->execute([
         $user_id, $name, $email, $phone, $address, $city, $payment_method, 
-        $subtotal, $deliveryFee, $discountAmount, $promo_code, $total, $notes
+        $subtotal, $deliveryFee, $discountAmount, $promo_code, $total, $order_restaurant_id, $notes
     ]);
     
     $order_id = $pdo->lastInsertId();
@@ -135,12 +145,12 @@ try {
     if ($payment_method === 'esewa') {
         header("Location: esewa_request.php?order_id=" . $order_id);
     } else {
-        header("Location: ../order_confirmation.php?id=" . $order_id);
+        header("Location: ../orders/order_confirmation.php?id=" . $order_id);
     }
     exit;
 
 } catch (Exception $e) {
     $pdo->rollBack();
     // Log error in real app
-    die("<h2 style='color:red; text-align:center; margin-top:50px;'>Error placing order: " . htmlspecialchars($e->getMessage()) . "</h2><p><a href='../cart.php'>Back to Cart</a></p>");
+    die("<h2 style='color:red; text-align:center; margin-top:50px;'>Error placing order: " . htmlspecialchars($e->getMessage()) . "</h2><p><a href='../orders/cart.php'>Back to Cart</a></p>");
 }

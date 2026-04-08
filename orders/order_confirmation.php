@@ -1,10 +1,10 @@
 <?php
 session_start();
-include('includes/db.php');
-include('includes/cart_helper.php'); // For navbar badge
+include('../core/db.php');
+include('../core/cart_helper.php'); // For navbar badge
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: auth/login.php");
+    header("Location: ../auth/login.php");
     exit;
 }
 
@@ -29,7 +29,7 @@ $cartCount = getCartCount($pdo, $user_id);
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Order Confirmed — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
     <style>
         .conf-page { min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 120px 24px 60px; }
         .conf-card { background: #fff; border-radius: 36px; padding: 50px 40px; text-align: center; max-width: 500px; width: 100%; box-shadow: 0 20px 60px rgba(52, 199, 89, 0.15); animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -59,7 +59,7 @@ $cartCount = getCartCount($pdo, $user_id);
     </style>
 </head>
 <body>
-    <?php include 'sections/navbar.php'; ?>
+    <?php include '../templates/navbar.php'; ?>
 
     <div class="conf-page">
         <div class="conf-card">
@@ -87,16 +87,16 @@ $cartCount = getCartCount($pdo, $user_id);
             </div>
 
             <div class="conf-actions">
-                <a href="order_history.php" class="btn-track">🔍 Trace Order</a>
+                <a href="user/order_history.php" class="btn-track">🔍 Trace Order</a>
                 <a href="index.php" class="btn-home">← Back to Home</a>
             </div>
         </div>
     </div>
 
-    <?php include 'sections/floating_menu.php'; ?>
+    <?php include '../templates/floating_menu.php'; ?>
 
-    <?php include 'sections/footer.php'; ?>
-    <script src="assets/js/script.js"></script>
-    <script src="assets/js/cart.js"></script>
+    <?php include '../templates/footer.php'; ?>
+    <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/cart.js"></script>
 </body>
 </html>

@@ -19,7 +19,7 @@ session_start();
     <div class="card">
         <h2>Payment Failed! ❌</h2>
         <p>Your eSewa payment was cancelled or failed. Your order has not been placed.</p>
-        <a href="../cart.php">Return to Cart</a>
+        <a href="../orders/cart.php">Return to Cart</a>
     </div>
 </body>
 </html>
