@@ -1,5 +1,5 @@
 <?php
-include('../includes/db.php');
+include('../core/db.php');
 
 $token = $_POST['token'];
 $newPassword = password_hash($_POST['password'], PASSWORD_DEFAULT);
@@ -10,3 +10,4 @@ $stmt->execute([$newPassword, $token]);
 echo "Password updated successfully! 
 <br><br><a href='../auth/login.php'>← Back to Login</a>";
 ?>
+

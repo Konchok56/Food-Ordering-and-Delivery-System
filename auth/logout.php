@@ -1,5 +1,5 @@
 <?php
-require_once '../includes/bootstrap.php';
+require_once '../core/bootstrap.php';
 
 // Clear remember me cookie and database token if exists
 if (isset($_COOKIE['remember_token'])) {

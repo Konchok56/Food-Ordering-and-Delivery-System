@@ -1,7 +1,7 @@
 <?php
 session_start();
-include('../includes/db.php');
-include('../includes/cart_helper.php');
+include('../core/db.php');
+include('../core/cart_helper.php');
 
 // 🔒 Check login
 if(!isset($_SESSION['user_id'])){
@@ -97,3 +97,4 @@ if (strpos($redirect, '../') === 0) {
     header("Location: ../$redirect");
 }
 exit;
+

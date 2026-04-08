@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../core/db.php';
 
 // Fetch featured restaurants
 $stmt = $pdo->query('SELECT * FROM restaurants WHERE is_featured = 1 ORDER BY rating DESC LIMIT 4');
@@ -69,3 +69,4 @@ if (!empty($featuredRests)):
   </div>
 </section>
 <?php endif; ?>
+

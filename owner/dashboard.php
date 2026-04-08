@@ -1,5 +1,5 @@
 <?php
-require_once '../includes/bootstrap.php';
+require_once '../core/bootstrap.php';
 
 // Require restaurant or admin role
 requireRole('restaurant');

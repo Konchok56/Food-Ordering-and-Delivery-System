@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../core/db.php';
 
 $stmt = $pdo->query('SELECT * FROM foods ORDER BY is_featured DESC, id DESC LIMIT 8');
 $foods = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -59,3 +59,4 @@ $foods = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php endforeach; ?>
   </div>
 </section>
+
