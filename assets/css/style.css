@@ -2101,3 +2101,191 @@ footer {
   .cart-item-right { flex-direction: row; width: 100%; justify-content: space-between; }
   .cart-header { flex-direction: column; align-items: flex-start; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   ── PROFESSIONAL GLOBAL UTILITIES (added)
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Page-load progress bar ──────────────────────────────── */
+#sb-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--orange), #ff9500, var(--orange));
+  background-size: 200% 100%;
+  z-index: 9999;
+  transition: width 0.25s ease, opacity 0.4s ease;
+  animation: progressShimmer 1.2s linear infinite;
+  border-radius: 0 3px 3px 0;
+  pointer-events: none;
+}
+#sb-progress.done { width: 100% !important; opacity: 0; }
+@keyframes progressShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Flash messages ───────────────────────────────────────── */
+.flash-msg {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  margin-bottom: 16px;
+  animation: flashSlide 0.35s cubic-bezier(0.22,1,0.36,1) both;
+}
+@keyframes flashSlide {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.flash-success { background: rgba(52,199,89,0.12);  color: #1a7a34; border: 1px solid rgba(52,199,89,0.2); }
+.flash-error   { background: rgba(255,59,48,0.08);  color: #cc2d25; border: 1px solid rgba(255,59,48,0.15); }
+.flash-info    { background: rgba(45,156,219,0.08); color: #1460a0; border: 1px solid rgba(45,156,219,0.2); }
+.flash-warning { background: rgba(255,184,48,0.12); color: #a06200; border: 1px solid rgba(255,184,48,0.2); }
+
+/* ── Page transition fade ─────────────────────────────────── */
+body {
+  animation: pageFadeIn 0.3s ease both;
+}
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Skeleton loader ─────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg, var(--cream2) 25%, #fff8ec 50%, var(--cream2) 75%);
+  background-size: 200% 100%;
+  animation: skeletonWave 1.4s ease infinite;
+  border-radius: 12px;
+}
+@keyframes skeletonWave {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Back-to-top button ──────────────────────────────────── */
+#sb-back-top {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 48px;
+  height: 48px;
+  background: var(--orange);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(255,79,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(16px) scale(0.8);
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+  z-index: 800;
+}
+#sb-back-top.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+#sb-back-top:hover { transform: translateY(-4px) scale(1.08); }
+
+/* ── Improved autocomplete dropdown ──────────────────────── */
+.ac-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.14);
+  border: 1px solid var(--cream2);
+  overflow: hidden;
+  z-index: 500;
+  max-height: 420px;
+  overflow-y: auto;
+  display: none;
+  animation: acDrop 0.18s ease both;
+}
+.ac-dropdown.is-open { display: block; }
+@keyframes acDrop {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.ac-list { list-style: none; padding: 6px; }
+.ac-group-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  padding: 8px 14px 4px;
+}
+.ac-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-size: 0.9rem;
+}
+.ac-item:hover, .ac-item.ac-active { background: var(--cream); }
+.ac-icon   { font-size: 1.2rem; flex-shrink: 0; }
+.ac-thumb  { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+.ac-label  { flex: 1; color: var(--dark); font-weight: 600; }
+.ac-label small, .ac-label mark {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+.ac-label mark { background: rgba(255,79,0,0.15); color: var(--orange); border-radius: 4px; padding: 0 3px; }
+.ac-meta  { font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
+.ac-arrow { font-size: 1rem; }
+.ac-search-row { border-bottom: 1px solid var(--cream2); margin-bottom: 4px; }
+
+/* ── Toast improvements ──────────────────────────────────── */
+.sb-toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--dark);
+  color: #fff;
+  padding: 14px 22px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  z-index: 1200;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.sb-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.sb-toast.error {
+  background: #cc2d25;
+}
+.sb-toast-icon { font-size: 1.1rem; }
+
+/* ── Add-to-cart button states ───────────────────────────── */
+.add-btn.sb-adding { opacity: 0.7; cursor: wait; }
+.add-btn.sb-added  { background: #34c759 !important; color: #fff; }

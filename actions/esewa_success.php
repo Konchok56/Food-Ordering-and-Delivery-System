@@ -21,11 +21,11 @@ if ($responseData && isset($responseData['status']) && $responseData['status'] =
     if ($order && $order['status'] !== 'confirmed') {
         // Officially confirm the order since payment is successful
         $pdo->prepare("UPDATE orders SET status = 'confirmed' WHERE id = ?")->execute([$order['id']]);
-        header("Location: ../order_confirmation.php?id=" . $order['id'] . "&payment=success");
+        header("Location: ../orders/order_confirmation.php?id=" . $order['id'] . "&payment=success");
         exit;
     } else if ($order && $order['status'] === 'confirmed') {
         // Already confirmed
-        header("Location: ../order_confirmation.php?id=" . $order['id']);
+        header("Location: ../orders/order_confirmation.php?id=" . $order['id']);
         exit;
     }
 }
@@ -33,6 +33,6 @@ if ($responseData && isset($responseData['status']) && $responseData['status'] =
 echo "<div style='text-align:center; margin-top: 50px; font-family: sans-serif;'>";
 echo "<h2>Payment Verification Failed</h2>";
 echo "<p>Something went wrong with the payment validation. Your order is still pending.</p>";
-echo "<a href='../cart.php' style='color:#ff4f00; font-weight:bold;'>Return to Cart</a>";
+echo "<a href='../orders/cart.php' style='color:#ff4f00; font-weight:bold;'>Return to Cart</a>";
 echo "</div>";
 ?>
