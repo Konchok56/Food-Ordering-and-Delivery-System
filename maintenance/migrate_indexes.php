@@ -4,7 +4,7 @@
  * Run ONCE: http://localhost/food/swiftbite_php_starter/migrate_indexes.php
  * Then delete this file.
  */
-include('includes/db.php');
+include('core/db.php');
 $results = [];
 
 // Helper to safely add an index

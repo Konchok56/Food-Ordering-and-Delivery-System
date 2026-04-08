@@ -3,7 +3,7 @@ session_start();
 
 // Remember me auto-login
 if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
-    include('includes/db.php');
+    include('../core/db.php');
     $stmt = $pdo->prepare("SELECT * FROM users WHERE remember_token=?");
     $stmt->execute([$_COOKIE['remember_token']]);
     $user = $stmt->fetch();
@@ -16,19 +16,19 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
 
 // Redirect to login if not logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: auth/login.php");
+    header("Location: ../auth/login.php");
     exit;
 }
 
-include('includes/db.php');
-include('includes/cart_helper.php');
+include('../core/db.php');
+include('../core/cart_helper.php');
 
 $user_id = $_SESSION['user_id'];
 
 // Handle "Clear All" action
 if (isset($_POST['clear_cart']) && $_POST['clear_cart'] === '1') {
     $pdo->prepare("DELETE FROM cart WHERE user_id = ?")->execute([$user_id]);
-    header("Location: cart.php");
+    header("Location: orders/cart.php");
     exit;
 }
 
@@ -72,11 +72,11 @@ $cartCount = getCartCount($pdo, $user_id);
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
     <!-- CSS -->
-    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
 </head>
 
 <body>
-    <?php include 'sections/navbar.php'; ?>
+    <?php include '../templates/navbar.php'; ?>
 
     <div class="cart-page">
         <div class="cart-page-inner">
@@ -192,9 +192,9 @@ $cartCount = getCartCount($pdo, $user_id);
         </div>
     </div>
 
-    <?php include 'sections/footer.php'; ?>
+    <?php include '../templates/footer.php'; ?>
 
-    <?php include 'sections/floating_menu.php'; ?>
+    <?php include '../templates/floating_menu.php'; ?>
 
     <script>
     // ── Cart Page AJAX Controls ──────────────────────────────
@@ -236,7 +236,7 @@ $cartCount = getCartCount($pdo, $user_id);
         data.append('cart_id', cartId);
         data.append('action', action);
 
-        fetch('actions/update_cart.php', {
+        fetch('../actions/update_orders/cart.php', {
             method: 'POST',
             body: data,
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -294,11 +294,11 @@ $cartCount = getCartCount($pdo, $user_id);
     const checkoutBtn = document.getElementById('checkoutBtn');
     if (checkoutBtn) {
         checkoutBtn.addEventListener('click', function() {
-            window.location.href = 'checkout.php';
+            window.location.href = 'orders/checkout.php';
         });
     }
     </script>
-    <script src="assets/js/cart.js"></script>
-    <script src="assets/js/script.js"></script>
+    <script src="../assets/js/cart.js"></script>
+    <script src="../assets/js/script.js"></script>
 </body>
 </html>

@@ -1,10 +1,10 @@
 <?php
 session_start();
-include('includes/db.php');
-include('includes/cart_helper.php');
+include('../core/db.php');
+include('../core/cart_helper.php');
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: auth/login.php");
+    header("Location: ../auth/login.php");
     exit;
 }
 
@@ -34,7 +34,7 @@ $cartCount = getCartCount($pdo, $user_id);
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Order Details #<?php echo str_pad($order['id'], 5, '0', STR_PAD_LEFT); ?> — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
     <style>
         .page { padding: 100px 24px 60px; min-height: 100vh; background: var(--cream); }
         .inner { max-width: 800px; margin: 0 auto; }
@@ -76,12 +76,12 @@ $cartCount = getCartCount($pdo, $user_id);
     </style>
 </head>
 <body>
-    <?php include 'sections/navbar.php'; ?>
+    <?php include '../templates/navbar.php'; ?>
 
     <div class="page">
         <div class="inner">
             <div class="header">
-                <a href="order_history.php" class="back-btn">← Back</a>
+                <a href="user/order_history.php" class="back-btn">← Back</a>
                 <h1>Order Details</h1>
             </div>
 
@@ -164,10 +164,10 @@ $cartCount = getCartCount($pdo, $user_id);
         </div>
     </div>
 
-    <?php include 'sections/floating_menu.php'; ?>
+    <?php include '../templates/floating_menu.php'; ?>
 
-    <?php include 'sections/footer.php'; ?>
-    <script src="assets/js/script.js"></script>
-    <script src="assets/js/cart.js"></script>
+    <?php include '../templates/footer.php'; ?>
+    <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/cart.js"></script>
 </body>
 </html>

@@ -1,10 +1,10 @@
 <?php
 /**
  * Cart Table Migration
- * Run this ONCE via browser: http://localhost/food/swiftbite_php_starter/migrate_cart.php
+ * Run this ONCE via browser: http://localhost/food/swiftbite_php_starter/migrate_orders/cart.php
  * Then delete this file.
  */
-include('includes/db.php');
+include('core/db.php');
 
 $results = [];
 

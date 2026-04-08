@@ -21,7 +21,7 @@ $food_id   = isset($_POST['food_id']) ? (int) $_POST['food_id'] : null;
 $food_name = $_POST['food_name'] ?? '';
 $price     = isset($_POST['price']) ? (float) $_POST['price'] : 0;
 $quantity  = isset($_POST['quantity']) ? max(1, (int) $_POST['quantity']) : 1;
-$redirect  = isset($_POST['redirect']) ? $_POST['redirect'] : '../cart.php';
+$redirect  = isset($_POST['redirect']) ? $_POST['redirect'] : '../orders/cart.php';
 
 // Lookup food details for image_path and emoji if food_id provided
 $image_path = '';
