@@ -221,7 +221,7 @@ $counts = $countsStmt->fetch(PDO::FETCH_ASSOC) ?: [
 
                                             <div class="btn-row">
                                                 <button type="submit" class="btn-main">Save Status</button>
-                                                <a class="btn-ghost" href="../order_details.php?id=<?php echo (int) $order['id']; ?>" style="text-decoration:none; display:inline-flex; align-items:center;">View User Order Page</a>
+                                                <a class="btn-ghost" href="../user/order_details.php?id=<?php echo (int) $order['id']; ?>" style="text-decoration:none; display:inline-flex; align-items:center;">View User Order Page</a>
                                             </div>
                                         </form>
                                     </div>

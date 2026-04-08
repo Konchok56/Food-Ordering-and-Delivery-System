@@ -1,25 +1,5 @@
 <?php
-session_start();
-
-// ✅ Remember me functionality - Check before session check
-if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
-    include('includes/db.php');
-    
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE remember_token=?");
-    $stmt->execute([$_COOKIE['remember_token']]);
-    $user = $stmt->fetch();
-
-    if ($user) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_name'] = $user['name'];
-        $_SESSION['role'] = $user['role'];
-    }
-}
-
-// Cart count from DB
-include('includes/db.php');
-include('includes/cart_helper.php');
-$cartCount = isset($_SESSION['user_id']) ? getCartCount($pdo, $_SESSION['user_id']) : 0;
+require_once 'core/bootstrap.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,22 +13,22 @@ $cartCount = isset($_SESSION['user_id']) ? getCartCount($pdo, $_SESSION['user_id
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
-  <?php include 'sections/navbar.php'; ?>
+  <?php include 'templates/navbar.php'; ?>
 
   <main>
-    <?php include 'sections/hero.php'; ?>
-    <?php include 'sections/search.php'; ?>
-    <?php include 'sections/categories.php'; ?>
-    <?php include 'sections/restaurants.php'; ?>
-    <?php include 'sections/foods.php'; ?>
-    <?php include 'sections/howitworks.php'; ?>
-    <?php include 'sections/promo.php'; ?>
-    <?php include 'sections/testimonials.php'; ?>
+    <?php include 'templates/hero.php'; ?>
+    <?php include 'templates/search.php'; ?>
+    <?php include 'templates/categories.php'; ?>
+    <?php include 'templates/restaurants.php'; ?>
+    <?php include 'templates/foods.php'; ?>
+    <?php include 'templates/howitworks.php'; ?>
+    <?php include 'templates/promo.php'; ?>
+    <?php include 'templates/testimonials.php'; ?>
   </main>
 
-  <?php include 'sections/footer.php'; ?>
+  <?php include 'templates/footer.php'; ?>
 
-  <?php include 'sections/floating_menu.php'; ?>
+  <?php include 'templates/floating_menu.php'; ?>
 
   <script src="assets/js/script.js"></script>
   <script src="assets/js/cart.js"></script>

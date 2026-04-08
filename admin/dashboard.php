@@ -15,81 +15,124 @@ if ($user['role'] !== 'admin') {
     echo "<h2 style='color:red; text-align:center; margin-top:50px;'>Access Denied! You are not an Admin.</h2>";
     exit;
 }
-?>
 
+// Count pending restaurant approvals
+$pendingCount = 0;
+try {
+    $pendingCount = $pdo->query("SELECT COUNT(*) FROM users WHERE role='restaurant' AND is_approved=0")->fetchColumn();
+} catch (Exception $e) { /* is_approved column may not exist yet if migration not run */ }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - SwiftBite</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-            margin: 0;
-            padding: 40px;
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, #fff8f0, #ffe8d0);
+            min-height: 100vh;
+            padding: 40px 20px;
         }
         .dashboard {
-            max-width: 900px;
+            max-width: 960px;
             margin: 0 auto;
             background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 48px 40px;
+            border-radius: 28px;
+            box-shadow: 0 20px 60px rgba(255,79,0,0.12);
             text-align: center;
         }
-        h1 { color: #27ae60; font-size: 2.5em; }
-        .welcome { font-size: 1.2em; color: #555; margin: 20px 0; }
-        ul { text-align: left; display: inline-block; margin: 30px 0; }
-        li { margin: 12px 0; font-size: 1.1em; }
-        .btn {
-            display: inline-block;
-            padding: 12px 30px;
-            background: #27ae60;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            margin-top: 20px;
+        .logo { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; color: #ff4f00; margin-bottom: 8px; }
+        h1 { font-family: 'Syne', sans-serif; color: #1a1004; font-size: 2.2rem; margin-bottom: 8px; }
+        .welcome { font-size: 1rem; color: #8b6a44; margin: 12px 0 36px; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
         }
-        .btn:hover { background: #219653; }
+        .btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 24px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-decoration: none;
+            color: #fff;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(0,0,0,0.2); }
+        .btn .icon { font-size: 2rem; }
+        .btn-orange { background: linear-gradient(135deg, #ff4f00, #ff7340); }
+        .btn-green  { background: linear-gradient(135deg, #34c759, #2da44e); }
+        .btn-blue   { background: linear-gradient(135deg, #2d9cdb, #56ccf2); }
+        .btn-sky    { background: linear-gradient(135deg, #0ea5e9, #38bdf8); }
+        .btn-dark   { background: linear-gradient(135deg, #1a1004, #3d2600); }
+        .btn-purple { background: linear-gradient(135deg, #6c47ff, #a78bfa); }
+        .pending-badge {
+            position: absolute;
+            top: -8px; right: -8px;
+            background: #ff3b30;
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 3px 9px;
+            border-radius: 999px;
+        }
+        .footer-note { font-size: 0.85rem; color: #b08060; margin-top: 12px; }
     </style>
 </head>
 <body>
     <div class="dashboard">
+        <div class="logo">🍽️ SwiftBite</div>
         <h1>👨‍💼 Admin Dashboard</h1>
-        <p class="welcome">Welcome, <strong>Admin (Hari)</strong>! You have full access.</p>
-        
-        <hr>
-        <h3>Quick Actions:</h3>
-        <div style="display:flex; flex-wrap:wrap; gap:16px; justify-content:center; margin:30px 0;">
-<<<<<<< HEAD
-            <a href="manage_foods.php" class="btn" style="background:linear-gradient(135deg,#ff4f00,#ff7340); font-size:1.1em; padding:16px 36px;">
-                🍔 Manage Menu
+        <p class="welcome">Welcome back, <strong>Admin</strong>! You have full access to all controls.</p>
+
+        <div class="grid">
+            <a href="manage_foods.php" class="btn btn-orange">
+                <span class="icon">🍔</span>
+                Manage Menu
             </a>
-            <a href="manage_promos.php" class="btn" style="background:linear-gradient(135deg,#41a124,#2d7a18); font-size:1.1em; padding:16px 36px;">
-                💸 Promos
+
+            <a href="manage_restaurants.php" class="btn btn-green">
+                <span class="icon">🏪</span>
+                Restaurants
             </a>
-            <a href="../index.php" class="btn" style="background:#1a1004; padding:16px 36px; font-size:1.1em;">
-                🏠 View Site
+
+            <a href="pending_restaurants.php" class="btn btn-purple">
+                <span class="icon">🔔</span>
+                Approvals
+                <?php if ($pendingCount > 0): ?>
+                    <span class="pending-badge"><?php echo (int)$pendingCount; ?></span>
+                <?php endif; ?>
+            </a>
+
+            <a href="manage_promos.php" class="btn btn-blue">
+                <span class="icon">💸</span>
+                Promos
+            </a>
+
+            <a href="delivery_partner.php" class="btn btn-sky">
+                <span class="icon">🚚</span>
+                Delivery
+            </a>
+
+            <a href="../index.php" class="btn btn-dark">
+                <span class="icon">🏠</span>
+                View Site
             </a>
         </div>
-=======
-    <a href="manage_foods.php" class="btn" style="background:linear-gradient(135deg,#ff4f00,#ff7340); font-size:1.1em; padding:16px 36px;">
-        🍔 Manage Menu
-    </a>
 
-    <a href="delivery_partner.php" class="btn" style="background:linear-gradient(135deg,#2d9cdb,#56ccf2); font-size:1.1em; padding:16px 36px;">
-        🚚 Delivery Partner Panel
-    </a>
-
-    <a href="../index.php" class="btn" style="background:#1a1004;">
-        🏠 View Site
-    </a>
-</div>
->>>>>>> b98ebb0b54c6352d5a7c362741c635d9dec30573
-        <h4 style="color:#888; margin-top:10px;">More features coming soon: Orders, Users, Reports</h4>
+        <p class="footer-note">More features coming soon: Order management, Revenue reports, User management</p>
     </div>
 </body>
 </html>

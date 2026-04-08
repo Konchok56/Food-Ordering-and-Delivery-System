@@ -1,10 +1,10 @@
 <?php
 session_start();
-include('includes/db.php');
-include('includes/cart_helper.php');
+include('../core/db.php');
+include('../core/cart_helper.php');
 
 if (!isset($_SESSION['user_id'])) {
-    header('Location: auth/login.php');
+    header('Location: ../auth/login.php');
     exit;
 }
 
@@ -17,7 +17,7 @@ $user = $userStmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$user) {
     session_destroy();
-    header('Location: auth/login.php');
+    header('Location: ../auth/login.php');
     exit;
 }
 
@@ -67,7 +67,7 @@ function orderStatusMeta(string $status): array {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>User Dashboard — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
     <style>
         .dash-page { padding: 100px 24px 60px; min-height: 100vh; background: var(--cream); }
         .dash-inner { max-width: 1180px; margin: 0 auto; }
@@ -131,7 +131,7 @@ function orderStatusMeta(string $status): array {
     </style>
 </head>
 <body>
-    <?php include 'sections/navbar.php'; ?>
+    <?php include '../templates/navbar.php'; ?>
 
     <div class="dash-page">
         <div class="dash-inner">
@@ -141,8 +141,8 @@ function orderStatusMeta(string $status): array {
                     <p>Profile summary, order history, and delivery tracking in one place.</p>
                 </div>
                 <div class="quick-links">
-                    <a class="quick-link" href="profile.php">👤 Edit Profile</a>
-                    <a class="quick-link" href="order_history.php">📦 Full Order History</a>
+                    <a class="quick-link" href="user/profile.php">👤 Edit Profile</a>
+                    <a class="quick-link" href="user/order_history.php">📦 Full Order History</a>
                     <a class="quick-link" href="menu.php">🍔 Browse Menu</a>
                 </div>
             </div>
@@ -260,8 +260,8 @@ function orderStatusMeta(string $status): array {
                                         <?php endif; ?>
 
                                         <div class="order-actions">
-                                            <a class="btn-soft" href="order_details.php?id=<?php echo (int) $order['id']; ?>">View Details</a>
-                                            <a class="btn-soft" href="order_history.php">See All Orders</a>
+                                            <a class="btn-soft" href="user/order_details.php?id=<?php echo (int) $order['id']; ?>">View Details</a>
+                                            <a class="btn-soft" href="user/order_history.php">See All Orders</a>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
@@ -273,9 +273,9 @@ function orderStatusMeta(string $status): array {
         </div>
     </div>
 
-    <?php include 'sections/floating_menu.php'; ?>
-    <?php include 'sections/footer.php'; ?>
-    <script src="assets/js/script.js"></script>
-    <script src="assets/js/cart.js"></script>
+    <?php include '../templates/floating_menu.php'; ?>
+    <?php include '../templates/footer.php'; ?>
+    <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/cart.js"></script>
 </body>
 </html>

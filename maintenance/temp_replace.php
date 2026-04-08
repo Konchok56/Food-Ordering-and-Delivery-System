@@ -5,10 +5,10 @@ $files = [
     'restaurant.php',
     'restaurants.php',
     'food_detail.php',
-    'cart.php',
-    'order_history.php',
-    'order_details.php',
-    'profile.php'
+    'orders/cart.php',
+    'user/order_history.php',
+    'user/order_details.php',
+    'user/profile.php'
 ];
 
 foreach ($files as $file) {
@@ -16,7 +16,7 @@ foreach ($files as $file) {
         $content = file_get_contents($file);
         
         $pattern = '/<button class="cart-fab".*?<\/button>/s';
-        $replacement = '<?php include \'sections/floating_menu.php\'; ?>';
+        $replacement = '<?php include \'templates/floating_menu.php\'; ?>';
         
         $newContent = preg_replace($pattern, $replacement, $content);
         

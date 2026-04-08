@@ -1,7 +1,8 @@
-# /vendor/
+/vendor/
 /composer.lock
 .env
 .DS_Store
 Thumbs.db
 /uploads/*
 !/uploads/.gitkeep
+

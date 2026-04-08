@@ -1,11 +1,11 @@
 <?php
 session_start();
-include('includes/db.php');
-include('includes/cart_helper.php');
-include('includes/csrf.php');
+include('../core/db.php');
+include('../core/cart_helper.php');
+include('../core/csrf.php');
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: auth/login.php");
+    header("Location: ../auth/login.php");
     exit;
 }
 
@@ -26,7 +26,7 @@ $stmt->execute([$user_id]);
 $cart = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if (empty($cart)) {
-    header("Location: cart.php");
+    header("Location: orders/cart.php");
     exit;
 }
 
@@ -52,7 +52,7 @@ $cartCount = getCartCount($pdo, $user_id);
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
     <style>
         .checkout-page { padding: 100px 24px 60px; min-height: 100vh; }
         .checkout-inner { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 380px; gap: 32px; align-items: start; }
@@ -107,12 +107,12 @@ $cartCount = getCartCount($pdo, $user_id);
     </style>
 </head>
 <body>
-    <?php include 'sections/navbar.php'; ?>
+    <?php include '../templates/navbar.php'; ?>
 
     <div class="checkout-page">
         <div class="checkout-inner">
             
-            <form action="actions/place_order.php" method="POST" id="checkoutForm">
+            <form action="../actions/place_order.php" method="POST" id="checkoutForm">
                 <?php echo csrfInput(); ?>
                 <input type="hidden" name="promo_code" id="hiddenPromoCode" value="">
                 
@@ -226,8 +226,8 @@ $cartCount = getCartCount($pdo, $user_id);
         </div>
     </div>
 
-    <?php include 'sections/footer.php'; ?>
-    <script src="assets/js/script.js"></script>
+    <?php include '../templates/footer.php'; ?>
+    <script src="../assets/js/script.js"></script>
     <script>
         const originalTotal = <?php echo $total; ?>;
         const subtotal = <?php echo $subtotal; ?>;
@@ -250,7 +250,7 @@ $cartCount = getCartCount($pdo, $user_id);
             formData.append('promo_code', code);
             formData.append('subtotal', subtotal);
 
-            fetch('actions/apply_promo.php', {
+            fetch('../actions/apply_promo.php', {
                 method: 'POST',
                 body: formData
             })

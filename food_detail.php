@@ -3,7 +3,7 @@ session_start();
 
 // Remember me auto-login
 if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
-    include('includes/db.php');
+    include('core/db.php');
     $stmt = $pdo->prepare("SELECT * FROM users WHERE remember_token=?");
     $stmt->execute([$_COOKIE['remember_token']]);
     $user = $stmt->fetch();
@@ -15,8 +15,8 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
 }
 
 // Cart count from DB
-include('includes/db.php');
-include('includes/cart_helper.php');
+include('core/db.php');
+include('core/cart_helper.php');
 $cartCount = isset($_SESSION['user_id']) ? getCartCount($pdo, $_SESSION['user_id']) : 0;
 
 // Get food ID
@@ -509,7 +509,7 @@ $reviews = $revStmt->fetchAll(PDO::FETCH_ASSOC);
     </style>
 </head>
 <body>
-    <?php include 'sections/navbar.php'; ?>
+    <?php include 'templates/navbar.php'; ?>
 
     <div class="detail-page">
         <!-- Cart & Review success toasts -->
@@ -621,7 +621,7 @@ $reviews = $revStmt->fetchAll(PDO::FETCH_ASSOC);
                         </div>
                     </div>
 
-                    <form action="actions/add_to_cart.php" method="POST" id="addToCartForm">
+                    <form action="actions/add_to_orders/cart.php" method="POST" id="addToCartForm">
                         <input type="hidden" name="food_id" value="<?php echo (int) $food['id']; ?>">
                         <input type="hidden" name="food_name" value="<?php echo htmlspecialchars($food['name']); ?>">
                         <input type="hidden" name="price" value="<?php echo (float) $food['price']; ?>">
@@ -771,9 +771,9 @@ $reviews = $revStmt->fetchAll(PDO::FETCH_ASSOC);
         <?php endif; ?>
     </div>
 
-    <?php include 'sections/footer.php'; ?>
+    <?php include 'templates/footer.php'; ?>
 
-    <?php include 'sections/floating_menu.php'; ?>
+    <?php include 'templates/floating_menu.php'; ?>
 
     <script>
         // Quantity control
