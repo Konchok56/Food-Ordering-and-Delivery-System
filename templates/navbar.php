@@ -12,7 +12,20 @@ if (isset($_SESSION['user_id'])) {
 }
 
 $nav_base_url = !file_exists('core/db.php') ? '../' : '';
+
+// Include cart helper if not already included (e.g. by bootstrap.php)
+if (!function_exists('getCartCount')) {
+    $nav_helper_path = file_exists('core/cart_helper.php') ? 'core/cart_helper.php' : '../core/cart_helper.php';
+    include_once($nav_helper_path);
+}
 ?>
+
+<script>
+    window.SwiftBiteConfig = {
+        baseUrl: '<?php echo $nav_base_url; ?>'
+    };
+</script>
+
 <nav>
   <a class="logo" href="<?php echo $nav_base_url; ?>index.php">Swift<span>Bite</span></a>
 
@@ -22,7 +35,12 @@ $nav_base_url = !file_exists('core/db.php') ? '../' : '';
     <li><a href="<?php echo $nav_base_url; ?>menu.php">Menu</a></li>
     <li><a href="#categories">Categories</a></li>
     <li><a href="#offers">Offers</a></li>
-    <li><a href="<?php echo $nav_base_url; ?>orders/cart.php">Cart</a></li>
+    <li>
+      <a href="<?php echo $nav_base_url; ?>orders/cart.php" class="nav-cart-link">
+        Cart
+        <span class="cart-badge" id="cartCount" data-cart-count><?php echo isset($_SESSION['user_id']) ? getCartCount($pdo, $_SESSION['user_id']) : 0; ?></span>
+      </a>
+    </li>
   </ul>
 
   <div class="nav-right">

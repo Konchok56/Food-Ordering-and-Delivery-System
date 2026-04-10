@@ -1,7 +1,5 @@
 <?php
-session_start();
-include('../core/db.php');
-include('../core/cart_helper.php'); // For navbar badge
+require_once '../core/bootstrap.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
@@ -29,7 +27,7 @@ $cartCount = getCartCount($pdo, $user_id);
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Order Confirmed — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/style.css?v=6" />
     <style>
         .conf-page { min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 120px 24px 60px; }
         .conf-card { background: #fff; border-radius: 36px; padding: 50px 40px; text-align: center; max-width: 500px; width: 100%; box-shadow: 0 20px 60px rgba(52, 199, 89, 0.15); animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -87,8 +85,8 @@ $cartCount = getCartCount($pdo, $user_id);
             </div>
 
             <div class="conf-actions">
-                <a href="user/order_history.php" class="btn-track">🔍 Trace Order</a>
-                <a href="index.php" class="btn-home">← Back to Home</a>
+                <a href="../user/order_history.php" class="btn-track">🔍 Trace Order</a>
+                <a href="../index.php" class="btn-home">← Back to Home</a>
             </div>
         </div>
     </div>

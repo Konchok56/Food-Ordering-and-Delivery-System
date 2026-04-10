@@ -78,7 +78,7 @@ $reviews = $revStmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/style.css?v=6" />
     <style>
         /* ── Food Detail Page ── */
         .detail-page {
@@ -621,7 +621,7 @@ $reviews = $revStmt->fetchAll(PDO::FETCH_ASSOC);
                         </div>
                     </div>
 
-                    <form action="actions/add_to_orders/cart.php" method="POST" id="addToCartForm">
+                    <form action="actions/add_to_cart.php" method="POST" id="addToCartForm">
                         <input type="hidden" name="food_id" value="<?php echo (int) $food['id']; ?>">
                         <input type="hidden" name="food_name" value="<?php echo htmlspecialchars($food['name']); ?>">
                         <input type="hidden" name="price" value="<?php echo (float) $food['price']; ?>">
@@ -813,3 +813,4 @@ $reviews = $revStmt->fetchAll(PDO::FETCH_ASSOC);
     <script src="assets/js/cart.js"></script>
 </body>
 </html>
+
