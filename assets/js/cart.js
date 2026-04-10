@@ -5,6 +5,9 @@
 (function () {
     'use strict';
 
+    const config = window.SwiftBiteConfig || { baseUrl: '' };
+    const getApiUrl = (path) => config.baseUrl + path;
+
     // ── Toast HTML (injected once) ──────────────────────────
     if (!document.getElementById('sbCartToast')) {
         const toastHTML = `
@@ -31,13 +34,25 @@
 
     // ── Update ALL cart count badges on the page ────────────
     function updateCartBadges(count) {
-        document.querySelectorAll('#cartCount, .cart-count, [data-cart-count]').forEach(el => {
+        const counts = document.querySelectorAll('#cartCount, .cart-count, .cart-badge, #cartCountBadge, [data-cart-count]');
+        counts.forEach(el => {
             el.textContent = count;
+            // Add a little pop animation
+            el.style.transform = 'scale(1.4)';
+            setTimeout(() => el.style.transform = '', 300);
         });
+
+        // Bounce the FAB
+        const fab = document.querySelector('.cart-fab');
+        if (fab) {
+            fab.style.transform = 'scale(1.2) translateY(-10px)';
+            setTimeout(() => fab.style.transform = '', 400);
+        }
     }
 
     // ── AJAX Add to Cart ────────────────────────────────────
     function handleAddToCart(form, btn) {
+        console.log('SwiftBiteCart: Handling add to cart...', form.action);
         const data = new FormData(form);
         const foodName = btn?.getAttribute('data-name') || data.get('food_name') || 'Item';
 
@@ -48,7 +63,7 @@
             btn.textContent = '✓';
         }
 
-        fetch('actions/add_to_cart.php', {
+        fetch(getApiUrl('actions/add_to_cart.php'), {
             method: 'POST',
             body: data,
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -90,8 +105,10 @@
     // ── Intercept ALL add-to-cart forms ─────────────────────
     document.addEventListener('submit', function (e) {
         const form = e.target;
+        const action = form.getAttribute('action') || '';
+        
         // Match forms that POST to add_to_cart.php
-        if (form.tagName === 'FORM' && form.action && form.action.includes('add_to_cart.php')) {
+        if (form.tagName === 'FORM' && action.includes('add_to_cart.php')) {
             e.preventDefault();
             e.stopPropagation();
             const btn = form.querySelector('.add-btn, .menu-add-btn, .detail-add-btn, [type="submit"]');
@@ -100,7 +117,7 @@
     }, true); // capture phase to beat inline onclick handlers
 
     // ── Fetch real cart count on page load ──────────────────
-    fetch('actions/get_cart_count.php', {
+    fetch(getApiUrl('actions/get_cart_count.php'), {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(res => res.json())
