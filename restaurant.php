@@ -83,7 +83,7 @@ $catEmojis = [
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/style.css?v=6" />
     <style>
         .restd-page { padding-top: 90px; min-height: 100vh; }
 
@@ -658,7 +658,7 @@ $catEmojis = [
                                         <div class="menu-item-price">
                                             <small>Rs.</small> <?php echo number_format((float)$food['price'], 0); ?>
                                         </div>
-                                    <form action="actions/add_to_orders/cart.php" method="post" class="menu-cart-form">
+                                    <form action="actions/add_to_cart.php" method="post" class="menu-cart-form">
                                             <input type="hidden" name="food_id" value="<?php echo (int)$food['id']; ?>">
                                             <input type="hidden" name="food_name" value="<?php echo htmlspecialchars($food['name']); ?>">
                                             <input type="hidden" name="price" value="<?php echo (float)$food['price']; ?>">
@@ -720,3 +720,4 @@ $catEmojis = [
     </script>
 </body>
 </html>
+
