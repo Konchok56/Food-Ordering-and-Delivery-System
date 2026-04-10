@@ -1,7 +1,5 @@
 <?php
-session_start();
-include('../core/db.php');
-include('../core/cart_helper.php');
+require_once '../core/bootstrap.php';
 
 // 🔒 Check login
 if(!isset($_SESSION['user_id'])){
@@ -9,7 +7,7 @@ if(!isset($_SESSION['user_id'])){
     if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) || 
         (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false)) {
         header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => 'Please login first', 'redirect' => '/food/swiftbite_php_starter/auth/login.php']);
+        echo json_encode(['success' => false, 'message' => 'Please login first', 'redirect' => SITE_BASE_URL . '/auth/login.php']);
         exit;
     }
     header("Location: ../auth/login.php");

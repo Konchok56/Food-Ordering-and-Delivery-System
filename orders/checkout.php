@@ -1,9 +1,7 @@
 <?php
-session_start();
-include('../core/db.php');
-include('../core/cart_helper.php');
-include('../core/csrf.php');
+require_once '../core/bootstrap.php';
 
+// Redirect to login if not logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
     exit;
@@ -26,7 +24,7 @@ $stmt->execute([$user_id]);
 $cart = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if (empty($cart)) {
-    header("Location: orders/cart.php");
+    header("Location: cart.php");
     exit;
 }
 
@@ -52,7 +50,7 @@ $cartCount = getCartCount($pdo, $user_id);
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/style.css?v=6" />
     <style>
         .checkout-page { padding: 100px 24px 60px; min-height: 100vh; }
         .checkout-inner { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 380px; gap: 32px; align-items: start; }
