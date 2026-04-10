@@ -46,7 +46,7 @@ $foods = $stmt->fetchAll(PDO::FETCH_ASSOC);
               <div class="food-price">Rs. <?php echo number_format((float) $food['price'], 2); ?></div>
             </div>
 
-            <form action="actions/add_to_orders/cart.php" method="post" onclick="event.stopPropagation();">
+            <form action="actions/add_to_cart.php" method="post" onclick="event.stopPropagation();">
               <input type="hidden" name="food_id" value="<?php echo (int) $food['id']; ?>" />
               <input type="hidden" name="food_name" value="<?php echo htmlspecialchars($food['name']); ?>" />
               <input type="hidden" name="price" value="<?php echo (float) $food['price']; ?>" />
@@ -59,4 +59,5 @@ $foods = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php endforeach; ?>
   </div>
 </section>
+
 
