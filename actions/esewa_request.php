@@ -105,4 +105,3 @@ $failure_url = $base_url . $folder_path . "/esewa_failure.php";
 </body>
 
 </html>
-
