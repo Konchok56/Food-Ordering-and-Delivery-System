@@ -6,8 +6,8 @@ $keyword       = trim($_GET['keyword'] ?? '');
 $activeCategory = trim($_GET['category'] ?? '');
 $activeCity    = trim($_GET['city'] ?? '');
 
-// Get all distinct categories
-$catStmt = $pdo->query("SELECT category, COUNT(*) as count FROM foods GROUP BY category ORDER BY category");
+// Get all distinct categories and one emoji from each
+$catStmt = $pdo->query("SELECT category, emoji, COUNT(*) as count FROM foods GROUP BY category ORDER BY category");
 $categories = $catStmt->fetchAll(PDO::FETCH_ASSOC);
 
 // ── Build search query ──
@@ -49,13 +49,13 @@ $pageTitle = 'Full Menu — SwiftBite';
 if ($keyword) $pageTitle = "Search: $keyword — SwiftBite";
 elseif ($activeCategory) $pageTitle = "$activeCategory — SwiftBite";
 
-// Category emoji map
-$catEmojis = [
-    'Burgers' => '🍔', 'Pizza' => '🍕', 'Sushi' => '🍣', 'Noodles' => '🍜',
-    'Salads' => '🥗', 'Desserts' => '🍰', 'Chicken' => '🍗', 'Drinks' => '🥤',
-    'Seafood' => '🦐', 'Pasta' => '🍝', 'BBQ' => '🥩', 'Breakfast' => '🥞',
-    'Sandwich' => '🥪', 'Soup' => '🍲', 'Rice' => '🍚',
-];
+// Helper to find emoji for a category from fetched categories
+$getCatEmoji = function($catName) use ($categories) {
+    foreach ($categories as $c) {
+        if ($c['category'] === $catName) return $c['emoji'] ?: '🍴';
+    }
+    return '🍴';
+};
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -294,7 +294,7 @@ $catEmojis = [
             <?php foreach ($categories as $cat): ?>
                 <a href="menu.php?category=<?php echo urlencode($cat['category']); ?><?php echo $keyword ? '&keyword='.urlencode($keyword) : ''; ?>"
                    class="filter-tab <?php echo $activeCategory === $cat['category'] ? 'active' : ''; ?>">
-                    <?php echo $catEmojis[$cat['category']] ?? '🍴'; ?>
+                    <?php echo htmlspecialchars($cat['emoji'] ?: '🍴'); ?>
                     <?php echo htmlspecialchars($cat['category']); ?>
                     <span class="tab-count"><?php echo $cat['count']; ?></span>
                 </a>
@@ -311,7 +311,7 @@ $catEmojis = [
                             for <span>"<?php echo htmlspecialchars($keyword); ?>"</span>
                         <?php endif; ?>
                         <?php if ($activeCategory): ?>
-                            <span class="search-tag"><?php echo $catEmojis[$activeCategory] ?? '🍴'; ?> <?php echo htmlspecialchars($activeCategory); ?></span>
+                            <span class="search-tag"><?php echo htmlspecialchars($getCatEmoji($activeCategory)); ?> <?php echo htmlspecialchars($activeCategory); ?></span>
                         <?php endif; ?>
                         <?php if ($activeCity): ?>
                             <span class="search-tag city-tag">📍 <?php echo htmlspecialchars($activeCity); ?></span>

@@ -562,15 +562,7 @@ $reviews = $revStmt->fetchAll(PDO::FETCH_ASSOC);
                 <!-- Category & Rating -->
                 <div class="detail-category-row">
                     <div class="detail-cat-pill">
-                        <?php
-                        $catEmojis = [
-                            'Burgers' => '🍔', 'Pizza' => '🍕', 'Sushi' => '🍣', 'Noodles' => '🍜',
-                            'Salads' => '🥗', 'Desserts' => '🍰', 'Chicken' => '🍗', 'Drinks' => '🥤',
-                            'Seafood' => '🦐', 'Pasta' => '🍝', 'BBQ' => '🥩', 'Breakfast' => '🥞',
-                            'Sandwich' => '🥪', 'Soup' => '🍲', 'Rice' => '🍚',
-                        ];
-                        echo $catEmojis[$food['category']] ?? '🍴';
-                        ?>
+                        <?php echo htmlspecialchars($food['emoji'] ?: '🍴'); ?>
                         <?php echo htmlspecialchars($food['category']); ?>
                     </div>
                     <div class="detail-rating">
