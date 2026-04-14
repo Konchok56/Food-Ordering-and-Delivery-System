@@ -97,7 +97,7 @@ $cartCount = getCartCount($pdo, $user_id);
                                 // Determine image: prefer foods table, fallback to cart stored, fallback to emoji
                                 $imgPath = !empty($item['food_image']) ? $item['food_image'] : (!empty($item['image_path']) ? $item['image_path'] : '');
                                 $emojiIcon = !empty($item['food_emoji']) ? $item['food_emoji'] : (!empty($item['emoji']) ? $item['emoji'] : '🍔');
-                                $foodLink = $item['fid'] ? "food_detail.php?id=" . (int)$item['fid'] : '#';
+                                $foodLink = $item['fid'] ? "../food_detail.php?id=" . (int)$item['fid'] : '#';
                             ?>
 
                             <div class="cart-item-card" data-cart-id="<?php echo (int)$item['id']; ?>" data-price="<?php echo (float)$item['price']; ?>">
@@ -105,7 +105,7 @@ $cartCount = getCartCount($pdo, $user_id);
                                 <div class="cart-item-image">
                                     <a href="<?php echo $foodLink; ?>">
                                         <?php if (!empty($imgPath)): ?>
-                                            <img src="<?php echo htmlspecialchars($imgPath); ?>" alt="<?php echo htmlspecialchars($item['food_name']); ?>">
+                                            <img src="<?php echo SITE_BASE_URL . '/' . htmlspecialchars($imgPath); ?>" alt="<?php echo htmlspecialchars($item['food_name']); ?>">
                                         <?php else: ?>
                                             <?php echo htmlspecialchars($emojiIcon); ?>
                                         <?php endif; ?>

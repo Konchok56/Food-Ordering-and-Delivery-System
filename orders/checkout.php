@@ -179,7 +179,7 @@ $cartCount = getCartCount($pdo, $user_id);
                         <div class="summary-item">
                             <div class="summary-img">
                                 <?php if (!empty($imgPath)): ?>
-                                    <img src="<?php echo htmlspecialchars($imgPath); ?>" alt="">
+                                    <img src="<?php echo SITE_BASE_URL . '/' . htmlspecialchars($imgPath); ?>" alt="">
                                 <?php else: ?>
                                     <?php echo htmlspecialchars($emojiIcon); ?>
                                 <?php endif; ?>

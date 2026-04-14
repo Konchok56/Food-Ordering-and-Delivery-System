@@ -242,7 +242,7 @@ $deadlineMs = $deadline * 1000;
                         <div class="item-row">
                             <div class="item-img">
                                 <?php if (!empty($item['image_path'])): ?>
-                                    <img src="<?php echo htmlspecialchars($item['image_path']); ?>" alt="">
+                                    <img src="<?php echo SITE_BASE_URL . '/' . htmlspecialchars($item['image_path']); ?>" alt="">
                                 <?php else: ?>
                                     <?php echo htmlspecialchars($item['emoji']); ?>
                                 <?php endif; ?>
