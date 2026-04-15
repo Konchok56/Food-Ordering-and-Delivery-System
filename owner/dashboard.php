@@ -134,7 +134,7 @@ $statusConfig = [
         <a href="../index.php">🌐 View Main Site</a>
     </nav>
     <div class="sidebar-footer">
-        <a href="../../auth/logout.php" style="color:var(--muted);text-decoration:none;font-size:0.9rem;font-weight:600;">🚪 Logout</a>
+        <a href="../auth/logout.php" style="color:var(--muted);text-decoration:none;font-size:0.9rem;font-weight:600;">🚪 Logout</a>
     </div>
 </aside>
 
