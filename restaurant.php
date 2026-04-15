@@ -51,10 +51,15 @@ $foodStmt = $pdo->prepare("SELECT * FROM foods WHERE restaurant_id = ? ORDER BY 
 $foodStmt->execute([$restId]);
 $allFoods = $foodStmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Group foods by category
+// Group foods by category and capture emojis
 $foodsByCategory = [];
+$catEmojis = [];
 foreach ($allFoods as $f) {
-    $foodsByCategory[$f['category']][] = $f;
+    $cat = $f['category'];
+    $foodsByCategory[$cat][] = $f;
+    if (!isset($catEmojis[$cat])) {
+        $catEmojis[$cat] = $f['emoji'] ?: '🍴';
+    }
 }
 $totalFoods = count($allFoods);
 
@@ -64,13 +69,6 @@ $cuisineEmojis = [
     'Japanese' => '🍣', 'Healthy' => '🥗', 'Indian' => '🍛', 'Thai' => '🍜',
     'Mexican' => '🌮', 'Korean' => '🥟', 'BBQ' => '🥩', 'Cafe' => '☕',
     'Bakery' => '🧁', 'Seafood' => '🦐', 'Mixed' => '🍴',
-];
-
-$catEmojis = [
-    'Burgers' => '🍔', 'Pizza' => '🍕', 'Sushi' => '🍣', 'Noodles' => '🍜',
-    'Salads' => '🥗', 'Desserts' => '🍰', 'Chicken' => '🍗', 'Drinks' => '🥤',
-    'Seafood' => '🦐', 'Pasta' => '🍝', 'BBQ' => '🥩', 'Breakfast' => '🥞',
-    'Sandwich' => '🥪', 'Soup' => '🍲', 'Rice' => '🍚',
 ];
 ?>
 <!DOCTYPE html>

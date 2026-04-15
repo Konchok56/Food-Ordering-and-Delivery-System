@@ -107,7 +107,7 @@ unset($_SESSION['profile_success'], $_SESSION['profile_error']);
                     </div>
 
                     <button type="submit" class="update-btn">💾 Save Changes</button>
-                    <a href="../../auth/logout.php" class="logout-link">🚪 Sign Out</a>
+                    <a href="../auth/logout.php" class="logout-link">🚪 Sign Out</a>
                 </form>
             </div>
             
