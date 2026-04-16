@@ -2,6 +2,7 @@
 session_start();
 include('../core/db.php');
 include('../core/csrf.php');
+include('../core/notification_helper.php');
 
 // Validate CSRF
 requireCsrf();
@@ -45,6 +46,21 @@ unset(
 
 // Set success message for login page
 $_SESSION['login_success'] = 'Password reset successful! Please login with your new password.';
+
+// Create notification for the user (find user_id by email)
+$userStmt = $pdo->prepare("SELECT id FROM users WHERE email = ? LIMIT 1");
+$userStmt->execute([$email]);
+$pwUser = $userStmt->fetch(PDO::FETCH_ASSOC);
+if ($pwUser) {
+    addNotification(
+        $pdo, (int)$pwUser['id'], 'password_changed',
+        'Password Changed Successfully',
+        'Your account password was reset on ' . date('M d, Y \a\t h:i A') . '. If this wasn\'t you, please contact support immediately.',
+        '🔒',
+        null,
+        null
+    );
+}
 
 header('Location: ../auth/login.php');
 exit;
