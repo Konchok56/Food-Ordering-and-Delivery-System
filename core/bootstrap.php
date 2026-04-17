@@ -73,6 +73,9 @@ require_once __DIR__ . '/csrf.php';
 // ── Cart helper ────────────────────────────────────────────
 require_once __DIR__ . '/cart_helper.php';
 
+// ── Notification helper ───────────────────────────────────
+require_once __DIR__ . '/notification_helper.php';
+
 // ── Validation helpers ────────────────────────────────────
 require_once __DIR__ . '/validation.php';
 

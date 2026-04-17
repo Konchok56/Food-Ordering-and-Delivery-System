@@ -3,6 +3,7 @@ session_start();
 include('../core/db.php');
 include('../core/csrf.php');
 include('../core/validation.php');
+include('../core/notification_helper.php');
 
 // Validate CSRF
 requireCsrf();
@@ -140,6 +141,22 @@ try {
 
     // Commit
     $pdo->commit();
+
+    // Create notification
+    $firstImage = null;
+    foreach ($cart as $ci) {
+        if (!empty($ci['food_image'])) { $firstImage = $ci['food_image']; break; }
+        if (!empty($ci['image_path'])) { $firstImage = $ci['image_path']; break; }
+    }
+    $orderLabel = '#' . str_pad($order_id, 5, '0', STR_PAD_LEFT);
+    addNotification(
+        $pdo, $user_id, 'order_placed',
+        'Order Placed Successfully! 🎉',
+        'Your order ' . $orderLabel . ' has been placed. Total: Rs. ' . number_format($total, 2) . '. We\'ll start preparing it soon!',
+        '🛒',
+        $firstImage,
+        '../orders/order_confirmation.php?id=' . $order_id
+    );
 
     // Redirect to confirmation or Payment Gateway
     if ($payment_method === 'esewa') {
