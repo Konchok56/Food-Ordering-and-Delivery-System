@@ -3,6 +3,7 @@ session_start();
 include('../core/db.php');
 include('../core/csrf.php');
 include('../core/validation.php');
+include('../core/notification_helper.php');
 
 requireCsrf();
 
@@ -51,6 +52,38 @@ try {
 
     $updateStmt = $pdo->prepare("UPDATE orders SET status = ?, delivery_partner_name = ?, delivery_partner_phone = ? WHERE id = ?");
     $updateStmt->execute([$status, $deliveryPartnerName, $deliveryPartnerPhone, $order_id]);
+
+    // Notify the customer about their order status change
+    $orderOwner = $pdo->prepare("SELECT user_id FROM orders WHERE id = ? LIMIT 1");
+    $orderOwner->execute([$order_id]);
+    $ownerRow = $orderOwner->fetch(PDO::FETCH_ASSOC);
+    if ($ownerRow) {
+        $statusMessages = [
+            'confirmed'        => ['👍', 'Order Confirmed!', 'Your order has been confirmed and will be prepared shortly.'],
+            'preparing'        => ['🧑‍🍳', 'Preparing Your Food', 'The kitchen is now preparing your order. Hang tight!'],
+            'out_for_delivery' => ['🛵', 'Out for Delivery!', 'Your order is on its way! Delivery partner: ' . $deliveryPartnerName . '.'],
+            'delivered'        => ['🎉', 'Order Delivered!', 'Your order has been delivered. Enjoy your meal!'],
+            'cancelled'        => ['❌', 'Order Cancelled', 'Your order has been cancelled by the admin.'],
+        ];
+        $orderLabel = '#' . str_pad($order_id, 5, '0', STR_PAD_LEFT);
+        // Get first image from order items
+        $oImgStmt = $pdo->prepare("SELECT image_path FROM order_items WHERE order_id = ? AND image_path IS NOT NULL AND image_path != '' LIMIT 1");
+        $oImgStmt->execute([$order_id]);
+        $oImg = $oImgStmt->fetchColumn() ?: null;
+
+        if (isset($statusMessages[$status])) {
+            $sm = $statusMessages[$status];
+            $notifType = ($status === 'delivered') ? 'order_delivered' : (($status === 'cancelled') ? 'order_cancelled' : 'order_status');
+            addNotification(
+                $pdo, (int)$ownerRow['user_id'], $notifType,
+                $sm[1] . ' ' . $orderLabel,
+                $sm[2],
+                $sm[0],
+                $oImg,
+                '../user/order_details.php?id=' . $order_id
+            );
+        }
+    }
 
     $_SESSION['delivery_success'] = 'Order status updated successfully.';
 } catch (Exception $e) {

@@ -2,6 +2,7 @@
 session_start();
 include('../core/db.php');
 include('../core/csrf.php');
+include('../core/notification_helper.php');
 
 header('Content-Type: application/json');
 
@@ -62,6 +63,11 @@ if ($elapsed > CANCEL_WINDOW_SECONDS) {
 
 // All checks passed — delete from DB inside a transaction
 try {
+    // Grab first food image before deleting items
+    $imgStmt = $pdo->prepare("SELECT image_path FROM order_items WHERE order_id = ? AND image_path IS NOT NULL AND image_path != '' LIMIT 1");
+    $imgStmt->execute([$order_id]);
+    $cancelImage = $imgStmt->fetchColumn() ?: null;
+
     $pdo->beginTransaction();
 
     // Delete order items first (FK constraint)
@@ -71,6 +77,17 @@ try {
     $pdo->prepare("DELETE FROM orders WHERE id = ? AND user_id = ?")->execute([$order_id, $user_id]);
 
     $pdo->commit();
+
+    // Create cancellation notification
+    $orderLabel = '#' . str_pad($order_id, 5, '0', STR_PAD_LEFT);
+    addNotification(
+        $pdo, $user_id, 'order_cancelled',
+        'Order Cancelled',
+        'Your order ' . $orderLabel . ' has been cancelled and removed successfully.',
+        '❌',
+        $cancelImage,
+        null
+    );
 
     echo json_encode(['success' => true, 'message' => 'Your order has been cancelled and removed successfully.']);
 } catch (Exception $e) {
