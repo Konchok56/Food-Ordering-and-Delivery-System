@@ -67,6 +67,23 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
     }
 }
 
+// ── Check if logged in user is banned ───────────────────────
+if (isset($_SESSION['user_id'])) {
+    try {
+        $banCheckStmt = $pdo->prepare("SELECT is_banned, ban_reason FROM users WHERE id = ? LIMIT 1");
+        $banCheckStmt->execute([$_SESSION['user_id']]);
+        $banUserCheck = $banCheckStmt->fetch();
+        if ($banUserCheck && isset($banUserCheck['is_banned']) && $banUserCheck['is_banned'] == 1) {
+            $_SESSION['banned_reason'] = $banUserCheck['ban_reason'];
+            unset($_SESSION['user_id']);
+            unset($_SESSION['role']);
+            setcookie('remember_token', '', time() - 3600, '/');
+            header("Location: " . SITE_BASE_URL . "/auth/banned.php");
+            exit;
+        }
+    } catch (Exception $e) { /* Ignore if schema not migrated yet */ }
+}
+
 // ── CSRF helpers ─────────────────────────────────────────
 require_once __DIR__ . '/csrf.php';
 

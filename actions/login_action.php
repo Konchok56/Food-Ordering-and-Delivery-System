@@ -36,6 +36,12 @@ if ($user['role'] === 'restaurant' && (isset($user['is_approved']) && $user['is_
     redirect('auth/login.php');
 }
 
+// Block banned users
+if (isset($user['is_banned']) && $user['is_banned'] == 1) {
+    $_SESSION['banned_reason'] = $user['ban_reason'];
+    redirect('auth/banned.php');
+}
+
 // Login successful: Regenerate session ID
 session_regenerate_id(true);
 

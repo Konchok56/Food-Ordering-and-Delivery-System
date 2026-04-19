@@ -130,6 +130,11 @@ try {
                 <span class="icon">🏠</span>
                 View Site
             </a>
+
+            <a href="manage_users.php" class="btn" style="background: linear-gradient(135deg, #f43f5e, #be123c);">
+                <span class="icon">👥</span>
+                Users
+            </a>
         </div>
 
         <p class="footer-note">More features coming soon: Order management, Revenue reports, User management</p>
