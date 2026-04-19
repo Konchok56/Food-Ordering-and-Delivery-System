@@ -74,7 +74,7 @@ unset($_SESSION['profile_success'], $_SESSION['profile_error']);
                     <div class="alert alert-error">❌ <?php echo htmlspecialchars($error); ?></div>
                 <?php endif; ?>
 
-                <form action="../actions/update_user/profile.php" method="POST">
+                <form action="../actions/update_profile.php" method="POST">
                     <?php echo csrfInput(); ?>
                     
                     <div class="form-group">
@@ -104,6 +104,15 @@ unset($_SESSION['profile_success'], $_SESSION['profile_error']);
                             <option value="Lalitpur" <?php echo ($user['city'] ?? '') === 'Lalitpur' ? 'selected' : ''; ?>>Lalitpur</option>
                             <option value="Bhaktapur" <?php echo ($user['city'] ?? '') === 'Bhaktapur' ? 'selected' : ''; ?>>Bhaktapur</option>
                         </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="status">Profile Status</label>
+                        <select id="status" name="status">
+                            <option value="active" <?php echo ($user['status'] ?? 'active') === 'active' ? 'selected' : ''; ?>>🟢 Active</option>
+                            <option value="inactive" <?php echo ($user['status'] ?? 'active') === 'inactive' ? 'selected' : ''; ?>>⚪ Inactive</option>
+                        </select>
+                        <small style="color:var(--muted); font-size:0.85rem; margin-top:6px; display:block;">If inactive, your profile may not be publicly visible.</small>
                     </div>
 
                     <button type="submit" class="update-btn">💾 Save Changes</button>
