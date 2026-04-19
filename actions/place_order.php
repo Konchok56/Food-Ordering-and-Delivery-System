@@ -26,6 +26,17 @@ $payment_method = sanitize($_POST['payment_method'] ?? 'cod');
 
 // Note: In a real app, do stronger validation here (e.g. phone format, empty fields)
 
+// 0. Check User Status
+$stmtStatus = $pdo->prepare("SELECT status FROM users WHERE id = ?");
+$stmtStatus->execute([$user_id]);
+$userStatusRow = $stmtStatus->fetch(PDO::FETCH_ASSOC);
+
+if ($userStatusRow && ($userStatusRow['status'] ?? 'active') === 'inactive') {
+    flash('error', 'You need to be active to order. Please update your status in your profile.');
+    header("Location: ../orders/checkout.php");
+    exit;
+}
+
 // 1. Fetch Cart
 $stmt = $pdo->prepare("
     SELECT c.*, 

@@ -20,6 +20,8 @@ $name = sanitize($_POST['name'] ?? '');
 $phone = sanitize($_POST['phone'] ?? '');
 $address = sanitize($_POST['address'] ?? '');
 $city = sanitize($_POST['city'] ?? 'Kathmandu');
+$status = sanitize($_POST['status'] ?? 'active');
+if (!in_array($status, ['active', 'inactive'])) $status = 'active';
 
 $errors = [];
 
@@ -38,8 +40,8 @@ if (!empty($errors)) {
 }
 
 try {
-    $stmt = $pdo->prepare("UPDATE users SET name = ?, phone = ?, address = ?, city = ? WHERE id = ?");
-    $stmt->execute([$name, $phone, $address, $city, $user_id]);
+    $stmt = $pdo->prepare("UPDATE users SET name = ?, phone = ?, address = ?, city = ?, status = ? WHERE id = ?");
+    $stmt->execute([$name, $phone, $address, $city, $status, $user_id]);
     
     // Update session name if changed
     $_SESSION['user_name'] = $name;
