@@ -82,7 +82,7 @@ $failure_url = $base_url . $folder_path . "/esewa_failure.php";
     <p>Please do not refresh or close this page.</p>
 
     <!-- TO USE REAL ESEWA, change the action below to: action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" -->
-    <form action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" method="POST" id="esewaForm">
+    <form action="mock_esewa_gateway.php" method="POST" id="esewaForm">
         <input type="hidden" id="amount" name="amount" value="<?php echo $total_amount; ?>" required>
         <input type="hidden" id="tax_amount" name="tax_amount" value="0" required>
         <input type="hidden" id="total_amount" name="total_amount" value="<?php echo $total_amount; ?>" required>

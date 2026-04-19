@@ -29,7 +29,7 @@ if (empty($cart)) {
 }
 
 // Get User details for pre-filling form
-$stmt = $pdo->prepare("SELECT name, email, phone, address, city FROM users WHERE id = ?");
+$stmt = $pdo->prepare("SELECT name, email, phone, address, city, status FROM users WHERE id = ?");
 $stmt->execute([$user_id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -110,6 +110,10 @@ $cartCount = getCartCount($pdo, $user_id);
     <div class="checkout-page">
         <div class="checkout-inner">
             
+            <div style="grid-column: 1 / -1; margin-bottom: 20px;">
+                <?php echo renderFlash(); ?>
+            </div>
+
             <form action="../actions/place_order.php" method="POST" id="checkoutForm">
                 <?php echo csrfInput(); ?>
                 <input type="hidden" name="promo_code" id="hiddenPromoCode" value="">
@@ -218,7 +222,14 @@ $cartCount = getCartCount($pdo, $user_id);
                     </div>
                 </div>
 
-                <button type="submit" form="checkoutForm" class="place-order-btn">🚀 Place Order</button>
+                <?php if (($user['status'] ?? 'active') === 'inactive'): ?>
+                    <div style="margin-top: 24px; padding: 14px; background: rgba(255,59,48,0.1); border: 1px solid rgba(255,59,48,0.2); border-radius: 12px; color: #cc2d25; font-size: 0.9rem; font-weight: 600; text-align: center;">
+                        ❌ You need to be active to order. Please update your status in your profile.
+                    </div>
+                    <button type="button" class="place-order-btn" style="background:#ccc; box-shadow:none; cursor:not-allowed;" disabled>🚀 Place Order</button>
+                <?php else: ?>
+                    <button type="submit" form="checkoutForm" class="place-order-btn">🚀 Place Order</button>
+                <?php endif; ?>
             </div>
 
         </div>
