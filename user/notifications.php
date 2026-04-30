@@ -26,7 +26,7 @@ markAllNotificationsRead($pdo, $user_id);
     <title>Notifications — SwiftBite</title>
     <meta name="description" content="View all your SwiftBite notifications — order updates, delivery status, account changes and more.">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../assets/css/style.css?v=6" />
+    <link rel="stylesheet" href="../assets/css/style.css?v=8" />
     <style>
         .notif-page {
             padding: 100px 24px 60px;

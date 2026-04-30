@@ -3,6 +3,7 @@ session_start();
 include('../core/db.php');
 include('../core/csrf.php');
 include('../core/notification_helper.php');
+include_once('../core/mailer_helper.php');
 
 header('Content-Type: application/json');
 
@@ -88,6 +89,14 @@ try {
         $cancelImage,
         null
     );
+
+    // --- 📧 Send Cancellation Email ---
+    $userEmailStmt = $pdo->prepare("SELECT email, name FROM users WHERE id = ? LIMIT 1");
+    $userEmailStmt->execute([$user_id]);
+    $userEmailRow = $userEmailStmt->fetch(PDO::FETCH_ASSOC);
+    if ($userEmailRow && !empty($userEmailRow['email'])) {
+        sendOrderCancelledByCustomerEmail($userEmailRow['email'], $userEmailRow['name'], $order_id);
+    }
 
     echo json_encode(['success' => true, 'message' => 'Your order has been cancelled and removed successfully.']);
 } catch (Exception $e) {

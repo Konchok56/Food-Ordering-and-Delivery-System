@@ -4,6 +4,7 @@ include('../core/db.php');
 include('../core/csrf.php');
 include('../core/validation.php');
 include('../core/notification_helper.php');
+include_once('../core/mailer_helper.php');
 
 // Validate CSRF
 requireCsrf();
@@ -168,6 +169,22 @@ try {
         $firstImage,
         '../orders/order_confirmation.php?id=' . $order_id
     );
+
+    // --- 📧 Send Order Confirmation Email ---
+    if (!empty($email)) {
+        sendOrderPlacedEmail(
+            $email,
+            $name,
+            $order_id,
+            $cart,
+            $subtotal,
+            $deliveryFee,
+            $discountAmount,
+            $total,
+            $payment_method,
+            $address . ', ' . $city
+        );
+    }
 
     // Redirect to confirmation or Payment Gateway
     if ($payment_method === 'esewa') {

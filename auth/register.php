@@ -1,10 +1,7 @@
 <?php
 require_once '../core/bootstrap.php';
 
-// Redirect if already logged in
-if (isLoggedIn()) {
-    redirect('index.php');
-}
+if (isLoggedIn()) { redirect('index.php'); }
 
 $old = $_SESSION['register_old'] ?? [];
 unset($_SESSION['register_old']);
@@ -16,277 +13,375 @@ $selectedRole = $old['role'] ?? 'user';
     <title>Register — SwiftBite</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css?v=8">
+    <script>(function(){var t=localStorage.getItem('sb-theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+    <script src="../assets/js/theme.js"></script>
     <style>
-        :root { --orange: #ff4f00; --dark: #1a1004; --cream: #fff8f0; --cream2: #fff0dc; --text: #3d2600; --muted: #8b6a44; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'DM Sans', sans-serif; background: var(--cream); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .auth-card {
-            background: #fff; border-radius: 32px; padding: 48px 40px; width: 100%; max-width: 460px;
-            box-shadow: 0 20px 60px rgba(255,79,0,0.12);
-        }
-        .auth-logo { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--orange); text-align: center; margin-bottom: 8px; }
-        .auth-logo span { color: var(--dark); }
-        .auth-title { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--dark); text-align: center; margin-bottom: 6px; }
-        .auth-subtitle { color: var(--muted); text-align: center; font-size: 0.92rem; margin-bottom: 24px; }
-        
-        /* Professional Flash Messages */
-        .flash-msg {
-            padding: 12px 18px; border-radius: 14px; font-size: 0.88rem; font-weight: 600; margin-bottom: 20px;
-            display: flex; align-items: center; gap: 10px;
-        }
-        .flash-error   { background: rgba(255,59,48,0.08); color: #cc2d25; border: 1px solid rgba(255,59,48,0.15); }
-        .flash-success { background: rgba(52,199,89,0.08); color: #1a7a34; border: 1px solid rgba(52,199,89,0.15); }
-        .flash-warning { background: rgba(255,184,48,0.12); color: #a06200; border: 1px solid rgba(255,184,48,0.2); }
+        :root { --orange:#ff4f00; --dark:#1a1004; --cream:#fff8f0; --cream2:#ffe0c2; --text:#3d2600; --muted:#8b6a44; }
+        *{ box-sizing:border-box; margin:0; padding:0; }
 
-        /* Role Toggle */
-        .role-toggle { display: flex; gap: 10px; margin-bottom: 24px; }
-        .role-btn {
-            flex: 1; padding: 14px 10px; border: 2px solid var(--cream2); border-radius: 16px;
-            background: var(--cream); cursor: pointer; transition: all 0.2s;
-            font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 700;
-            color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 6px;
+        body{
+            font-family:'DM Sans',sans-serif;
+            background: linear-gradient(135deg, #1a0a00 0%, #3d1500 50%, #1a0a00 100%);
+            min-height:100vh;
+            display:flex; align-items:center; justify-content:center;
+            padding:16px;
         }
-        .role-btn .role-icon { font-size: 1.5rem; }
-        .role-btn.active { border-color: var(--orange); background: rgba(255,79,0,0.06); color: var(--orange); }
-        
-        /* Approval notice */
-        .approval-notice {
-            background: rgba(255,184,48,0.12); border: 1px solid rgba(255,184,48,0.3);
-            border-radius: 14px; padding: 12px 16px;
-            font-size: 0.82rem; color: #7a5700; font-weight: 500; margin-bottom: 20px;
-            display: none;
+
+        /* ── Outer card ── */
+        .auth-wrap{
+            display:grid;
+            grid-template-columns: 260px 1fr;
+            width:100%; max-width:820px;
+            background:var(--white);
+            border-radius:28px;
+            overflow:hidden;
+            box-shadow:0 30px 80px rgba(0,0,0,0.35);
+            min-height:0;
         }
-        .approval-notice strong { display: block; margin-bottom: 2px; font-weight: 700; }
-        
-        .auth-field { margin-bottom: 18px; }
-        .auth-field label { display: block; font-weight: 600; font-size: 0.85rem; color: var(--dark); margin-bottom: 6px; }
-        .auth-field input, .auth-field select {
-            width: 100%; padding: 14px 18px; border: 2px solid var(--cream2); border-radius: 16px;
-            font-size: 0.95rem; color: var(--text); background: var(--cream); outline: none; transition: border-color 0.2s;
-            font-family: 'DM Sans', sans-serif;
+
+        /* ── Left panel (brand + role toggle) ── */
+        .auth-left{
+            background: linear-gradient(160deg, #1a0a00, #3d1500);
+            padding:32px 24px;
+            display:flex; flex-direction:column;
         }
-        .auth-field input:focus, .auth-field select:focus { border-color: var(--orange); background: #fff; }
-        .pwd-hint { font-size: 0.78rem; color: var(--muted); margin-top: 6px; }
-        .auth-btn {
-            width: 100%; padding: 16px; background: linear-gradient(135deg, var(--orange), #ff2400); color: #fff;
-            border: none; border-radius: 18px; font-weight: 800; font-size: 1.05rem; cursor: pointer;
-            transition: all 0.25s; box-shadow: 0 8px 30px rgba(255,79,0,0.3); margin-top: 8px;
-            font-family: 'DM Sans', sans-serif;
+        .auth-logo{
+            font-family:'Syne',sans-serif; font-size:1.7rem; font-weight:800;
+            color:#ff6b1a; margin-bottom:4px;
         }
-        .auth-btn:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(255,79,0,0.4); }
-        .auth-footer { text-align: center; margin-top: 24px; font-size: 0.92rem; color: var(--muted); }
-        .auth-footer a { color: var(--orange); font-weight: 700; text-decoration: none; }
-        .auth-footer a:hover { text-decoration: underline; }
-        .auth-back { display: block; text-align: center; margin-top: 16px; color: var(--muted); font-size: 0.85rem; text-decoration: none; }
-        .auth-back:hover { color: var(--orange); }
-        .restaurant-fields { display: none; border-top: 1px dashed var(--cream2); margin-top: 4px; padding-top: 18px; }
-        .section-label { font-size: 0.78rem; font-weight: 700; color: var(--orange); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; }
+        .auth-logo span{ color:#fff; }
+        .auth-tagline{ color:#c9a07d; font-size:0.8rem; margin-bottom:28px; }
+
+        .role-label{ font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#8b6a44; margin-bottom:10px; }
+
+        .role-btn{
+            display:flex; align-items:center; gap:10px;
+            width:100%; padding:11px 14px;
+            border:1.5px solid rgba(255,255,255,0.08);
+            border-radius:12px; background:transparent;
+            color:#c9a07d; font-family:'DM Sans',sans-serif;
+            font-size:0.88rem; font-weight:600;
+            cursor:pointer; transition:all 0.2s; margin-bottom:8px;
+            text-align:left;
+        }
+        .role-btn .ri{ font-size:1.2rem; }
+        .role-btn:hover{ background:rgba(255,79,0,0.12); color:#ff9a6b; border-color:rgba(255,79,0,0.3); }
+        .role-btn.active{
+            background:rgba(255,79,0,0.18);
+            border-color:var(--orange);
+            color:#fff;
+            box-shadow:0 0 0 2px rgba(255,79,0,0.25);
+        }
+        .role-btn .role-check{ margin-left:auto; font-size:0.8rem; opacity:0; }
+        .role-btn.active .role-check{ opacity:1; }
+
+        .approval-notice{
+            background:rgba(255,184,48,0.12); border:1px solid rgba(255,184,48,0.3);
+            border-radius:10px; padding:10px 12px;
+            font-size:0.76rem; color:#c9a07d; margin-top:auto;
+            display:none; line-height:1.5;
+        }
+        .approval-notice strong{ display:block; color:#f0b429; margin-bottom:2px; }
+
+        /* ── Right panel (form) ── */
+        .auth-right{
+            padding:28px 28px 24px;
+            display:flex; flex-direction:column;
+            overflow-y:auto;
+            max-height:calc(100vh - 32px);
+        }
+        .auth-title{
+            font-family:'Syne',sans-serif; font-size:1.4rem;
+            font-weight:800; color:var(--dark); margin-bottom:4px;
+        }
+        .auth-subtitle{ color:var(--muted); font-size:0.82rem; margin-bottom:16px; }
+
+        /* Flash */
+        .flash-msg{
+            padding:10px 14px; border-radius:10px; font-size:0.82rem;
+            font-weight:600; margin-bottom:14px;
+            display:flex; align-items:center; gap:8px;
+        }
+        .flash-error  { background:rgba(255,59,48,0.08);  color:#cc2d25; border:1px solid rgba(255,59,48,0.2); }
+        .flash-success{ background:rgba(52,199,89,0.08);  color:#1a7a34; border:1px solid rgba(52,199,89,0.2); }
+
+        /* Fields */
+        .auth-field{ margin-bottom:11px; }
+        .auth-field label{ display:block; font-weight:600; font-size:0.78rem; color:var(--dark); margin-bottom:4px; }
+        .auth-field input,
+        .auth-field select{
+            width:100%; padding:10px 13px;
+            border:1.5px solid var(--cream2); border-radius:10px;
+            font-size:0.88rem; color:var(--text);
+            background:var(--cream); outline:none;
+            transition:border-color 0.2s; font-family:'DM Sans',sans-serif;
+        }
+        .auth-field input:focus,
+        .auth-field select:focus{ border-color:var(--orange); background:#fff; }
+        .pwd-hint{ font-size:0.72rem; color:var(--muted); margin-top:3px; }
+
+        .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+        /* Divider */
+        .section-label{
+            font-size:0.7rem; font-weight:700; color:var(--orange);
+            text-transform:uppercase; letter-spacing:0.5px;
+            margin:4px 0 10px; padding-top:10px;
+            border-top:1px dashed var(--cream2);
+        }
+
+        /* Photo upload */
+        .photo-upload-box{
+            border:1.5px dashed var(--cream2); border-radius:10px;
+            padding:12px; text-align:center; cursor:pointer;
+            transition:all 0.2s; position:relative; background:var(--cream);
+        }
+        .photo-upload-box:hover{ border-color:var(--orange); background:rgba(255,79,0,0.03); }
+        .photo-upload-box input[type=file]{
+            position:absolute; inset:0; opacity:0;
+            cursor:pointer; width:100%; height:100%;
+        }
+        .photo-preview{
+            width:48px; height:48px; border-radius:50%;
+            object-fit:cover; margin:0 auto 4px;
+            display:none; border:2px solid var(--orange);
+        }
+        .photo-icon{ font-size:1.5rem; }
+        .photo-label{ font-size:0.78rem; font-weight:600; color:var(--muted); margin-top:2px; }
+        .photo-hint{ font-size:0.7rem; color:#bbb; }
+
+        /* Extra fields */
+        .extra-fields{ display:none; }
+
+        /* Button */
+        .auth-btn{
+            width:100%; padding:12px;
+            background:linear-gradient(135deg,var(--orange),#ff2400);
+            color:#fff; border:none; border-radius:12px;
+            font-weight:800; font-size:0.95rem; cursor:pointer;
+            transition:all 0.25s; box-shadow:0 6px 20px rgba(255,79,0,0.3);
+            margin-top:10px; font-family:'DM Sans',sans-serif;
+        }
+        .auth-btn:hover{ transform:translateY(-2px); box-shadow:0 10px 30px rgba(255,79,0,0.4); }
+
+        .auth-footer{ text-align:center; margin-top:12px; font-size:0.82rem; color:var(--muted); }
+        .auth-footer a{ color:var(--orange); font-weight:700; text-decoration:none; }
+        .auth-back{ display:block; text-align:center; margin-top:6px; color:#c9a07d; font-size:0.78rem; text-decoration:none; }
+        .auth-back:hover{ color:var(--orange); }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .auth-wrap{ grid-template-columns: 1fr; max-width:420px; }
+            .auth-left{ padding:20px; flex-direction:row; flex-wrap:wrap; gap:8px; align-items:center; }
+            .auth-logo{ margin-bottom:0; }
+            .auth-tagline{ display:none; }
+            .role-label{ display:none; }
+            .role-btn{ padding:8px 12px; margin-bottom:0; flex:1; justify-content:center; font-size:0.78rem; }
+            .role-btn .role-check{ display:none; }
+            .approval-notice{ display:none !important; }
+            .auth-right{ max-height:none; padding:20px; }
+        }
     </style>
 </head>
 <body>
-    <div class="auth-card">
-        <div class="auth-logo">Swift<span>Bite</span></div>
-        <div class="auth-title">Create Account</div>
-        <div class="auth-subtitle">Join SwiftBite — choose your account type</div>
+<div class="auth-wrap">
+
+    <!-- LEFT: Brand + Role Switcher -->
+    <div class="auth-left">
+        <div style="display:flex; align-items:center; width:100%; justify-content:space-between; margin-bottom:4px;">
+            <div class="auth-logo">Swift<span>Bite</span></div>
+            <!-- Theme Toggle -->
+            <button id="theme-toggle" class="theme-toggle-btn" style="width:32px; height:32px; font-size:0.85rem; background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2); color:#fff;" title="Toggle theme">
+                <span class="theme-icon theme-icon-sun">&#9728;</span>
+                <span class="theme-icon theme-icon-moon">&#127769;</span>
+            </button>
+        </div>
+        <div class="auth-tagline">Fast. Fresh. Delivered.</div>
+
+        <div class="role-label">Choose account type</div>
+
+        <button type="button" class="role-btn <?php echo $selectedRole==='user'?'active':''; ?>" id="btnUser" onclick="setRole('user')">
+            <span class="ri">👤</span> Customer
+            <span class="role-check">✓</span>
+        </button>
+        <button type="button" class="role-btn <?php echo $selectedRole==='restaurant'?'active':''; ?>" id="btnRestaurant" onclick="setRole('restaurant')">
+            <span class="ri">🍽️</span> Restaurant Owner
+            <span class="role-check">✓</span>
+        </button>
+        <button type="button" class="role-btn <?php echo $selectedRole==='delivery_partner'?'active':''; ?>" id="btnRider" onclick="setRole('delivery_partner')">
+            <span class="ri">🛵</span> Delivery Rider
+            <span class="role-check">✓</span>
+        </button>
+
+        <div class="approval-notice" id="approvalNotice"
+             <?php echo in_array($selectedRole,['restaurant','delivery_partner']) ? 'style="display:block"' : ''; ?>>
+            <strong>⏳ Pending Approval</strong>
+            Your account will be reviewed by an admin before you can log in.
+        </div>
+    </div>
+
+    <!-- RIGHT: Form -->
+    <div class="auth-right">
+        <div class="auth-title" id="formTitle">Create Account</div>
+        <div class="auth-subtitle">Fill in the details below to get started</div>
 
         <?php echo renderFlash(); ?>
 
-        <!-- Role Toggle -->
-        <div class="role-toggle">
-            <button type="button" class="role-btn <?php echo $selectedRole === 'user' ? 'active' : ''; ?>" id="btnUser" onclick="setRole('user')">
-                <span class="role-icon">👤</span>
-                Customer
-            </button>
-            <button type="button" class="role-btn <?php echo $selectedRole === 'restaurant' ? 'active' : ''; ?>" id="btnRestaurant" onclick="setRole('restaurant')">
-                <span class="role-icon">🍽️</span>
-                Restaurant Owner
-            </button>
-        </div>
-
-        <!-- Approval notice (shown only for restaurant) -->
-        <div class="approval-notice" id="approvalNotice" <?php echo $selectedRole === 'restaurant' ? 'style="display:block"' : ''; ?>>
-            <strong>⏳ Pending Admin Approval</strong>
-            Your restaurant account will be reviewed by an admin before you can log in.
-        </div>
-
-        <form action="../actions/register_action.php" method="POST">
+        <form action="../actions/register_action.php" method="POST" enctype="multipart/form-data">
             <?php echo csrfInput(); ?>
             <input type="hidden" name="role" id="roleInput" value="<?php echo htmlspecialchars($selectedRole); ?>">
 
+            <!-- Common fields -->
             <div class="auth-field">
-                <label for="name">Full Name</label>
-                <input type="text" name="name" id="name" placeholder="John Doe" required
+                <label>Full Name</label>
+                <input type="text" name="name" placeholder="John Doe" required
                        value="<?php echo htmlspecialchars($old['name'] ?? ''); ?>">
             </div>
             <div class="auth-field">
-                <label for="email">Email</label>
-                <input type="email" name="email" id="email" placeholder="you@example.com" required
+                <label>Email</label>
+                <input type="email" name="email" placeholder="you@example.com" required
                        value="<?php echo htmlspecialchars($old['email'] ?? ''); ?>">
             </div>
             <div class="auth-field">
-                <label for="password">Password</label>
-                <input type="password" name="password" id="password" placeholder="••••••••" required minlength="6">
-                <div class="pwd-hint">At least 6 characters with letters and numbers</div>
+                <label>Password</label>
+                <input type="password" name="password" placeholder="••••••••" required minlength="6">
+                <div class="pwd-hint">At least 6 characters</div>
             </div>
 
-            <!-- Restaurant-only fields -->
-            <div class="restaurant-fields" id="restaurantFields" <?php echo $selectedRole === 'restaurant' ? 'style="display:block"' : ''; ?>>
+            <!-- ── Restaurant fields ── -->
+            <div class="extra-fields" id="restaurantFields"
+                 <?php echo $selectedRole==='restaurant' ? 'style="display:block"' : ''; ?>>
                 <div class="section-label">🏪 Restaurant Details</div>
                 <div class="auth-field">
-                    <label for="rest_name">Restaurant Name</label>
-                    <input type="text" name="rest_name" id="rest_name" placeholder="e.g. Burger Palace"
+                    <label>Restaurant Name</label>
+                    <input type="text" name="rest_name" placeholder="e.g. Burger Palace"
                            value="<?php echo htmlspecialchars($old['rest_name'] ?? ''); ?>">
                 </div>
-                <div class="auth-field">
-                    <label for="rest_city">City</label>
-                    <select name="rest_city" id="rest_city">
-                        <option value="Kathmandu" <?php echo ($old['rest_city'] ?? '') === 'Kathmandu' ? 'selected' : ''; ?>>Kathmandu</option>
-                        <option value="Lalitpur"  <?php echo ($old['rest_city'] ?? '') === 'Lalitpur'  ? 'selected' : ''; ?>>Lalitpur</option>
-                        <option value="Bhaktapur" <?php echo ($old['rest_city'] ?? '') === 'Bhaktapur' ? 'selected' : ''; ?>>Bhaktapur</option>
-                    </select>
+                <div class="field-row">
+                    <div class="auth-field">
+                        <label>City</label>
+                        <select name="rest_city">
+                            <?php foreach (['Kathmandu','Lalitpur','Bhaktapur'] as $c): ?>
+                                <option value="<?php echo $c; ?>" <?php echo ($old['rest_city']??'')===$c?'selected':''; ?>><?php echo $c; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="auth-field">
+                        <label>Cuisine</label>
+                        <select name="rest_cuisine">
+                            <?php foreach (['Fast Food','Nepali','Italian','Chinese','Japanese','Healthy','Indian','Thai','Mixed'] as $c): ?>
+                                <option value="<?php echo $c; ?>" <?php echo ($old['rest_cuisine']??'')===$c?'selected':''; ?>><?php echo $c; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                 </div>
                 <div class="auth-field">
-                    <label for="rest_cuisine">Cuisine Type</label>
-                    <select name="rest_cuisine" id="rest_cuisine">
-                        <?php foreach (['Fast Food','Nepali','Italian','Chinese','Japanese','Healthy','Indian','Thai','Mixed'] as $c): ?>
-                            <option value="<?php echo $c; ?>" <?php echo ($old['rest_cuisine'] ?? '') === $c ? 'selected' : ''; ?>><?php echo $c; ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="auth-field">
-                    <label for="rest_phone">Restaurant Phone</label>
-                    <input type="text" name="rest_phone" id="rest_phone" placeholder="01-4567890"
+                    <label>Restaurant Phone</label>
+                    <input type="text" name="rest_phone" placeholder="01-4567890"
                            value="<?php echo htmlspecialchars($old['rest_phone'] ?? ''); ?>">
                 </div>
             </div>
 
-            <button class="auth-btn" type="submit" id="submitBtn">
-                <?php echo $selectedRole === 'restaurant' ? '🍽️ Register Restaurant' : 'Create Account'; ?>
-            </button>
+            <!-- ── Rider fields ── -->
+            <div class="extra-fields" id="riderFields"
+                 <?php echo $selectedRole==='delivery_partner' ? 'style="display:block"' : ''; ?>>
+                <div class="section-label">🛵 Rider Details</div>
+                <div class="field-row">
+                    <div class="auth-field">
+                        <label>Phone Number</label>
+                        <input type="text" name="rider_phone" placeholder="98XXXXXXXX"
+                               value="<?php echo htmlspecialchars($old['rider_phone'] ?? ''); ?>">
+                    </div>
+                    <div class="auth-field">
+                        <label>Vehicle Type</label>
+                        <select name="rider_vehicle">
+                            <option value="Motorcycle" <?php echo ($old['rider_vehicle']??'')==='Motorcycle'?'selected':''; ?>>🏍️ Motorcycle</option>
+                            <option value="Bicycle"    <?php echo ($old['rider_vehicle']??'')==='Bicycle'?'selected':''; ?>>🚲 Bicycle</option>
+                            <option value="Scooter"    <?php echo ($old['rider_vehicle']??'')==='Scooter'?'selected':''; ?>>🛵 Scooter</option>
+                            <option value="Car"        <?php echo ($old['rider_vehicle']??'')==='Car'?'selected':''; ?>>🚗 Car</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="auth-field">
+                        <label>City / Area</label>
+                        <input type="text" name="rider_address" placeholder="e.g. Baneshwor"
+                               value="<?php echo htmlspecialchars($old['rider_address'] ?? ''); ?>">
+                    </div>
+                    <div class="auth-field">
+                        <label>Profile Photo <span style="color:#bbb;font-weight:400;">(required)</span></label>
+                        <div class="photo-upload-box" id="photoBox">
+                            <input type="file" name="rider_photo" id="riderPhoto" accept="image/*" onchange="previewPhoto(this)">
+                            <img class="photo-preview" id="photoPreview" src="" alt="">
+                            <div id="photoContent">
+                                <div class="photo-icon">📷</div>
+                                <div class="photo-label">Upload photo</div>
+                                <div class="photo-hint">JPG/PNG · max 2MB</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="auth-btn" type="submit" id="submitBtn">Create Account</button>
         </form>
 
-        <div class="auth-footer">
-            Already have an account? <a href="login.php">Sign In</a>
-        </div>
+        <div class="auth-footer">Already have an account? <a href="login.php">Sign In</a></div>
         <a href="../index.php" class="auth-back">← Back to SwiftBite</a>
     </div>
+</div>
 
 <script>
+const titles = {
+    user:             'Create Account',
+    restaurant:       '🍽️ Register Restaurant',
+    delivery_partner: '🛵 Apply as Rider'
+};
+const btnMap = {
+    user: 'btnUser', restaurant: 'btnRestaurant', delivery_partner: 'btnRider'
+};
+
 function setRole(role) {
     document.getElementById('roleInput').value = role;
-    document.getElementById('restaurantFields').style.display = role === 'restaurant' ? 'block' : 'none';
-    document.getElementById('approvalNotice').style.display = role === 'restaurant' ? 'block' : 'none';
-    document.getElementById('btnUser').classList.toggle('active', role === 'user');
-    document.getElementById('btnRestaurant').classList.toggle('active', role === 'restaurant');
-    document.getElementById('submitBtn').textContent = role === 'restaurant' ? '🍽️ Register Restaurant' : 'Create Account';
 
-    // Make restaurant fields required/not-required
-    const restFields = document.querySelectorAll('#restaurantFields input, #restaurantFields select');
-    restFields.forEach(f => { f.required = (role === 'restaurant') && f.id === 'rest_name'; });
+    // Extra fields
+    document.getElementById('restaurantFields').style.display = role === 'restaurant'       ? 'block' : 'none';
+    document.getElementById('riderFields').style.display      = role === 'delivery_partner' ? 'block' : 'none';
+
+    // Approval notice
+    document.getElementById('approvalNotice').style.display =
+        (role === 'restaurant' || role === 'delivery_partner') ? 'block' : 'none';
+
+    // Active button
+    Object.values(btnMap).forEach(id => document.getElementById(id).classList.remove('active'));
+    document.getElementById(btnMap[role]).classList.add('active');
+
+    // Titles & button label
+    document.getElementById('formTitle').textContent  = titles[role];
+    document.getElementById('submitBtn').textContent  = titles[role];
+
+    // Rider photo required
+    const rPhoto = document.getElementById('riderPhoto');
+    if (rPhoto) rPhoto.required = (role === 'delivery_partner');
 }
-// Init on load
-setRole(document.getElementById('roleInput').value);
-</script>
-</body>
-</html>
 
-        <!-- Role Toggle -->
-        <div class="role-toggle">
-            <button type="button" class="role-btn <?php echo $selectedRole === 'user' ? 'active' : ''; ?>" id="btnUser" onclick="setRole('user')">
-                <span class="role-icon">👤</span>
-                Customer
-            </button>
-            <button type="button" class="role-btn <?php echo $selectedRole === 'restaurant' ? 'active' : ''; ?>" id="btnRestaurant" onclick="setRole('restaurant')">
-                <span class="role-icon">🍽️</span>
-                Restaurant Owner
-            </button>
-        </div>
-
-        <!-- Approval notice (shown only for restaurant) -->
-        <div class="approval-notice" id="approvalNotice" <?php echo $selectedRole === 'restaurant' ? 'style="display:block"' : ''; ?>>
-            <strong>⏳ Pending Admin Approval</strong>
-            Your restaurant account will be reviewed by an admin before you can log in.
-        </div>
-
-        <form action="../actions/register_action.php" method="POST">
-            <?php echo csrfInput(); ?>
-            <input type="hidden" name="role" id="roleInput" value="<?php echo htmlspecialchars($selectedRole); ?>">
-
-            <div class="auth-field">
-                <label for="name">Full Name</label>
-                <input type="text" name="name" id="name" placeholder="John Doe" required
-                       value="<?php echo htmlspecialchars($old['name'] ?? ''); ?>">
-            </div>
-            <div class="auth-field">
-                <label for="email">Email</label>
-                <input type="email" name="email" id="email" placeholder="you@example.com" required
-                       value="<?php echo htmlspecialchars($old['email'] ?? ''); ?>">
-            </div>
-            <div class="auth-field">
-                <label for="password">Password</label>
-                <input type="password" name="password" id="password" placeholder="••••••••" required minlength="6">
-                <div class="pwd-hint">At least 6 characters with letters and numbers</div>
-            </div>
-
-            <!-- Restaurant-only fields -->
-            <div class="restaurant-fields" id="restaurantFields" <?php echo $selectedRole === 'restaurant' ? 'style="display:block"' : ''; ?>>
-                <div class="section-label">🏪 Restaurant Details</div>
-                <div class="auth-field">
-                    <label for="rest_name">Restaurant Name</label>
-                    <input type="text" name="rest_name" id="rest_name" placeholder="e.g. Burger Palace"
-                           value="<?php echo htmlspecialchars($old['rest_name'] ?? ''); ?>">
-                </div>
-                <div class="auth-field">
-                    <label for="rest_city">City</label>
-                    <select name="rest_city" id="rest_city">
-                        <option value="Kathmandu" <?php echo ($old['rest_city'] ?? '') === 'Kathmandu' ? 'selected' : ''; ?>>Kathmandu</option>
-                        <option value="Lalitpur"  <?php echo ($old['rest_city'] ?? '') === 'Lalitpur'  ? 'selected' : ''; ?>>Lalitpur</option>
-                        <option value="Bhaktapur" <?php echo ($old['rest_city'] ?? '') === 'Bhaktapur' ? 'selected' : ''; ?>>Bhaktapur</option>
-                    </select>
-                </div>
-                <div class="auth-field">
-                    <label for="rest_cuisine">Cuisine Type</label>
-                    <select name="rest_cuisine" id="rest_cuisine">
-                        <?php foreach (['Fast Food','Nepali','Italian','Chinese','Japanese','Healthy','Indian','Thai','Mixed'] as $c): ?>
-                            <option value="<?php echo $c; ?>" <?php echo ($old['rest_cuisine'] ?? '') === $c ? 'selected' : ''; ?>><?php echo $c; ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="auth-field">
-                    <label for="rest_phone">Restaurant Phone</label>
-                    <input type="text" name="rest_phone" id="rest_phone" placeholder="01-4567890"
-                           value="<?php echo htmlspecialchars($old['rest_phone'] ?? ''); ?>">
-                </div>
-            </div>
-
-            <button class="auth-btn" type="submit" id="submitBtn">
-                <?php echo $selectedRole === 'restaurant' ? '🍽️ Register Restaurant' : 'Create Account'; ?>
-            </button>
-        </form>
-
-        <div class="auth-footer">
-            Already have an account? <a href="login.php">Sign In</a>
-        </div>
-        <a href="../index.php" class="auth-back">← Back to SwiftBite</a>
-    </div>
-
-<script>
-function setRole(role) {
-    document.getElementById('roleInput').value = role;
-    document.getElementById('restaurantFields').style.display = role === 'restaurant' ? 'block' : 'none';
-    document.getElementById('approvalNotice').style.display = role === 'restaurant' ? 'block' : 'none';
-    document.getElementById('btnUser').classList.toggle('active', role === 'user');
-    document.getElementById('btnRestaurant').classList.toggle('active', role === 'restaurant');
-    document.getElementById('submitBtn').textContent = role === 'restaurant' ? '🍽️ Register Restaurant' : 'Create Account';
-
-    // Make restaurant fields required/not-required
-    const restFields = document.querySelectorAll('#restaurantFields input, #restaurantFields select');
-    restFields.forEach(f => { f.required = (role === 'restaurant') && f.id === 'rest_name'; });
+function previewPhoto(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            const img = document.getElementById('photoPreview');
+            img.src = e.target.result;
+            img.style.display = 'block';
+            document.getElementById('photoContent').style.display = 'none';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
 }
-// Init on load
+
+// Init
 setRole(document.getElementById('roleInput').value);
 </script>
 </body>
