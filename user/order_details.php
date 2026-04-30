@@ -41,7 +41,7 @@ $deadlineMs = $deadline * 1000;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Order Details #<?php echo str_pad($order['id'], 5, '0', STR_PAD_LEFT); ?> — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../assets/css/style.css?v=6" />
+    <link rel="stylesheet" href="../assets/css/style.css?v=8" />
     <style>
         .page { padding: 100px 24px 60px; min-height: 100vh; background: var(--cream); }
         .inner { max-width: 800px; margin: 0 auto; }
@@ -225,6 +225,21 @@ $deadlineMs = $deadline * 1000;
                 <div class="cancel-expired">
                     <span>⏰</span>
                     <span>The 30-minute cancellation window for this order has expired. Please contact support if you need assistance.</span>
+                </div>
+            <?php endif; ?>
+
+            <!-- ── Live Tracking Section ── -->
+            <?php if ($order['status'] === 'out_for_delivery'): ?>
+                <div class="card" style="border: 2px solid var(--orange); background: linear-gradient(135deg, #fff, #fff8f0);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+                        <div>
+                            <h3 style="font-family:'Syne', sans-serif; font-size:1.3rem; margin:0 0 4px; color:var(--dark);">🛵 Your order is on the way!</h3>
+                            <p style="color:var(--muted); margin:0; font-size:0.95rem;">Track your rider's live location on the map.</p>
+                        </div>
+                        <a href="../orders/track.php?id=<?php echo $order['id']; ?>" class="cancel-detail-btn" style="background:var(--orange); box-shadow: 0 8px 24px rgba(255,79,0,0.3); text-decoration:none; display:inline-block;">
+                            📍 Track Live Location
+                        </a>
+                    </div>
                 </div>
             <?php endif; ?>
 

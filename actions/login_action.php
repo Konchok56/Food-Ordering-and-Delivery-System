@@ -36,6 +36,12 @@ if ($user['role'] === 'restaurant' && (isset($user['is_approved']) && $user['is_
     redirect('auth/login.php');
 }
 
+// Block unapproved delivery partners
+if ($user['role'] === 'delivery_partner' && (isset($user['is_approved']) && $user['is_approved'] == 0)) {
+    flash('warning', '⏳ Your rider application is still under review. Please wait for admin approval.');
+    redirect('auth/login.php');
+}
+
 // Block banned users
 if (isset($user['is_banned']) && $user['is_banned'] == 1) {
     $_SESSION['banned_reason'] = $user['ban_reason'];
@@ -67,6 +73,9 @@ switch ($user['role']) {
         break;
     case 'restaurant':
         redirect('owner/dashboard.php');
+        break;
+    case 'delivery_partner':
+        redirect('delivery/dashboard.php');
         break;
     default:
         redirect('index.php');
