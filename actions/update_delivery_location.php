@@ -57,11 +57,12 @@ try {
     $updateStmt = $pdo->prepare("UPDATE orders SET delivery_lat = ?, delivery_lng = ?, location_updated_at = NOW() WHERE id = ?");
     $updateStmt->execute([$lat, $lng, $order_id]);
 
-    $_SESSION['delivery_success'] = 'Delivery location updated successfully.';
+    header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '../delivery/dashboard.php'));
+    exit;
 } catch (Exception $e) {
     $_SESSION['delivery_error'] = 'Failed to update delivery location.';
 }
 
-header('Location: ../admin/delivery_partner.php');
+header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '../delivery/dashboard.php'));
 exit;
 

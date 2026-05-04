@@ -21,6 +21,12 @@ $pendingCount = 0;
 try {
     $pendingCount = $pdo->query("SELECT COUNT(*) FROM users WHERE role='restaurant' AND is_approved=0")->fetchColumn();
 } catch (Exception $e) { /* is_approved column may not exist yet if migration not run */ }
+
+// Count pending rider approvals
+$pendingRiders = 0;
+try {
+    $pendingRiders = (int)$pdo->query("SELECT COUNT(*) FROM users WHERE role='delivery_partner' AND is_approved=0")->fetchColumn();
+} catch (Exception $e) {}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -134,6 +140,14 @@ try {
             <a href="manage_users.php" class="btn" style="background: linear-gradient(135deg, #f43f5e, #be123c);">
                 <span class="icon">👥</span>
                 Users
+            </a>
+
+            <a href="manage_riders.php" class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                <span class="icon">🛵</span>
+                Manage Riders
+                <?php if ($pendingRiders > 0): ?>
+                    <span class="pending-badge"><?php echo $pendingRiders; ?></span>
+                <?php endif; ?>
             </a>
         </div>
 

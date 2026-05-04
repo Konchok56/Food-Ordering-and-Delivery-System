@@ -31,3 +31,6 @@ define('REMEMBER_ME_DAYS', 30);
 // ── Delivery ───────────────────────────────────────────────
 define('DEFAULT_DELIVERY_FEE', 50);
 define('FREE_DELIVERY_ABOVE',  1000);
+
+// ── External APIs ──────────────────────────────────────────
+define('GOOGLE_MAPS_API_KEY', 'YOUR_GOOGLE_MAPS_API_KEY_HERE');
