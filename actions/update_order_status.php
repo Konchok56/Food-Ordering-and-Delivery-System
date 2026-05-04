@@ -4,6 +4,7 @@ include('../core/db.php');
 include('../core/csrf.php');
 include('../core/validation.php');
 include('../core/notification_helper.php');
+include_once('../core/mailer_helper.php');
 
 requireCsrf();
 
@@ -82,6 +83,20 @@ try {
                 $oImg,
                 '../user/order_details.php?id=' . $order_id
             );
+
+            // --- 📧 Send Order Status Email ---
+            $custEmailStmt = $pdo->prepare("SELECT email, name FROM users WHERE id = ? LIMIT 1");
+            $custEmailStmt->execute([(int)$ownerRow['user_id']]);
+            $custEmailRow = $custEmailStmt->fetch(PDO::FETCH_ASSOC);
+            if ($custEmailRow && !empty($custEmailRow['email'])) {
+                sendOrderStatusEmail(
+                    $custEmailRow['email'],
+                    $custEmailRow['name'],
+                    $order_id,
+                    $status,
+                    $deliveryPartnerName
+                );
+            }
         }
     }
 

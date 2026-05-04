@@ -57,7 +57,7 @@ $counts = $countsStmt->fetch(PDO::FETCH_ASSOC) ?: [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delivery Partner Panel - SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../assets/css/style.css?v=6" />
+    <link rel="stylesheet" href="../assets/css/style.css?v=8" />
     <style>
         .page { padding: 100px 24px 60px; min-height: 100vh; background: var(--cream); }
         .inner { max-width: 1200px; margin: 0 auto; }
