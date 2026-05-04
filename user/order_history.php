@@ -28,7 +28,7 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Orders — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../assets/css/style.css?v=6" />
+    <link rel="stylesheet" href="../assets/css/style.css?v=8" />
     <style>
         .orders-page { padding: 100px 24px 60px; min-height: 100vh; background: var(--cream); }
         .orders-inner { max-width: 900px; margin: 0 auto; }

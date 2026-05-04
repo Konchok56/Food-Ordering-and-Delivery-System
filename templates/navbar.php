@@ -24,7 +24,10 @@ if (!function_exists('getCartCount')) {
     window.SwiftBiteConfig = {
         baseUrl: '<?php echo $nav_base_url; ?>'
     };
+    /* Apply theme IMMEDIATELY to avoid flash of wrong theme */
+    (function(){var t=localStorage.getItem('sb-theme')||'light';document.documentElement.setAttribute('data-theme',t);})();
 </script>
+<script src="<?php echo $nav_base_url; ?>assets/js/theme.js"></script>
 
 <nav>
   <a class="logo" href="<?php echo $nav_base_url; ?>index.php">Swift<span>Bite</span></a>
@@ -44,7 +47,13 @@ if (!function_exists('getCartCount')) {
   </ul>
 
   <div class="nav-right">
-    
+
+    <!-- Theme Toggle -->
+    <button id="theme-toggle" class="theme-toggle-btn" title="Switch to Dark Mode" aria-label="Toggle dark/light mode">
+      <span class="theme-icon theme-icon-sun">&#9728;&#65039;</span>
+      <span class="theme-icon theme-icon-moon">&#127769;</span>
+    </button>
+
     <a class="btn-ghost" href="#support">Support</a>
 
     <?php if(isset($_SESSION['user_name'])): ?>
