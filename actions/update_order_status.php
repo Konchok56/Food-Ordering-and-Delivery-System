@@ -1,5 +1,6 @@
 <?php
 session_start();
+include('../core/config.php');
 include('../core/db.php');
 include('../core/csrf.php');
 include('../core/validation.php');
@@ -19,7 +20,7 @@ $currentRole = (string) $roleStmt->fetchColumn();
 
 if (!in_array($currentRole, ['admin', 'delivery_partner'], true)) {
     $_SESSION['delivery_error'] = 'Access denied.';
-    header('Location: ../admin/delivery_partner.php');
+    header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '../delivery/dashboard.php'));
     exit;
 }
 
@@ -31,14 +32,14 @@ $deliveryPartnerPhone = sanitize($_POST['delivery_partner_phone'] ?? '');
 $allowedStatuses = ['pending', 'confirmed', 'preparing', 'out_for_delivery', 'delivered', 'cancelled'];
 if ($order_id <= 0 || !in_array($status, $allowedStatuses, true)) {
     $_SESSION['delivery_error'] = 'Invalid order or status.';
-    header('Location: ../admin/delivery_partner.php');
+    header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '../delivery/dashboard.php'));
     exit;
 }
 
 $phoneError = validatePhone($deliveryPartnerPhone);
 if ($phoneError) {
     $_SESSION['delivery_error'] = $phoneError;
-    header('Location: ../admin/delivery_partner.php');
+    header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '../delivery/dashboard.php'));
     exit;
 }
 
@@ -51,7 +52,7 @@ try {
         exit;
     }
 
-    $updateStmt = $pdo->prepare("UPDATE orders SET status = ?, delivery_partner_name = ?, delivery_partner_phone = ? WHERE id = ?");
+    $updateStmt = $pdo->prepare("UPDATE orders SET status = ?, delivery_partner_name = ?, delivery_partner_phone = ?, updated_at = NOW() WHERE id = ?");
     $updateStmt->execute([$status, $deliveryPartnerName, $deliveryPartnerPhone, $order_id]);
 
     // Notify the customer about their order status change
@@ -84,6 +85,7 @@ try {
                 '../user/order_details.php?id=' . $order_id
             );
 
+            /* 
             // --- 📧 Send Order Status Email ---
             $custEmailStmt = $pdo->prepare("SELECT email, name FROM users WHERE id = ? LIMIT 1");
             $custEmailStmt->execute([(int)$ownerRow['user_id']]);
@@ -97,14 +99,15 @@ try {
                     $deliveryPartnerName
                 );
             }
+            */
         }
     }
 
     $_SESSION['delivery_success'] = 'Order status updated successfully.';
 } catch (Exception $e) {
-    $_SESSION['delivery_error'] = 'Failed to update order status.';
+    $_SESSION['delivery_error'] = 'Failed to update order status: ' . (APP_ENV === 'development' ? $e->getMessage() : '');
 }
 
-header('Location: ../admin/delivery_partner.php');
+header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '../delivery/dashboard.php'));
 exit;
 

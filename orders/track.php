@@ -11,13 +11,25 @@ if (!isset($_SESSION['user_id'])) {
 $order_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $user_id = $_SESSION['user_id'];
 
-// Get Order
 $stmt = $pdo->prepare("SELECT * FROM orders WHERE id = ? AND user_id = ?");
 $stmt->execute([$order_id, $user_id]);
 $order = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$order) {
     die("<h2 style='text-align:center;margin-top:50px;'>Order not found!</h2>");
+}
+
+// Try to get restaurant coordinates if available
+$restaurantLat = 27.7172; // Kathmandu default
+$restaurantLng = 85.3240;
+if (!empty($order['restaurant_id'])) {
+    $rStmt = $pdo->prepare("SELECT lat, lng FROM restaurants WHERE id = ? LIMIT 1");
+    $rStmt->execute([$order['restaurant_id']]);
+    $rest = $rStmt->fetch(PDO::FETCH_ASSOC);
+    if ($rest && $rest['lat'] && $rest['lng']) {
+        $restaurantLat = (float)$rest['lat'];
+        $restaurantLng = (float)$rest['lng'];
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -27,216 +39,294 @@ if (!$order) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Track Order #<?php echo str_pad($order['id'], 5, '0', STR_PAD_LEFT); ?> — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css?v=8">
-    
-    <!-- Leaflet CSS (FREE) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
     <style>
-        :root {
-            --orange: #ff4f00;
-            --dark: #1a0a00;
-            --cream: #fff8f0;
-            --white: #ffffff;
-            --shadow: 0 10px 40px rgba(26,10,0,0.1);
-        }
+        :root { --orange: #ff4f00; --dark: #1a0a00; --cream: #fff8f0; --white: #fff; --shadow: 0 10px 40px rgba(26,10,0,0.12); }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--cream); overflow: hidden; }
 
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--cream);
-            margin: 0;
-            overflow: hidden;
-        }
+        #map { width: 100%; height: 100vh; position: absolute; top: 0; left: 0; z-index: 1; }
 
-        #map {
-            width: 100%;
-            height: 100vh;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
-
-        /* Overlay UI */
+        /* ── Header Overlay ── */
         .track-header {
-            position: absolute;
-            top: 24px; left: 24px; right: 24px;
-            z-index: 10;
-            display: flex; justify-content: space-between; align-items: flex-start;
-            pointer-events: none;
+            position: absolute; top: 20px; left: 20px; right: 20px;
+            z-index: 10; display: flex; justify-content: space-between;
+            align-items: flex-start; pointer-events: none; gap: 12px;
         }
-
         .back-btn {
             background: var(--white); padding: 12px 20px; border-radius: 16px;
             text-decoration: none; color: var(--dark); font-weight: 700;
-            box-shadow: var(--shadow); display: flex; align-items: center; gap: 8px;
-            pointer-events: auto; transition: all 0.2s;
+            box-shadow: var(--shadow); display: flex; align-items: center;
+            gap: 8px; pointer-events: auto; transition: all 0.2s; white-space: nowrap;
         }
-        .back-btn:hover { transform: translateX(-4px); }
+        .back-btn:hover { transform: translateX(-4px); color: var(--orange); }
 
         .order-status-card {
-            background: var(--white); padding: 20px 24px; border-radius: 24px;
-            box-shadow: var(--shadow); pointer-events: auto; max-width: 320px; width: 100%;
+            background: var(--white); padding: 18px 22px; border-radius: 22px;
+            box-shadow: var(--shadow); pointer-events: auto; max-width: 300px; width: 100%;
         }
-
         .status-pill {
-            display: inline-block; padding: 6px 14px; border-radius: 999px;
-            font-size: 0.75rem; font-weight: 800; text-transform: uppercase;
-            letter-spacing: 1px; margin-bottom: 12px; background: rgba(255,79,0,0.1); color: var(--orange);
+            display: inline-block; padding: 5px 12px; border-radius: 999px;
+            font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 1px; margin-bottom: 10px;
+            background: rgba(255,79,0,0.1); color: var(--orange);
         }
+        .order-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--dark); margin: 0 0 2px; }
+        .order-subtitle { color: #8b6a44; font-size: 0.82rem; margin: 0 0 14px; }
+        .rider-info { display: flex; align-items: center; gap: 10px; padding-top: 12px; border-top: 1px solid #f0e6d9; }
+        .rider-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--orange); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-family: 'Syne', sans-serif; font-size: 1rem; flex-shrink: 0; }
+        .rider-details h4 { margin: 0; font-size: 0.88rem; color: var(--dark); font-weight: 700; }
+        .rider-details p { margin: 0; font-size: 0.75rem; color: #8b6a44; }
 
-        .order-title { font-family: 'Syne', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--dark); margin: 0 0 4px; }
-        .order-subtitle { color: #8b6a44; font-size: 0.9rem; margin: 0 0 20px; }
-
-        .rider-info { display: flex; align-items: center; gap: 12px; padding-top: 16px; border-top: 1px solid var(--cream); }
-        .rider-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--orange); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-family: 'Syne', sans-serif; }
-        .rider-details h4 { margin: 0; font-size: 0.95rem; color: var(--dark); }
-        .rider-details p { margin: 0; font-size: 0.8rem; color: #8b6a44; }
-
+        /* ── Bottom Card ── */
         .bottom-card {
-            position: absolute; bottom: 24px; left: 24px; right: 24px;
-            background: var(--white); padding: 24px; border-radius: 28px;
-            box-shadow: var(--shadow); z-index: 10; display: flex; flex-direction: column; gap: 16px;
+            position: absolute; bottom: 20px; left: 20px; right: 20px;
+            background: var(--white); padding: 20px 24px; border-radius: 26px;
+            box-shadow: var(--shadow); z-index: 10; display: flex; flex-direction: column; gap: 14px;
+        }
+        .eta-row { display: flex; justify-content: space-between; align-items: center; }
+        .eta-label { font-size: 0.82rem; color: #8b6a44; font-weight: 600; margin-bottom: 4px; }
+        .eta-time { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--orange); }
+
+        /* ── Route legend ── */
+        .route-legend {
+            display: flex; gap: 16px; flex-wrap: wrap;
+        }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #8b6a44; font-weight: 600; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+        /* ── Progress Steps ── */
+        .steps { display: flex; align-items: center; gap: 0; }
+        .step { display: flex; flex-direction: column; align-items: center; flex: 1; }
+        .step-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; border: 2px solid #e2d5c5; background: #f5ede3; transition: all 0.4s; }
+        .step-icon.done { background: var(--orange); border-color: var(--orange); }
+        .step-label { font-size: 0.65rem; color: #8b6a44; margin-top: 4px; font-weight: 600; text-align: center; }
+        .step-line { flex: 1; height: 2px; background: #e2d5c5; margin-bottom: 20px; transition: background 0.4s; }
+        .step-line.done { background: var(--orange); }
+
+        /* ── Marker Styles ── */
+        .rider-marker { font-size: 1.4rem; display: flex; align-items: center; justify-content: center; }
+        .pulse { animation: pulse-anim 2s infinite; }
+        @keyframes pulse-anim {
+            0% { filter: drop-shadow(0 0 0 rgba(255,79,0,0.7)); }
+            70% { filter: drop-shadow(0 0 8px rgba(255,79,0,0)); }
+            100% { filter: drop-shadow(0 0 0 rgba(255,79,0,0)); }
         }
 
-        .eta-box { display: flex; justify-content: space-between; align-items: center; }
-        .eta-label { font-size: 0.9rem; color: #8b6a44; font-weight: 600; }
-        .eta-time { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--orange); }
-
-        .progress-track { height: 6px; background: var(--cream); border-radius: 3px; overflow: hidden; position: relative; }
-        .progress-fill { height: 100%; background: var(--orange); width: 20%; transition: width 1s ease; }
-
-        /* Leaflet Marker Styling */
-        .rider-marker {
-            background: var(--orange);
-            border: 3px solid white;
-            border-radius: 50%;
-            width: 40px !important;
-            height: 40px !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(255,79,0,0.4);
-            font-size: 1.2rem;
-            margin-top: -20px;
-            margin-left: -20px;
-        }
-        
-        .pulse {
-            animation: pulse-animation 2s infinite;
-        }
-        @keyframes pulse-animation {
-            0% { box-shadow: 0 0 0 0px rgba(255, 79, 0, 0.7); }
-            100% { box-shadow: 0 0 0 20px rgba(255, 79, 0, 0); }
+        @media (max-width: 600px) {
+            .track-header { flex-direction: column; }
+            .order-status-card { max-width: none; }
         }
     </style>
 </head>
 <body>
-
     <div id="map"></div>
 
     <div class="track-header">
-        <a href="../user/order_details.php?id=<?php echo $order['id']; ?>" class="back-btn">
-            <span>←</span> Back
-        </a>
-
+        <a href="../user/order_details.php?id=<?php echo $order['id']; ?>" class="back-btn">← Back</a>
         <div class="order-status-card">
             <div class="status-pill" id="status-label"><?php echo str_replace('_', ' ', $order['status']); ?></div>
             <h2 class="order-title">Order #<?php echo str_pad($order['id'], 5, '0', STR_PAD_LEFT); ?></h2>
-            <p class="order-subtitle" id="last-updated">Waiting for location...</p>
-            
+            <p class="order-subtitle" id="last-updated">Connecting to rider...</p>
             <div class="rider-info">
-                <div class="rider-avatar" id="rider-initial">
-                    <?php echo strtoupper(substr($order['delivery_partner_name'] ?? 'S', 0, 1)); ?>
-                </div>
+                <div class="rider-avatar" id="rider-initial"><?php echo strtoupper(substr($order['delivery_partner_name'] ?? 'S', 0, 1)); ?></div>
                 <div class="rider-details">
-                    <h4 id="rider-name"><?php echo htmlspecialchars($order['delivery_partner_name'] ?? 'Searching for rider...'); ?></h4>
-                    <p>SwiftBite Delivery Partner</p>
+                    <h4 id="rider-name"><?php echo htmlspecialchars($order['delivery_partner_name'] ?? 'Assigning rider...'); ?></h4>
+                    <p>🟢 SwiftBite Delivery Partner</p>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="bottom-card">
-        <div class="eta-box">
+        <!-- Steps -->
+        <div class="steps" id="steps-row">
+            <div class="step">
+                <div class="step-icon done" id="step-confirmed">✅</div>
+                <div class="step-label">Confirmed</div>
+            </div>
+            <div class="step-line" id="line-1"></div>
+            <div class="step">
+                <div class="step-icon" id="step-preparing">🧑‍🍳</div>
+                <div class="step-label">Preparing</div>
+            </div>
+            <div class="step-line" id="line-2"></div>
+            <div class="step">
+                <div class="step-icon" id="step-transit">🛵</div>
+                <div class="step-label">On the Way</div>
+            </div>
+            <div class="step-line" id="line-3"></div>
+            <div class="step">
+                <div class="step-icon" id="step-delivered">🎉</div>
+                <div class="step-label">Delivered</div>
+            </div>
+        </div>
+
+        <!-- ETA + Legend -->
+        <div class="eta-row">
             <div>
                 <div class="eta-label">Estimated Delivery</div>
                 <div class="eta-time" id="eta-val">Calculating...</div>
             </div>
-            <div style="font-size: 2.5rem;">🛵</div>
-        </div>
-        <div class="progress-track">
-            <div class="progress-fill" id="progress-bar" style="width: 20%;"></div>
+            <div class="route-legend">
+                <div class="legend-item"><div class="legend-dot" style="background:#ff4f00;"></div> Rider</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#34c759;"></div> Restaurant</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#007aff;"></div> Destination</div>
+            </div>
         </div>
     </div>
 
-    <!-- Leaflet JS (FREE) -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
     <script>
-        let map, marker;
+        let map, riderMarker;
+        let doneRouteLine = null, remainRouteLine = null;
+
         const orderId = <?php echo (int)$order['id']; ?>;
-        
-        let currentLat = <?php echo (float)($order['delivery_lat'] ?: 27.7172); ?>;
-        let currentLng = <?php echo (float)($order['delivery_lng'] ?: 85.3240); ?>;
+        let riderLat  = <?php echo (float)($order['delivery_lat'] ?: 27.7172); ?>;
+        let riderLng  = <?php echo (float)($order['delivery_lng'] ?: 85.3240); ?>;
+        const restLat = <?php echo $restaurantLat; ?>;
+        const restLng = <?php echo $restaurantLng; ?>;
+        // Destination offset (approx — replace with real coords if available)
+        const destLat = riderLat + 0.008;
+        const destLng = riderLng + 0.005;
+
+        // ── Icons ──
+        const riderIcon = L.divIcon({
+            className: '',
+            html: '<div style="width:44px;height:44px;background:#ff4f00;border:3px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 4px 14px rgba(255,79,0,0.5);">🛵</div>',
+            iconSize: [44, 44], iconAnchor: [22, 22]
+        });
+        const restIcon = L.divIcon({
+            className: '',
+            html: '<div style="width:38px;height:38px;background:#34c759;border:3px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;box-shadow:0 4px 10px rgba(52,199,89,0.5);">🏪</div>',
+            iconSize: [38, 38], iconAnchor: [19, 19]
+        });
+        const destIcon = L.divIcon({
+            className: '',
+            html: '<div style="width:38px;height:38px;background:#007aff;border:3px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;box-shadow:0 4px 10px rgba(0,122,255,0.5);">📍</div>',
+            iconSize: [38, 38], iconAnchor: [19, 38]
+        });
+
+        // ── OSRM Road Route Fetcher ──
+        async function fetchRoadRoute(from, to) {
+            const url = `https://router.project-osrm.org/route/v1/driving/${from[1]},${from[0]};${to[1]},${to[0]}?overview=full&geometries=geojson`;
+            try {
+                const res  = await fetch(url);
+                const data = await res.json();
+                if (data.routes && data.routes[0]) {
+                    // GeoJSON coords are [lng, lat], Leaflet needs [lat, lng]
+                    return data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+                }
+            } catch (e) { console.warn('OSRM fallback to straight line', e); }
+            return [from, to]; // fallback
+        }
+
+        async function drawRoadRoute(from, rider, to) {
+            // Remove old lines
+            if (doneRouteLine)   { map.removeLayer(doneRouteLine);   doneRouteLine = null; }
+            if (remainRouteLine) { map.removeLayer(remainRouteLine); remainRouteLine = null; }
+
+            // Fetch both segments in parallel
+            const [donePath, remainPath] = await Promise.all([
+                fetchRoadRoute(from, rider),
+                fetchRoadRoute(rider, to)
+            ]);
+
+            doneRouteLine = L.polyline(donePath, {
+                color: '#34c759', weight: 5, opacity: 0.7, dashArray: '10 8'
+            }).addTo(map);
+
+            remainRouteLine = L.polyline(remainPath, {
+                color: '#ff4f00', weight: 5, opacity: 0.9
+            }).addTo(map);
+        }
 
         function initMap() {
-            // Initialize Leaflet Map with OpenStreetMap tiles
-            map = L.map('map', {
-                center: [currentLat, currentLng],
-                zoom: 16,
-                zoomControl: false
-            });
-
+            map = L.map('map', { center: [riderLat, riderLng], zoom: 14, zoomControl: false });
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
 
-            // Custom Rider Icon
-            const riderIcon = L.divIcon({
-                className: 'rider-marker pulse',
-                html: '🛵',
-                iconSize: [40, 40],
-                iconAnchor: [20, 20]
-            });
+            // Place markers
+            riderMarker = L.marker([riderLat, riderLng], { icon: riderIcon }).addTo(map);
+            riderMarker.bindPopup('<b>🛵 Rider is here</b>').openPopup();
+            L.marker([restLat, restLng], { icon: restIcon }).addTo(map).bindPopup('<b>🏪 Restaurant</b>');
+            L.marker([destLat, destLng], { icon: destIcon }).addTo(map).bindPopup('<b>📍 Delivery Address</b>');
 
-            marker = L.marker([currentLat, currentLng], { icon: riderIcon }).addTo(map);
+            // Draw real road route
+            drawRoadRoute([restLat, restLng], [riderLat, riderLng], [destLat, destLng]);
+
+            // Fit bounds
+            map.fitBounds(L.latLngBounds([
+                [restLat, restLng], [riderLat, riderLng], [destLat, destLng]
+            ]), { padding: [80, 80] });
 
             startTracking();
         }
 
+        function updateSteps(status) {
+            const steps = {
+                'confirmed':        ['step-confirmed'],
+                'preparing':        ['step-confirmed', 'step-preparing', 'line-1'],
+                'out_for_delivery': ['step-confirmed', 'step-preparing', 'step-transit', 'line-1', 'line-2'],
+                'delivered':        ['step-confirmed', 'step-preparing', 'step-transit', 'step-delivered', 'line-1', 'line-2', 'line-3'],
+            };
+            const done = steps[status] || [];
+            ['step-confirmed','step-preparing','step-transit','step-delivered','line-1','line-2','line-3'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.toggle('done', done.includes(id));
+            });
+        }
+
         async function updateLocation() {
             try {
-                const response = await fetch(`../actions/get_order_location.php?order_id=${orderId}`);
-                const data = await response.json();
-                
-                if (data.success && data.lat && data.lng) {
-                    const lat = parseFloat(data.lat);
-                    const lng = parseFloat(data.lng);
-                    
-                    // Update Marker Position
-                    marker.setLatLng([lat, lng]);
-                    map.panTo([lat, lng]);
-                    
-                    // Update UI
-                    document.getElementById('status-label').textContent = data.status.replace('_', ' ');
-                    document.getElementById('last-updated').textContent = "Live updates every 5s";
-                    document.getElementById('rider-name').textContent = data.rider_name || 'Assigned Rider';
-                    document.getElementById('rider-initial').textContent = (data.rider_name || 'S').charAt(0).toUpperCase();
+                const res  = await fetch(`../actions/get_order_location.php?order_id=${orderId}`);
+                const data = await res.json();
+                if (!data.success) return;
 
-                    const statusMap = { 'pending': 10, 'confirmed': 25, 'preparing': 45, 'out_for_delivery': 75, 'delivered': 100 };
-                    document.getElementById('progress-bar').style.width = (statusMap[data.status] || 20) + '%';
-                    
-                    if (data.status === 'out_for_delivery') {
-                        document.getElementById('eta-val').textContent = 'Arriving Soon';
-                    } else if (data.status === 'delivered') {
-                        document.getElementById('eta-val').textContent = 'Delivered';
-                        clearInterval(trackingInterval);
-                    }
+                const lat = parseFloat(data.lat) || riderLat;
+                const lng = parseFloat(data.lng) || riderLng;
+
+                // Smoothly animate marker
+                animateMarker(riderMarker, [lat, lng]);
+
+                // Redraw road route via OSRM
+                drawRoadRoute([restLat, restLng], [lat, lng], [destLat, destLng]);
+
+                // Update UI
+                document.getElementById('status-label').textContent  = (data.status || '').replace(/_/g, ' ');
+                document.getElementById('last-updated').textContent   = '🟢 Live — updates every 5s';
+                document.getElementById('rider-name').textContent     = data.rider_name || 'Rider';
+                document.getElementById('rider-initial').textContent  = (data.rider_name || 'R').charAt(0).toUpperCase();
+
+                updateSteps(data.status);
+
+                if (data.status === 'out_for_delivery') {
+                    document.getElementById('eta-val').textContent = '🚀 Arriving Soon';
+                } else if (data.status === 'delivered') {
+                    document.getElementById('eta-val').textContent = '✅ Delivered!';
+                    clearInterval(trackingInterval);
+                } else {
+                    document.getElementById('eta-val').textContent = 'Preparing...';
                 }
-            } catch (error) {
-                console.error("Tracking Error:", error);
-            }
+
+                riderLat = lat; riderLng = lng;
+            } catch (e) { console.error('Tracking error:', e); }
+        }
+
+        function animateMarker(marker, newLatLng) {
+            const start  = marker.getLatLng();
+            const steps  = 40;
+            const delay  = 50;
+            let   step   = 0;
+            const timer  = setInterval(() => {
+                step++;
+                marker.setLatLng([
+                    start.lat + (newLatLng[0] - start.lat) * (step / steps),
+                    start.lng + (newLatLng[1] - start.lng) * (step / steps),
+                ]);
+                if (step >= steps) clearInterval(timer);
+            }, delay);
         }
 
         let trackingInterval;
