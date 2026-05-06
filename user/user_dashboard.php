@@ -2,6 +2,7 @@
 session_start();
 include('../core/db.php');
 include('../core/cart_helper.php');
+include('../core/recommendation_helper.php');
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../auth/login.php');
@@ -47,6 +48,8 @@ $recentStmt = $pdo->prepare("SELECT
     LIMIT 6");
 $recentStmt->execute([$user_id]);
 $recentOrders = $recentStmt->fetchAll(PDO::FETCH_ASSOC);
+
+$recommended_foods = getRecommendations($pdo, $user_id, 4);
 
 function orderStatusMeta(string $status): array {
     $map = [
@@ -268,6 +271,8 @@ function orderStatusMeta(string $status): array {
                             </div>
                         <?php endif; ?>
                     </div>
+
+                    <?php include '../templates/recommended_foods.php'; ?>
                 </div>
             </div>
         </div>
