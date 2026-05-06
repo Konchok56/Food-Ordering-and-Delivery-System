@@ -1,14 +1,5 @@
 <?php
 require_once 'core/bootstrap.php';
-require_once 'core/recommendation_helper.php';
-
-$recommended_foods = [];
-if (isLoggedIn() && hasRole('user')) {
-    $user_id = $_SESSION['user_id'] ?? 0;
-    if ($user_id) {
-        $recommended_foods = getRecommendations($pdo, $user_id, 4);
-    }
-}
 
 // Riders should not access the main landing page, redirect them to their dashboard
 if (isLoggedIn() && hasRole('delivery_partner')) {
@@ -34,7 +25,6 @@ if (isLoggedIn() && hasRole('delivery_partner')) {
     <?php include 'templates/search.php'; ?>
     <?php include 'templates/categories.php'; ?>
     <?php include 'templates/restaurants.php'; ?>
-    <?php if (isLoggedIn() && !empty($recommended_foods)) { include 'templates/recommended_foods.php'; } ?>
     <?php include 'templates/foods.php'; ?>
     <?php include 'templates/howitworks.php'; ?>
     <?php include 'templates/promo.php'; ?>
