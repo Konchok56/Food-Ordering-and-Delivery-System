@@ -260,8 +260,8 @@ function orderStatusMeta(string $status): array {
                                         <?php endif; ?>
 
                                         <div class="order-actions">
-                                            <a class="btn-soft" href="user/order_details.php?id=<?php echo (int) $order['id']; ?>">View Details</a>
-                                            <a class="btn-soft" href="user/order_history.php">See All Orders</a>
+                                            <a class="btn-soft" href="order_details.php?id=<?php echo (int) $order['id']; ?>">View Details</a>
+                                            <a class="btn-soft" href="order_history.php">See All Orders</a>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>

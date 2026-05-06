@@ -1,5 +1,10 @@
 <?php
 require_once 'core/bootstrap.php';
+
+// Riders should not access the main landing page, redirect them to their dashboard
+if (isLoggedIn() && hasRole('delivery_partner')) {
+    redirect('delivery/dashboard.php');
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
