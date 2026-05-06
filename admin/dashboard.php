@@ -132,6 +132,11 @@ try {
                 Delivery
             </a>
 
+            <a href="live_map.php" class="btn" style="background: linear-gradient(135deg, #0d9488, #14b8a6);">
+                <span class="icon">🗺️</span>
+                Live Rider Map
+            </a>
+
             <a href="../index.php" class="btn btn-dark">
                 <span class="icon">🏠</span>
                 View Site

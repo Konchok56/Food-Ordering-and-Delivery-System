@@ -25,11 +25,10 @@ unset($_SESSION['delivery_success'], $_SESSION['delivery_error']);
 
 // Stats
 $statsRow = $pdo->query("SELECT
-    SUM(CASE WHEN status IN ('pending','confirmed','preparing','out_for_delivery') THEN 1 ELSE 0 END) AS active_count,
-    SUM(CASE WHEN status = 'out_for_delivery' THEN 1 ELSE 0 END) AS in_transit,
-    SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) AS delivered_today
-    FROM orders
-    WHERE DATE(created_at) = CURDATE()")->fetch(PDO::FETCH_ASSOC);
+    COUNT(CASE WHEN status IN ('pending','confirmed','preparing','out_for_delivery') THEN 1 END) AS active_count,
+    COUNT(CASE WHEN status = 'out_for_delivery' THEN 1 END) AS in_transit,
+    COUNT(CASE WHEN status = 'delivered' AND DATE(updated_at) = CURDATE() THEN 1 END) AS delivered_today
+    FROM orders")->fetch(PDO::FETCH_ASSOC);
 
 $stats = [
     'active'    => (int)($statsRow['active_count'] ?? 0),
@@ -201,6 +200,42 @@ $activeOrders = $pdo->query("
         .btn-save:hover { opacity: 0.88; }
         .btn-locate { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); color: #e8d5c0; padding: 12px; border-radius: 14px; font-weight: 700; font-size: 0.85rem; cursor: pointer; width: 100%; font-family: 'DM Sans', sans-serif; transition: all .2s; }
         .btn-locate:hover { background: rgba(255,79,0,0.12); color: var(--orange); }
+        .btn-simulate { background: linear-gradient(135deg, #6c47ff, #a78bfa); border: none; color: #fff; padding: 12px; border-radius: 14px; font-weight: 800; font-size: 0.85rem; cursor: pointer; width: 100%; font-family: 'DM Sans', sans-serif; transition: all .2s; }
+        .btn-simulate:hover { opacity: 0.88; }
+        .btn-simulate:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sim-progress-wrap { padding: 0 22px 14px; display: none; }
+        .sim-progress-bar-bg { height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+        .sim-progress-bar-fill { height: 100%; background: linear-gradient(90deg, #6c47ff, #a78bfa); width: 0%; transition: width 0.4s ease; border-radius: 3px; }
+        .sim-status-text { font-size: 0.78rem; color: #a78bfa; font-weight: 600; }
+
+        /* Live Tracking Banner */
+        .live-tracking-banner {
+            margin: 0 22px 14px;
+            border-radius: 16px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid;
+            transition: all 0.3s;
+        }
+        .live-tracking-banner.idle    { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); }
+        .live-tracking-banner.active  { background: rgba(52,199,89,0.1);  border-color: rgba(52,199,89,0.35); }
+        .live-tracking-banner.error   { background: rgba(255,59,48,0.1);  border-color: rgba(255,59,48,0.35); }
+        .tracking-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; background: #8b6a44; }
+        .tracking-dot.green { background: #34c759; animation: blink 1.2s infinite; }
+        .tracking-dot.red   { background: #ff3b30; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+        .tracking-info { flex: 1; }
+        .tracking-title { font-weight: 800; font-size: 0.88rem; color: #fff; }
+        .tracking-sub   { font-size: 0.75rem; color: #8b6a44; margin-top: 2px; }
+        .btn-toggle-tracking {
+            padding: 8px 16px; border-radius: 12px; border: none;
+            font-weight: 800; font-size: 0.8rem; cursor: pointer;
+            font-family: 'DM Sans', sans-serif; transition: all .2s; white-space: nowrap;
+        }
+        .btn-toggle-tracking.start { background: #34c759; color: #fff; }
+        .btn-toggle-tracking.stop  { background: rgba(255,59,48,0.2); color: #ff3b30; border: 1px solid rgba(255,59,48,0.4); }
 
         .map-wrap { padding: 0 22px 18px; }
         .map-wrap iframe { width: 100%; height: 200px; border: 0; border-radius: 14px; }
@@ -402,6 +437,22 @@ $activeOrders = $pdo->query("
                         </div>
                     </div>
 
+                    <!-- Live GPS Tracking Banner -->
+                    <?php if ($order['status'] === 'out_for_delivery'): ?>
+                    <div class="live-tracking-banner idle" id="track-banner-<?php echo (int)$order['id']; ?>">
+                        <div class="tracking-dot" id="track-dot-<?php echo (int)$order['id']; ?>"></div>
+                        <div class="tracking-info">
+                            <div class="tracking-title" id="track-title-<?php echo (int)$order['id']; ?>">📡 Live GPS Tracking</div>
+                            <div class="tracking-sub"  id="track-sub-<?php echo (int)$order['id']; ?>">Tap Start to begin sending your location automatically</div>
+                        </div>
+                        <button type="button" class="btn-toggle-tracking start"
+                            id="track-btn-<?php echo (int)$order['id']; ?>"
+                            data-order-id="<?php echo (int)$order['id']; ?>">
+                            ▶ Start
+                        </button>
+                    </div>
+                    <?php endif; ?>
+
                     <!-- Live Location Update -->
                     <form action="../actions/update_delivery_location.php" method="POST" class="location-form">
                         <?php echo csrfInput(); ?>
@@ -425,27 +476,32 @@ $activeOrders = $pdo->query("
                             <div>
                                 <button type="submit" class="btn-save" style="background:rgba(255,79,0,0.7);">📡 Update Location</button>
                             </div>
+                            <?php if ($order['status'] === 'out_for_delivery'): ?>
+                            <div style="grid-column:1/-1;">
+                                <button type="button" class="btn-simulate"
+                                    data-order-id="<?php echo (int)$order['id']; ?>"
+                                    data-start-lat="<?php echo (float)($order['delivery_lat'] ?: 27.7172); ?>"
+                                    data-start-lng="<?php echo (float)($order['delivery_lng'] ?: 85.3240); ?>">
+                                    🎬 Simulate Delivery
+                                </button>
+                            </div>
+                            <?php endif; ?>
                         </div>
                     </form>
 
-                    <!-- Map -->
-                    <?php if (!empty($order['delivery_lat']) && !empty($order['delivery_lng'])): ?>
-                    <div class="map-wrap">
+                    <!-- Simulation Progress Bar -->
+                    <div class="sim-progress-wrap" id="sim-wrap-<?php echo (int)$order['id']; ?>">
+                        <div class="sim-progress-bar-bg"><div class="sim-progress-bar-fill" id="sim-bar-<?php echo (int)$order['id']; ?>"></div></div>
+                        <div class="sim-status-text" id="sim-text-<?php echo (int)$order['id']; ?>">🎬 Starting simulation...</div>
+                    </div>
+
+                    <!-- Mini Map (Leaflet) -->
+                    <div class="map-wrap" id="minimap-wrap-<?php echo (int)$order['id']; ?>">
                         <div style="color:#8b6a44;font-size:0.8rem;margin-bottom:8px;">
                             📍 Last updated: <?php echo !empty($order['location_updated_at']) ? date('h:i A', strtotime($order['location_updated_at'])) : 'N/A'; ?>
                         </div>
-                        <iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-                            src="https://www.openstreetmap.org/export/embed.html?bbox=<?php
-                                echo urlencode((string)((float)$order['delivery_lng'] - 0.01));
-                            ?>%2C<?php echo urlencode((string)((float)$order['delivery_lat'] - 0.01));
-                            ?>%2C<?php echo urlencode((string)((float)$order['delivery_lng'] + 0.01));
-                            ?>%2C<?php echo urlencode((string)((float)$order['delivery_lat'] + 0.01));
-                            ?>&layer=mapnik&marker=<?php
-                                echo urlencode((string)$order['delivery_lat']);
-                            ?>%2C<?php echo urlencode((string)$order['delivery_lng']); ?>">
-                        </iframe>
+                        <div id="minimap-<?php echo (int)$order['id']; ?>" style="width:100%;height:200px;border-radius:14px;overflow:hidden;"></div>
                     </div>
-                    <?php endif; ?>
 
                 </div>
                 <?php endforeach; ?>
@@ -454,96 +510,305 @@ $activeOrders = $pdo->query("
     </main>
 </div>
 
+<!-- Leaflet for mini-maps -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script>
-// Live clock
+// ── Live Clock ──
 function updateClock() {
     const now = new Date();
     document.getElementById('live-time').textContent =
         now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }
-setInterval(updateClock, 1000);
-updateClock();
+setInterval(updateClock, 1000); updateClock();
 
-// GPS location
+// ── GPS Button ──
 document.querySelectorAll('.location-form').forEach(function(form) {
     form.querySelector('.btn-locate').addEventListener('click', function() {
         if (!navigator.geolocation) { alert('Geolocation not supported.'); return; }
         const btn = this;
-        btn.textContent = '📡 Getting GPS...';
-        btn.disabled = true;
+        btn.textContent = '📡 Getting GPS...'; btn.disabled = true;
         navigator.geolocation.getCurrentPosition(function(pos) {
             form.querySelector('[name="delivery_lat"]').value = pos.coords.latitude.toFixed(7);
             form.querySelector('[name="delivery_lng"]').value = pos.coords.longitude.toFixed(7);
-            btn.textContent = '✅ GPS Captured';
-            btn.disabled = false;
+            btn.textContent = '✅ GPS Captured'; btn.disabled = false;
         }, function() {
-            alert('Unable to get location. Please allow GPS permission.');
-            btn.textContent = '📍 Use My GPS';
-            btn.disabled = false;
+            alert('Unable to get location.'); btn.textContent = '📍 Use My GPS'; btn.disabled = false;
         }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
     });
 });
 
-// Auto-refresh every 60 seconds
-const refreshTimeout = setTimeout(() => location.reload(), 60000);
+// ── Auto-refresh (stops if simulation is running) ──
+let refreshTimeout = setTimeout(() => location.reload(), 60000);
 
-// ── Real-time Auto Tracking ──
+// ═══════════════════════════════════════════════════
+// 🎬 SIMULATION ENGINE
+// ═══════════════════════════════════════════════════
+const activeSimulations = {}; // orderId → interval handle
+
+// Initialize Leaflet mini-maps for each order card
+const miniMaps = {};
+
+<?php foreach ($activeOrders as $order):
+    $startLat = (float)($order['delivery_lat'] ?: 27.7172);
+    $startLng = (float)($order['delivery_lng'] ?: 85.3240);
+?>
 (function() {
-    const activeOrdersInTransit = <?php 
-        $transitIds = array_map(fn($o) => $o['id'], array_filter($activeOrders, fn($o) => $o['status'] === 'out_for_delivery'));
-        echo json_encode($transitIds); 
-    ?>;
+    const orderId  = <?php echo (int)$order['id']; ?>;
+    const startLat = <?php echo $startLat; ?>;
+    const startLng = <?php echo $startLng; ?>;
+    const destLat  = startLat + 0.012;
+    const destLng  = startLng - 0.008;
 
-    if (activeOrdersInTransit.length === 0) return;
+    // ── Init mini Leaflet map ──
+    const mapEl = document.getElementById('minimap-' + orderId);
+    if (!mapEl) return;
 
-    console.log("🛵 Auto-tracking active for orders:", activeOrdersInTransit);
-    
-    // Stop auto-refresh if tracking is active to prevent jitter
-    clearTimeout(refreshTimeout);
+    const miniMap = L.map('minimap-' + orderId, { zoomControl: false, attributionControl: false });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(miniMap);
 
-    let watchId = null;
-    const CSRF_TOKEN = '<?php echo generateCsrfToken(); ?>';
+    const riderIcon = L.divIcon({
+        className: '',
+        html: '<div style="width:34px;height:34px;background:#ff4f00;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;box-shadow:0 2px 8px rgba(255,79,0,0.5);">🛵</div>',
+        iconSize: [34, 34], iconAnchor: [17, 17]
+    });
+    const destIcon = L.divIcon({
+        className: '',
+        html: '<div style="width:30px;height:30px;background:#007aff;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.9rem;box-shadow:0 2px 8px rgba(0,122,255,0.5);">📍</div>',
+        iconSize: [30, 30], iconAnchor: [15, 30]
+    });
 
-    function sendLocation(lat, lng) {
-        activeOrdersInTransit.forEach(orderId => {
-            const formData = new FormData();
-            formData.append('order_id', orderId);
-            formData.append('delivery_lat', lat);
-            formData.append('delivery_lng', lng);
-            formData.append('csrf_token', CSRF_TOKEN);
+    const riderMarker = L.marker([startLat, startLng], { icon: riderIcon }).addTo(miniMap);
+    L.marker([destLat, destLng], { icon: destIcon }).addTo(miniMap);
+    miniMap.setView([startLat, startLng], 14);
+    miniMaps[orderId] = { map: miniMap, marker: riderMarker };
 
-            fetch('../actions/update_delivery_location.php', {
-                method: 'POST',
-                body: formData,
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            }).then(response => {
-                console.log(`📡 Location updated for #${orderId}`);
-            }).catch(err => console.error("Tracking Error:", err));
-        });
-    }
+    // ── Simulate button click ──
+    const simBtn = document.querySelector(`.btn-simulate[data-order-id="${orderId}"]`);
+    if (!simBtn) return;
 
-    if ("geolocation" in navigator) {
-        watchId = navigator.geolocation.watchPosition(
-            (pos) => {
-                const { latitude, longitude } = pos.coords;
-                sendLocation(latitude.toFixed(7), longitude.toFixed(7));
-                
-                // Update UI fields if they exist
-                activeOrdersInTransit.forEach(id => {
-                    const form = document.querySelector(`.location-form input[name="order_id"][value="${id}"]`)?.closest('form');
-                    if (form) {
-                        form.querySelector('[name="delivery_lat"]').value = latitude.toFixed(7);
-                        form.querySelector('[name="delivery_lng"]').value = longitude.toFixed(7);
-                        const btn = form.querySelector('.btn-locate');
-                        if (btn) btn.textContent = '🟢 Auto-tracking...';
-                    }
-                });
-            },
-            (err) => console.warn("WatchPosition Error:", err),
-            { enableHighAccuracy: true, maximumAge: 10000 }
-        );
-    }
+    simBtn.addEventListener('click', async function() {
+        if (activeSimulations[orderId]) {
+            // Stop
+            clearInterval(activeSimulations[orderId]);
+            delete activeSimulations[orderId];
+            simBtn.textContent = '🎬 Simulate Delivery';
+            simBtn.style.background = 'linear-gradient(135deg,#6c47ff,#a78bfa)';
+            document.getElementById('sim-wrap-' + orderId).style.display = 'none';
+            return;
+        }
+
+        simBtn.disabled = true;
+        simBtn.textContent = '⏳ Loading route...';
+
+        // Stop page auto-refresh during simulation
+        clearTimeout(refreshTimeout);
+
+        // 1. Fetch road route from OSRM
+        let routePoints = [];
+        try {
+            const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${destLng},${destLat}?overview=full&geometries=geojson`;
+            const res  = await fetch(osrmUrl);
+            const data = await res.json();
+            if (data.routes && data.routes[0]) {
+                routePoints = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+            }
+        } catch(e) { console.warn('OSRM failed, using straight line'); }
+
+        // Fallback: generate interpolated points between start and dest
+        if (routePoints.length < 2) {
+            const steps = 30;
+            for (let i = 0; i <= steps; i++) {
+                routePoints.push([
+                    startLat + (destLat - startLat) * (i / steps),
+                    startLng + (destLng - startLng) * (i / steps)
+                ]);
+            }
+        }
+
+        // 2. Draw full route on mini map
+        L.polyline(routePoints, { color: '#ff4f00', weight: 3, opacity: 0.7 }).addTo(miniMaps[orderId].map);
+        miniMaps[orderId].map.fitBounds(L.latLngBounds(routePoints), { padding: [20, 20] });
+
+        // 3. Show progress UI
+        const simWrap = document.getElementById('sim-wrap-' + orderId);
+        const simBar  = document.getElementById('sim-bar-' + orderId);
+        const simText = document.getElementById('sim-text-' + orderId);
+        simWrap.style.display = 'block';
+        simBtn.disabled = false;
+        simBtn.textContent = '⏹ Stop Simulation';
+        simBtn.style.background = 'linear-gradient(135deg,#ff4f00,#ff7340)';
+
+        // 4. Walk along route points
+        const total = routePoints.length;
+        let   step  = 0;
+
+        async function sendStep() {
+            if (step >= total) {
+                clearInterval(activeSimulations[orderId]);
+                delete activeSimulations[orderId];
+                simBtn.textContent  = '✅ Delivered!';
+                simBtn.disabled     = true;
+                simBar.style.width  = '100%';
+                simText.textContent = '✅ Simulation complete — rider arrived!';
+                return;
+            }
+
+            const [lat, lng] = routePoints[step];
+
+            // Update marker on mini map
+            miniMaps[orderId].marker.setLatLng([lat, lng]);
+            miniMaps[orderId].map.panTo([lat, lng]);
+
+            // Update lat/lng input fields
+            const latInput = document.querySelector(`.location-form input[name="order_id"][value="${orderId}"]`)
+                             ?.closest('form')?.querySelector('[name="delivery_lat"]');
+            const lngInput = document.querySelector(`.location-form input[name="order_id"][value="${orderId}"]`)
+                             ?.closest('form')?.querySelector('[name="delivery_lng"]');
+            if (latInput) latInput.value = lat.toFixed(7);
+            if (lngInput) lngInput.value = lng.toFixed(7);
+
+            // POST to DB (AJAX, no reload)
+            try {
+                const fd = new FormData();
+                fd.append('order_id', orderId);
+                fd.append('lat', lat.toFixed(7));
+                fd.append('lng', lng.toFixed(7));
+                await fetch('../actions/update_location_ajax.php', { method: 'POST', body: fd });
+            } catch(e) {}
+
+            // Update progress bar
+            const pct = Math.round((step / (total - 1)) * 100);
+            simBar.style.width  = pct + '%';
+            simText.textContent = `🛵 Simulating... ${pct}% (${step + 1}/${total} points)`;
+            step++;
+        }
+
+        activeSimulations[orderId] = setInterval(sendStep, 2000); // move every 2 seconds
+        sendStep(); // fire immediately for first point
+    });
 })();
+<?php endforeach; ?>
+
+// ══════════════════════════════════════════════
+// 📡 REAL GPS LIVE TRACKING ENGINE
+// ══════════════════════════════════════════════
+const gpsWatchIds = {}; // orderId → watchPosition ID
+
+document.querySelectorAll('.btn-toggle-tracking').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const orderId = this.dataset.orderId;
+
+        // ── STOP tracking ──
+        if (gpsWatchIds[orderId]) {
+            navigator.geolocation.clearWatch(gpsWatchIds[orderId]);
+            delete gpsWatchIds[orderId];
+            setTrackingState(orderId, 'idle', '📡 Live GPS Tracking', 'Tracking stopped. Tap Start to resume.');
+            btn.textContent = '▶ Start';
+            btn.className = 'btn-toggle-tracking start';
+            return;
+        }
+
+        // ── Check GPS support ──
+        if (!navigator.geolocation) {
+            setTrackingState(orderId, 'error', '❌ GPS Not Supported',
+                'Your browser does not support geolocation. Use Chrome or Firefox on a real device.');
+            return;
+        }
+
+        // ── START tracking ──
+        setTrackingState(orderId, 'idle', '⏳ Requesting GPS permission...', 'Please allow location access in your browser.');
+        btn.textContent = '...';
+        btn.disabled = true;
+
+        const watchId = navigator.geolocation.watchPosition(
+            // ✅ SUCCESS — position received
+            async function(pos) {
+                const lat = pos.coords.latitude.toFixed(7);
+                const lng = pos.coords.longitude.toFixed(7);
+                const acc = Math.round(pos.coords.accuracy);
+
+                // Update input fields
+                const form = document.querySelector(`.location-form input[name="order_id"][value="${orderId}"]`)?.closest('form');
+                if (form) {
+                    form.querySelector('[name="delivery_lat"]').value = lat;
+                    form.querySelector('[name="delivery_lng"]').value = lng;
+                }
+
+                // Update banner to active
+                setTrackingState(orderId, 'active',
+                    '🟢 Live Tracking Active',
+                    `📍 ${lat}, ${lng} · Accuracy: ±${acc}m · Sending to server...`
+                );
+
+                // Enable stop button
+                btn.textContent = '⏹ Stop';
+                btn.className = 'btn-toggle-tracking stop';
+                btn.disabled = false;
+
+                // Send to server via AJAX
+                try {
+                    const fd = new FormData();
+                    fd.append('order_id', orderId);
+                    fd.append('lat', lat);
+                    fd.append('lng', lng);
+                    const res  = await fetch('../actions/update_location_ajax.php', { method: 'POST', body: fd });
+                    const data = await res.json();
+
+                    const now = new Date().toLocaleTimeString();
+                    if (data.success) {
+                        document.getElementById('track-sub-' + orderId).textContent =
+                            `✅ Sent at ${now} · ${lat}, ${lng} · ±${acc}m`;
+                    } else {
+                        document.getElementById('track-sub-' + orderId).textContent =
+                            `⚠️ Server error at ${now}: ${data.message}`;
+                    }
+                } catch(e) {
+                    document.getElementById('track-sub-' + orderId).textContent =
+                        `⚠️ Network error — will retry on next movement`;
+                }
+            },
+
+            // ❌ ERROR — GPS failed
+            function(err) {
+                btn.textContent = '▶ Start';
+                btn.className = 'btn-toggle-tracking start';
+                btn.disabled = false;
+                delete gpsWatchIds[orderId];
+
+                const msgs = {
+                    1: '❌ Permission Denied — Please allow location access in your browser settings.',
+                    2: '❌ GPS Unavailable — Make sure you are outdoors or GPS is enabled on your device.',
+                    3: '❌ GPS Timeout — Your device took too long to get a location. Try again.',
+                };
+                setTrackingState(orderId, 'error', '❌ GPS Error', msgs[err.code] || '❌ Unknown GPS error.');
+            },
+
+            // Options
+            {
+                enableHighAccuracy: true,
+                maximumAge: 5000,     // accept cached position up to 5s old
+                timeout: 15000        // wait up to 15s for a fix
+            }
+        );
+
+        gpsWatchIds[orderId] = watchId;
+    });
+});
+
+function setTrackingState(orderId, state, title, sub) {
+    const banner = document.getElementById('track-banner-' + orderId);
+    const dot    = document.getElementById('track-dot-'    + orderId);
+    const titleEl = document.getElementById('track-title-' + orderId);
+    const subEl   = document.getElementById('track-sub-'   + orderId);
+    if (!banner) return;
+    banner.className = 'live-tracking-banner ' + state;
+    dot.className    = 'tracking-dot ' + (state === 'active' ? 'green' : state === 'error' ? 'red' : '');
+    if (titleEl) titleEl.textContent = title;
+    if (subEl)   subEl.textContent   = sub;
+}
+
 </script>
 </body>
 </html>
