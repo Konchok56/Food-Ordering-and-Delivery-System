@@ -1,5 +1,6 @@
 <?php
 session_start();
+include('../core/config.php');
 include('../core/db.php');
 include('../core/cart_helper.php');
 include('../core/csrf.php');

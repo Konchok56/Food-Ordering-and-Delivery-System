@@ -34,3 +34,11 @@ define('FREE_DELIVERY_ABOVE',  1000);
 
 // ── External APIs ──────────────────────────────────────────
 define('GOOGLE_MAPS_API_KEY', 'YOUR_GOOGLE_MAPS_API_KEY_HERE');
+
+// ── Mail Configuration ─────────────────────────────────────
+define('MAIL_HOST',       'smtp.gmail.com');
+define('MAIL_PORT',       587);
+define('MAIL_USER',       'sheetpillo@gmail.com');
+define('MAIL_PASS',       'julx gwvm kfhv idlp');
+define('MAIL_FROM_EMAIL', 'sheetpillo@gmail.com');
+define('MAIL_FROM_NAME',  'SwiftBite');
