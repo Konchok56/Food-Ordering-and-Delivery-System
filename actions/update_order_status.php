@@ -48,7 +48,7 @@ try {
     $checkStmt->execute([$order_id]);
     if (!$checkStmt->fetch(PDO::FETCH_ASSOC)) {
         $_SESSION['delivery_error'] = 'Order not found.';
-        header('Location: ../admin/delivery_partner.php');
+        header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '../delivery/dashboard.php'));
         exit;
     }
 
@@ -82,7 +82,7 @@ try {
                 $sm[2],
                 $sm[0],
                 $oImg,
-                '../user/order_details.php?id=' . $order_id
+                'order_details.php?id=' . $order_id
             );
 
             /* 

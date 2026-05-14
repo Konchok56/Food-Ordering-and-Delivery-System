@@ -50,6 +50,7 @@ if (isLoggedIn() && hasRole('delivery_partner')) {
   <?php include 'templates/footer.php'; ?>
 
   <?php include 'templates/floating_menu.php'; ?>
+  <?php include 'templates/chatbot.php'; ?>
 
   <script src="assets/js/script.js"></script>
   <script src="assets/js/cart.js"></script>
