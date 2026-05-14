@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Only delivery_partner role allowed
-$roleStmt = $pdo->prepare("SELECT role, name, email, phone FROM users WHERE id = ? LIMIT 1");
+$roleStmt = $pdo->prepare("SELECT role, name, email, phone, availability_status FROM users WHERE id = ? LIMIT 1");
 $roleStmt->execute([$_SESSION['user_id']]);
 $rider = $roleStmt->fetch(PDO::FETCH_ASSOC);
 
@@ -278,8 +278,30 @@ $activeOrders = $pdo->query("
         <div class="rider-card">
             <div class="rider-avatar"><?php echo strtoupper(substr($rider['name'], 0, 1)); ?></div>
             <div class="rider-name"><?php echo htmlspecialchars($rider['name']); ?></div>
-            <div class="rider-role">🟢 Delivery Partner</div>
+            <div class="rider-status-wrap" style="margin-top: 8px;">
+                <?php $isOnline = ($rider['availability_status'] === 'online'); ?>
+                <div id="status-indicator" class="rider-role" style="color: <?php echo $isOnline ? '#2ecc71' : '#8b6a44'; ?>;">
+                    <?php echo $isOnline ? '🟢 Online' : '⚪ Offline'; ?>
+                </div>
+                
+                <!-- Status Toggle Switch -->
+                <div style="margin-top: 12px; display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 12px;">
+                    <span style="font-size: 0.75rem; font-weight: 800; color: #fff; text-transform: uppercase;">Work Mode</span>
+                    <label class="sb-toggle" style="position: relative; display: inline-block; width: 44px; height: 24px; cursor: pointer;">
+                        <input type="checkbox" id="availability-toggle" <?php echo $isOnline ? 'checked' : ''; ?> style="opacity: 0; width: 0; height: 0;">
+                        <span style="position: absolute; inset: 0; background: #3d2600; transition: .3s; border-radius: 24px;"></span>
+                        <span style="position: absolute; left: 4px; bottom: 4px; background: #fff; width: 16px; height: 16px; transition: .3s; border-radius: 50%;" id="toggle-circle"></span>
+                    </label>
+                </div>
+            </div>
         </div>
+
+        <style>
+            #availability-toggle:checked + span { background: var(--orange); }
+            #availability-toggle:checked + span + #toggle-circle { transform: translateX(20px); }
+            /* Direct sibling selector fix for the circle */
+            #availability-toggle:checked ~ #toggle-circle { transform: translateX(20px); }
+        </style>
 
         <a class="nav-item active" href="dashboard.php">
             <span class="nav-icon">📦</span> Active Orders
@@ -799,16 +821,54 @@ document.querySelectorAll('.btn-toggle-tracking').forEach(btn => {
 
 function setTrackingState(orderId, state, title, sub) {
     const banner = document.getElementById('track-banner-' + orderId);
-    const dot    = document.getElementById('track-dot-'    + orderId);
-    const titleEl = document.getElementById('track-title-' + orderId);
-    const subEl   = document.getElementById('track-sub-'   + orderId);
     if (!banner) return;
     banner.className = 'live-tracking-banner ' + state;
-    dot.className    = 'tracking-dot ' + (state === 'active' ? 'green' : state === 'error' ? 'red' : '');
-    if (titleEl) titleEl.textContent = title;
-    if (subEl)   subEl.textContent   = sub;
+    document.getElementById('track-dot-' + orderId).className = 'tracking-dot ' + (state === 'active' ? 'green' : (state === 'error' ? 'red' : ''));
+    document.getElementById('track-title-' + orderId).textContent = title;
+    document.getElementById('track-sub-' + orderId).textContent = sub;
 }
 
+// ── Availability Toggle Logic ──
+const availToggle = document.getElementById('availability-toggle');
+const statusInd = document.getElementById('status-indicator');
+const toggleCircle = document.getElementById('toggle-circle');
+
+if (availToggle) {
+    availToggle.addEventListener('change', async function() {
+        const isOnline = this.checked;
+        const newStatus = isOnline ? 'online' : 'offline';
+        
+        // Optimistic UI update
+        statusInd.textContent = isOnline ? '🟢 Online' : '⚪ Offline';
+        statusInd.style.color = isOnline ? '#2ecc71' : '#8b6a44';
+        toggleCircle.style.transform = isOnline ? 'translateX(20px)' : 'translateX(0)';
+
+        try {
+            const fd = new FormData();
+            fd.append('status', newStatus);
+            fd.append('csrf_token', '<?php echo generateCsrfToken(); ?>');
+            
+            const res = await fetch('../actions/toggle_rider_status.php', {
+                method: 'POST',
+                body: fd
+            });
+            const data = await res.json();
+            
+            if (!data.success) {
+                alert('Failed to update status: ' + data.message);
+                // Revert UI
+                this.checked = !isOnline;
+                statusInd.textContent = !isOnline ? '🟢 Online' : '⚪ Offline';
+                statusInd.style.color = !isOnline ? '#2ecc71' : '#8b6a44';
+                toggleCircle.style.transform = !isOnline ? 'translateX(20px)' : 'translateX(0)';
+            }
+        } catch (e) {
+            console.error('Status update failed', e);
+            alert('Network error while updating status.');
+        }
+    });
+    });
+}
 </script>
 </body>
 </html>
