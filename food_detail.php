@@ -67,21 +67,11 @@ $revStmt = $pdo->prepare("
 $revStmt->execute([$foodId]);
 $reviews = $revStmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Check if current user has already reviewed
-$hasReviewed = false;
 $canReview = false;
 
 if (isset($_SESSION['user_id'])) {
     $uid = (int)$_SESSION['user_id'];
     
-    // Check if they reviewed
-    foreach ($reviews as $r) {
-        if ($r['user_id'] == $uid) {
-            $hasReviewed = true;
-            break;
-        }
-    }
-
     // Check if they have a delivered order for this food
     $eligStmt = $pdo->prepare("
         SELECT oi.id 
@@ -701,15 +691,8 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
             </div>
 
             <div style="display: grid; gap: 32px; grid-template-columns: 1fr; max-width: 800px; margin: 0 auto 40px;">
-                <!-- Review Form -->
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <?php if ($hasReviewed): ?>
-                        <div class="review-form-card" style="background: var(--cream); border-radius: 24px; padding: 32px; border: 2px solid var(--cream2); text-align: center;">
-                            <div style="font-size: 2.5rem; margin-bottom: 12px;">✅</div>
-                            <h3 style="margin-bottom: 10px; font-family: 'Syne', sans-serif; font-size: 1.3rem;">You've reviewed this!</h3>
-                            <p style="color: var(--muted); font-weight: 500;">Thank you for your feedback. You can only review each item once.</p>
-                        </div>
-                    <?php elseif (!$canReview): ?>
+                    <?php if (!$canReview): ?>
                         <div class="review-form-card" style="background: var(--cream); border-radius: 24px; padding: 32px; border: 2px solid var(--cream2); text-align: center;">
                             <div style="font-size: 2.5rem; margin-bottom: 12px;">🔒</div>
                             <h3 style="margin-bottom: 10px; font-family: 'Syne', sans-serif; font-size: 1.3rem;">Review Locked</h3>
