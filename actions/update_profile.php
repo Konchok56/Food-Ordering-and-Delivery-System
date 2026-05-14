@@ -1,5 +1,6 @@
 <?php
 session_start();
+include('../core/config.php');
 include('../core/db.php');
 include('../core/csrf.php');
 include('../core/validation.php');
@@ -55,7 +56,7 @@ try {
         'Your profile information was updated on ' . date('M d, Y \a\t h:i A') . '.',
         '👤',
         null,
-        '../user/profile.php'
+        SITE_BASE_URL . '/user/profile.php'
     );
 } catch (Exception $e) {
     $_SESSION['profile_error'] = 'Failed to update profile. Please try again.';
