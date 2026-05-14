@@ -148,7 +148,7 @@ try {
 
         $itemStmt->execute([
             $order_id,
-            $item['fid'] ?? null,
+            $item['food_id'] ?? null,
             $item['food_name'],
             $item['price'],
             $item['quantity'],

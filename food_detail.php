@@ -69,16 +69,35 @@ $reviews = $revStmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Check if current user has already reviewed
 $hasReviewed = false;
+$canReview = false;
+
 if (isset($_SESSION['user_id'])) {
+    $uid = (int)$_SESSION['user_id'];
+    
+    // Check if they reviewed
     foreach ($reviews as $r) {
-        if ($r['user_id'] == $_SESSION['user_id']) {
+        if ($r['user_id'] == $uid) {
             $hasReviewed = true;
             break;
         }
     }
+
+    // Check if they have a delivered order for this food
+    $eligStmt = $pdo->prepare("
+        SELECT oi.id 
+        FROM order_items oi
+        JOIN orders o ON oi.order_id = o.id
+        WHERE o.user_id = ? AND oi.food_id = ? AND o.status = 'delivered'
+        LIMIT 1
+    ");
+    $eligStmt->execute([$uid, $foodId]);
+    if ($eligStmt->fetch()) {
+        $canReview = true;
+    }
 }
 
 $alreadyReviewed = isset($_GET['already_reviewed']) ? true : false;
+$notDelivered = isset($_GET['not_delivered']) ? true : false;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -540,6 +559,11 @@ $alreadyReviewed = isset($_GET['already_reviewed']) ? true : false;
                 🚫 You have already reviewed this item!
             </div>
         <?php endif; ?>
+        <?php if ($notDelivered): ?>
+            <div class="cart-toast review-toast" id="notDeliveredToast" style="background: linear-gradient(135deg, #ff3b30 0%, #d93025 100%); box-shadow: 0 10px 40px rgba(255, 59, 48, 0.35);">
+                🚫 You can only review items after they are delivered!
+            </div>
+        <?php endif; ?>
 
         <!-- Breadcrumb -->
         <div class="breadcrumb">
@@ -685,6 +709,13 @@ $alreadyReviewed = isset($_GET['already_reviewed']) ? true : false;
                             <h3 style="margin-bottom: 10px; font-family: 'Syne', sans-serif; font-size: 1.3rem;">You've reviewed this!</h3>
                             <p style="color: var(--muted); font-weight: 500;">Thank you for your feedback. You can only review each item once.</p>
                         </div>
+                    <?php elseif (!$canReview): ?>
+                        <div class="review-form-card" style="background: var(--cream); border-radius: 24px; padding: 32px; border: 2px solid var(--cream2); text-align: center;">
+                            <div style="font-size: 2.5rem; margin-bottom: 12px;">🔒</div>
+                            <h3 style="margin-bottom: 10px; font-family: 'Syne', sans-serif; font-size: 1.3rem;">Review Locked</h3>
+                            <p style="color: var(--muted); font-weight: 500; margin-bottom: 20px;">You can only review items that you have purchased and received.</p>
+                            <a href="menu.php" class="btn-primary" style="display: inline-flex; padding: 12px 24px; border-radius: 12px; text-decoration: none; font-weight: 700;">Order Now</a>
+                        </div>
                     <?php else: ?>
                         <div class="review-form-card" style="background: var(--cream); border-radius: 24px; padding: 32px; border: 2px solid var(--cream2);">
                             <h3 style="margin-bottom: 20px; font-family: 'Syne', sans-serif; font-size: 1.3rem;">Write a Review</h3>
@@ -828,6 +859,10 @@ $alreadyReviewed = isset($_GET['already_reviewed']) ? true : false;
         const arToast = document.getElementById('alreadyReviewedToast');
         if (arToast) {
             setTimeout(() => arToast.remove(), 3200);
+        }
+        const ndToast = document.getElementById('notDeliveredToast');
+        if (ndToast) {
+            setTimeout(() => ndToast.remove(), 3200);
         }
     </script>
     <script src="assets/js/script.js"></script>
