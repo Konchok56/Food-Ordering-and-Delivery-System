@@ -1,5 +1,6 @@
 <?php
 session_start();
+include('../core/config.php');
 include('../core/db.php');
 include('../core/csrf.php');
 include('../core/validation.php');
@@ -193,7 +194,7 @@ try {
         'Your order ' . $orderLabel . ' has been placed. Total: Rs. ' . number_format($total, 2) . '. We\'ll start preparing it soon!',
         '🛒',
         $firstImage,
-        '../orders/order_confirmation.php?id=' . $order_id
+        SITE_BASE_URL . '/orders/order_confirmation.php?id=' . $order_id
     );
 
     // --- 📧 Send Order Confirmation Email ---

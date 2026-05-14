@@ -82,7 +82,7 @@ try {
                 $sm[2],
                 $sm[0],
                 $oImg,
-                'order_details.php?id=' . $order_id
+                SITE_BASE_URL . '/user/order_details.php?id=' . $order_id
             );
 
             /* 

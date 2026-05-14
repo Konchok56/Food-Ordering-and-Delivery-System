@@ -1,5 +1,6 @@
 <?php
 session_start();
+include('../core/config.php');
 include('../core/db.php');
 include('../core/csrf.php');
 include('../core/notification_helper.php');
@@ -87,7 +88,7 @@ try {
         'Your order ' . $orderLabel . ' has been cancelled and removed successfully.',
         '❌',
         $cancelImage,
-        null
+        SITE_BASE_URL . '/user/order_history.php'
     );
 
     // --- 📧 Send Cancellation Email ---
