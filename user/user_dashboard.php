@@ -274,6 +274,7 @@ function orderStatusMeta(string $status): array {
     </div>
 
     <?php include '../templates/floating_menu.php'; ?>
+    <?php include '../templates/chatbot.php'; ?>
     <?php include '../templates/footer.php'; ?>
     <script src="../assets/js/script.js"></script>
     <script src="../assets/js/cart.js"></script>

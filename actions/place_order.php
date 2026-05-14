@@ -6,6 +6,11 @@ include('../core/validation.php');
 include('../core/notification_helper.php');
 include_once('../core/mailer_helper.php');
 
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+
 // Validate CSRF
 requireCsrf();
 
@@ -61,7 +66,7 @@ if (empty($cart)) {
 $order_restaurant_id = null;
 foreach ($cart as $item) {
     if (!empty($item['food_restaurant_id'])) {
-        $order_restaurant_id = (int)$item['food_restaurant_id'];
+        $order_restaurant_id = (int) $item['food_restaurant_id'];
         break;
     }
 }
@@ -91,7 +96,8 @@ if ($promo_code !== null) {
         } else {
             $discountAmount = $promo['value'];
         }
-        if ($discountAmount > $subtotal) $discountAmount = $subtotal;
+        if ($discountAmount > $subtotal)
+            $discountAmount = $subtotal;
         $total -= $discountAmount;
     } else {
         $promo_code = null;
@@ -109,10 +115,22 @@ try {
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)
     ");
     $stmt->execute([
-        $user_id, $name, $email, $phone, $address, $city, $payment_method, 
-        $subtotal, $deliveryFee, $discountAmount, $promo_code, $total, $order_restaurant_id, $notes
+        $user_id,
+        $name,
+        $email,
+        $phone,
+        $address,
+        $city,
+        $payment_method,
+        $subtotal,
+        $deliveryFee,
+        $discountAmount,
+        $promo_code,
+        $total,
+        $order_restaurant_id,
+        $notes
     ]);
-    
+
     $order_id = $pdo->lastInsertId();
 
     // 5. Insert Order Items
@@ -128,13 +146,13 @@ try {
         $itemSubtotal = $item['price'] * $item['quantity'];
 
         $itemStmt->execute([
-            $order_id, 
-            $item['fid'] ?? null, 
-            $item['food_name'], 
-            $item['price'], 
-            $item['quantity'], 
-            $itemSubtotal, 
-            $imgPath, 
+            $order_id,
+            $item['fid'] ?? null,
+            $item['food_name'],
+            $item['price'],
+            $item['quantity'],
+            $itemSubtotal,
+            $imgPath,
             $emojiIcon
         ]);
     }
@@ -146,7 +164,7 @@ try {
     $userStmt = $pdo->prepare("SELECT phone, address FROM users WHERE id = ?");
     $userStmt->execute([$user_id]);
     $userRow = $userStmt->fetch(PDO::FETCH_ASSOC);
-    
+
     if (empty($userRow['phone']) || empty($userRow['address'])) {
         $pdo->prepare("UPDATE users SET phone = ?, address = ?, city = ? WHERE id = ?")->execute([$phone, $address, $city, $user_id]);
     }
@@ -157,12 +175,20 @@ try {
     // Create notification
     $firstImage = null;
     foreach ($cart as $ci) {
-        if (!empty($ci['food_image'])) { $firstImage = $ci['food_image']; break; }
-        if (!empty($ci['image_path'])) { $firstImage = $ci['image_path']; break; }
+        if (!empty($ci['food_image'])) {
+            $firstImage = $ci['food_image'];
+            break;
+        }
+        if (!empty($ci['image_path'])) {
+            $firstImage = $ci['image_path'];
+            break;
+        }
     }
     $orderLabel = '#' . str_pad($order_id, 5, '0', STR_PAD_LEFT);
     addNotification(
-        $pdo, $user_id, 'order_placed',
+        $pdo,
+        $user_id,
+        'order_placed',
         'Order Placed Successfully! 🎉',
         'Your order ' . $orderLabel . ' has been placed. Total: Rs. ' . number_format($total, 2) . '. We\'ll start preparing it soon!',
         '🛒',
