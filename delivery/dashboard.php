@@ -835,10 +835,12 @@ if (availToggle) {
         const isOnline = this.checked;
         const newStatus = isOnline ? 'online' : 'offline';
         
+        console.log('Switching to:', newStatus);
+
         // Optimistic UI update
         statusInd.textContent = isOnline ? '🟢 Online' : '⚪ Offline';
         statusInd.style.color = isOnline ? '#2ecc71' : '#8b6a44';
-        toggleCircle.style.transform = isOnline ? 'translateX(20px)' : 'translateX(0)';
+        if (toggleCircle) toggleCircle.style.transform = isOnline ? 'translateX(20px)' : 'translateX(0)';
 
         try {
             const fd = new FormData();
@@ -850,21 +852,21 @@ if (availToggle) {
                 body: fd
             });
             const data = await res.json();
+            console.log('Update result:', data);
             
             if (!data.success) {
-                console.error('Status update error:', data.message);
+                console.error('Update failed:', data.message);
                 alert('Failed to update status: ' + data.message);
                 // Revert UI
                 this.checked = !isOnline;
                 statusInd.textContent = !isOnline ? '🟢 Online' : '⚪ Offline';
                 statusInd.style.color = !isOnline ? '#2ecc71' : '#8b6a44';
-                toggleCircle.style.transform = !isOnline ? 'translateX(20px)' : 'translateX(0)';
+                if (toggleCircle) toggleCircle.style.transform = !isOnline ? 'translateX(20px)' : 'translateX(0)';
             }
         } catch (e) {
-            console.error('Status update failed', e);
-            alert('Network error while updating status.');
+            console.error('Network Error:', e);
+            alert('Network error. Status not saved.');
         }
-    });
     });
 }
 </script>
