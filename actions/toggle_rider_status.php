@@ -1,7 +1,5 @@
 <?php
-session_start();
-include('../core/db.php');
-include('../core/csrf.php');
+require_once '../core/bootstrap.php';
 
 if (!isset($_SESSION['user_id'])) {
     header('Content-Type: application/json');

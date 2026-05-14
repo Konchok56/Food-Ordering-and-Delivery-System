@@ -1,8 +1,5 @@
 <?php
-session_start();
-include('../core/db.php');
-include('../core/csrf.php');
-include('../core/validation.php');
+require_once '../core/bootstrap.php';
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../auth/login.php');
@@ -848,13 +845,14 @@ if (availToggle) {
             fd.append('status', newStatus);
             fd.append('csrf_token', '<?php echo generateCsrfToken(); ?>');
             
-            const res = await fetch('../actions/toggle_rider_status.php', {
+            const res = await fetch('<?php echo SITE_BASE_URL; ?>/actions/toggle_rider_status.php', {
                 method: 'POST',
                 body: fd
             });
             const data = await res.json();
             
             if (!data.success) {
+                console.error('Status update error:', data.message);
                 alert('Failed to update status: ' + data.message);
                 // Revert UI
                 this.checked = !isOnline;
