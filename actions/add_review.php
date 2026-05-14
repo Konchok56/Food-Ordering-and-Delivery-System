@@ -11,8 +11,8 @@ if (!isset($_SESSION['user_id'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user_id = $_SESSION['user_id'];
     $food_id = (int)$_POST['food_id'];
-    $rating = (int)$_POST['rating'];
-    $comment = sanitize($_POST['comment'] ?? '');
+    $rating  = (int)$_POST['rating'];
+    $comment = trim($_POST['comment'] ?? '');
 
     // Validate
     if ($rating < 1 || $rating > 5) {
@@ -20,10 +20,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
+        // 1. Check if user has actually ordered this item and it was DELIVERED
+        $orderCheck = $pdo->prepare("
+            SELECT oi.id 
+            FROM order_items oi
+            JOIN orders o ON oi.order_id = o.id
+            WHERE o.user_id = ? AND oi.food_id = ? AND o.status = 'delivered'
+            LIMIT 1
+        ");
+        $orderCheck->execute([$user_id, $food_id]);
+        if (!$orderCheck->fetch()) {
+            // Not delivered or not ordered
+            header("Location: ../food_detail.php?id=$food_id&not_delivered=1");
+            exit;
+        }
+
+        // 2. Check if user already reviewed this food
+        $checkStmt = $pdo->prepare("SELECT id FROM reviews WHERE food_id = ? AND user_id = ? LIMIT 1");
+        $checkStmt->execute([$food_id, $user_id]);
+        if ($checkStmt->fetch()) {
+            // Already reviewed, redirect back with error or just skip
+            header("Location: ../food_detail.php?id=$food_id&already_reviewed=1");
+            exit;
+        }
+
         $pdo->beginTransaction();
 
-        // Check if user already reviewed this food, maybe update instead? 
-        // For now let's just insert
         $stmt = $pdo->prepare("INSERT INTO reviews (food_id, user_id, rating, comment) VALUES (?, ?, ?, ?)");
         $stmt->execute([$food_id, $user_id, $rating, $comment]);
 
