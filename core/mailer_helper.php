@@ -5,23 +5,34 @@
 // ========================================
 
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/config.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 function sendSwiftBiteEmail($to, $subject, $body)
 {
+  /** @var PHPMailer $mail */
   $mail = new PHPMailer(true);
   try {
-    $mail->isSMTP();
-    $mail->Host = 'smtp.gmail.com';
-    $mail->SMTPAuth = true;
-    $mail->Username = 'sheetpillo@gmail.com';
-    $mail->Password = 'julx gwvm kfhv idlp';
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port = 587;
+    // Check if configuration constants are defined, else use defaults or fail
+    $host = defined('MAIL_HOST') ? MAIL_HOST : 'smtp.gmail.com';
+    $port = defined('MAIL_PORT') ? MAIL_PORT : 587;
+    $user = defined('MAIL_USER') ? MAIL_USER : '';
+    $pass = defined('MAIL_PASS') ? MAIL_PASS : '';
+    $fromEmail = defined('MAIL_FROM_EMAIL') ? MAIL_FROM_EMAIL : $user;
+    $fromName = defined('MAIL_FROM_NAME') ? MAIL_FROM_NAME : 'SwiftBite';
 
-    $mail->setFrom('sheetpillo@gmail.com', 'SwiftBite');
+    $mail->isSMTP();
+    $mail->Host = $host;
+    $mail->SMTPAuth = true;
+    $mail->Username = $user;
+    $mail->Password = $pass;
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port = $port;
+
+    $mail->setFrom($fromEmail, $fromName);
     $mail->addAddress($to);
     $mail->isHTML(true);
     $mail->Subject = $subject;
@@ -29,8 +40,9 @@ function sendSwiftBiteEmail($to, $subject, $body)
     $mail->AltBody = strip_tags($body);
     $mail->send();
     return true;
-  } catch (Exception $e) {
-    error_log("Mailer Error: " . $mail->ErrorInfo);
+  } catch (\Throwable $e) {
+    // Catching everything (Exception and Error) to prevent crashing the caller
+    error_log("Mailer Error: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
     return false;
   }
 }
@@ -91,17 +103,21 @@ function sendOrderPlacedEmail(
   $firstName = htmlspecialchars(explode(' ', trim($customerName))[0]);
 
   $itemRows = '';
-  foreach ($items as $item) {
-    $itemName = htmlspecialchars($item['food_name']);
-    $itemEmoji = htmlspecialchars($item['emoji'] ?? '🍽️');
-    $itemQty = (int) $item['quantity'];
-    $itemPrice = number_format($item['price'] * $item['quantity'], 2);
-    $itemRows .= "
-        <tr>
-          <td style='padding:10px 0; border-bottom:1px solid #f5ede3; font-size:14px; color:#3d2600;'>$itemEmoji $itemName</td>
-          <td style='padding:10px 0; border-bottom:1px solid #f5ede3; text-align:center; font-size:14px; color:#8b6a44;'>x$itemQty</td>
-          <td style='padding:10px 0; border-bottom:1px solid #f5ede3; text-align:right; font-size:14px; color:#3d2600; font-weight:bold;'>Rs. $itemPrice</td>
-        </tr>";
+  if (is_array($items)) {
+    foreach ($items as $item) {
+      $itemName = htmlspecialchars((string)($item['food_name'] ?? 'Item'));
+      $itemEmoji = htmlspecialchars((string)($item['emoji'] ?? ($item['food_emoji'] ?? '🍽️')));
+      $qty = (int)($item['quantity'] ?? 1);
+      $price = (float)($item['price'] ?? 0);
+      $itemTotal = number_format($price * $qty, 2);
+      
+      $itemRows .= "
+          <tr>
+            <td style='padding:10px 0; border-bottom:1px solid #f5ede3; font-size:14px; color:#3d2600;'>$itemEmoji $itemName</td>
+            <td style='padding:10px 0; border-bottom:1px solid #f5ede3; text-align:center; font-size:14px; color:#8b6a44;'>x$qty</td>
+            <td style='padding:10px 0; border-bottom:1px solid #f5ede3; text-align:right; font-size:14px; color:#3d2600; font-weight:bold;'>Rs. $itemTotal</td>
+          </tr>";
+    }
   }
 
   $discountRow = '';
@@ -143,4 +159,25 @@ function sendOrderPlacedEmail(
   $subject = "✅ Order $orderLabel Confirmed — SwiftBite";
   return sendSwiftBiteEmail($to, $subject, $body);
 }
-?>
+
+function sendOrderCancelledByCustomerEmail($to, $customerName, $order_id)
+{
+  $orderLabel = '#' . str_pad($order_id, 5, '0', STR_PAD_LEFT);
+  $firstName = htmlspecialchars(explode(' ', trim($customerName))[0]);
+
+  $content = "
+      <h2 style='color:#d93025; margin:0 0 6px;'>Order Cancelled 🗑️</h2>
+      <p style='color:#3d2600; margin:0 0 20px;'>Hi $firstName, your order <strong>$orderLabel</strong> has been successfully cancelled as per your request.</p>
+      <div style='background:#fff0f0; border:1px solid #ffcccb; border-radius:10px; padding:16px 20px; margin-bottom:24px;'>
+        <p style='margin:0; color:#3d2600; font-size:14px;'>The order has been removed from our system. If you change your mind, we're always here to serve you again!</p>
+      </div>
+      <p style='text-align:center;'>
+        <a href='" . SITE_BASE_URL . "/menu.php' style='display:inline-block; padding:12px 24px; background:#ff6b1a; color:#fff; text-decoration:none; border-radius:50px; font-weight:bold; font-size:14px;'>Order Something Else</a>
+      </p>
+    ";
+
+  $body = _swiftbiteEmailWrapper($content);
+  $subject = "❌ Order $orderLabel Cancelled — SwiftBite";
+  return sendSwiftBiteEmail($to, $subject, $body);
+}
+?>
