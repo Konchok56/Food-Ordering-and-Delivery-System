@@ -28,8 +28,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("UPDATE users SET availability_status = ? WHERE id = ? AND role = 'delivery_partner'");
         $stmt->execute([$new_status, $user_id]);
 
+        $count = $stmt->rowCount();
+
         header('Content-Type: application/json');
-        echo json_encode(['success' => true, 'message' => 'Status updated to ' . ucfirst($new_status)]);
+        echo json_encode([
+            'success' => true, 
+            'message' => 'Status updated to ' . ucfirst($new_status),
+            'updated' => $count,
+            'user_id' => $user_id,
+            'status' => $new_status
+        ]);
         exit;
     } catch (Exception $e) {
         header('Content-Type: application/json');
