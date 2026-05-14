@@ -20,10 +20,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
+        // Check if user already reviewed this food
+        $checkStmt = $pdo->prepare("SELECT id FROM reviews WHERE food_id = ? AND user_id = ? LIMIT 1");
+        $checkStmt->execute([$food_id, $user_id]);
+        if ($checkStmt->fetch()) {
+            // Already reviewed, redirect back with error or just skip
+            header("Location: ../food_detail.php?id=$food_id&already_reviewed=1");
+            exit;
+        }
+
         $pdo->beginTransaction();
 
-        // Check if user already reviewed this food, maybe update instead? 
-        // For now let's just insert
         $stmt = $pdo->prepare("INSERT INTO reviews (food_id, user_id, rating, comment) VALUES (?, ?, ?, ?)");
         $stmt->execute([$food_id, $user_id, $rating, $comment]);
 
