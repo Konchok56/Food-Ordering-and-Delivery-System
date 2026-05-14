@@ -67,6 +67,37 @@ $revStmt = $pdo->prepare("
 $revStmt->execute([$foodId]);
 $reviews = $revStmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Check if current user has already reviewed
+$hasReviewed = false;
+$canReview = false;
+
+if (isset($_SESSION['user_id'])) {
+    $uid = (int)$_SESSION['user_id'];
+    
+    // Check if they reviewed
+    foreach ($reviews as $r) {
+        if ($r['user_id'] == $uid) {
+            $hasReviewed = true;
+            break;
+        }
+    }
+
+    // Check if they have a delivered order for this food
+    $eligStmt = $pdo->prepare("
+        SELECT oi.id 
+        FROM order_items oi
+        JOIN orders o ON oi.order_id = o.id
+        WHERE o.user_id = ? AND oi.food_id = ? AND o.status = 'delivered'
+        LIMIT 1
+    ");
+    $eligStmt->execute([$uid, $foodId]);
+    if ($eligStmt->fetch()) {
+        $canReview = true;
+    }
+}
+
+$alreadyReviewed = isset($_GET['already_reviewed']) ? true : false;
+$notDelivered = isset($_GET['not_delivered']) ? true : false;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -523,6 +554,16 @@ $reviews = $revStmt->fetchAll(PDO::FETCH_ASSOC);
                 ⭐ Review submitted successfully!
             </div>
         <?php endif; ?>
+        <?php if ($alreadyReviewed): ?>
+            <div class="cart-toast review-toast" id="alreadyReviewedToast" style="background: linear-gradient(135deg, #ff3b30 0%, #d93025 100%); box-shadow: 0 10px 40px rgba(255, 59, 48, 0.35);">
+                🚫 You have already reviewed this item!
+            </div>
+        <?php endif; ?>
+        <?php if ($notDelivered): ?>
+            <div class="cart-toast review-toast" id="notDeliveredToast" style="background: linear-gradient(135deg, #ff3b30 0%, #d93025 100%); box-shadow: 0 10px 40px rgba(255, 59, 48, 0.35);">
+                🚫 You can only review items after they are delivered!
+            </div>
+        <?php endif; ?>
 
         <!-- Breadcrumb -->
         <div class="breadcrumb">
@@ -662,27 +703,42 @@ $reviews = $revStmt->fetchAll(PDO::FETCH_ASSOC);
             <div style="display: grid; gap: 32px; grid-template-columns: 1fr; max-width: 800px; margin: 0 auto 40px;">
                 <!-- Review Form -->
                 <?php if (isset($_SESSION['user_id'])): ?>
-                <div class="review-form-card" style="background: var(--cream); border-radius: 24px; padding: 32px; border: 2px solid var(--cream2);">
-                    <h3 style="margin-bottom: 20px; font-family: 'Syne', sans-serif; font-size: 1.3rem;">Write a Review</h3>
-                    <form action="actions/add_review.php" method="POST">
-                        <input type="hidden" name="food_id" value="<?php echo (int) $food['id']; ?>">
-                        <div style="margin-bottom: 20px;">
-                            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Rating</label>
-                            <select name="rating" required style="width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--cream2); outline: none; background: #fff; font-family: 'DM Sans', sans-serif;">
-                                <option value="5">5 - Excellent! ⭐⭐⭐⭐⭐</option>
-                                <option value="4">4 - Very Good ⭐⭐⭐⭐</option>
-                                <option value="3">3 - Average ⭐⭐⭐</option>
-                                <option value="2">2 - Poor ⭐⭐</option>
-                                <option value="1">1 - Terrible ⭐</option>
-                            </select>
+                    <?php if ($hasReviewed): ?>
+                        <div class="review-form-card" style="background: var(--cream); border-radius: 24px; padding: 32px; border: 2px solid var(--cream2); text-align: center;">
+                            <div style="font-size: 2.5rem; margin-bottom: 12px;">✅</div>
+                            <h3 style="margin-bottom: 10px; font-family: 'Syne', sans-serif; font-size: 1.3rem;">You've reviewed this!</h3>
+                            <p style="color: var(--muted); font-weight: 500;">Thank you for your feedback. You can only review each item once.</p>
                         </div>
-                        <div style="margin-bottom: 20px;">
-                            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Comment</label>
-                            <textarea name="comment" rows="3" placeholder="Share your experience format..." style="width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--cream2); outline: none; resize: vertical; font-family: 'DM Sans', sans-serif; background: #fff;"></textarea>
+                    <?php elseif (!$canReview): ?>
+                        <div class="review-form-card" style="background: var(--cream); border-radius: 24px; padding: 32px; border: 2px solid var(--cream2); text-align: center;">
+                            <div style="font-size: 2.5rem; margin-bottom: 12px;">🔒</div>
+                            <h3 style="margin-bottom: 10px; font-family: 'Syne', sans-serif; font-size: 1.3rem;">Review Locked</h3>
+                            <p style="color: var(--muted); font-weight: 500; margin-bottom: 20px;">You can only review items that you have purchased and received.</p>
+                            <a href="menu.php" class="btn-primary" style="display: inline-flex; padding: 12px 24px; border-radius: 12px; text-decoration: none; font-weight: 700;">Order Now</a>
                         </div>
-                        <button type="submit" style="padding: 14px 28px; background: var(--dark); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s;">Submit Review</button>
-                    </form>
-                </div>
+                    <?php else: ?>
+                        <div class="review-form-card" style="background: var(--cream); border-radius: 24px; padding: 32px; border: 2px solid var(--cream2);">
+                            <h3 style="margin-bottom: 20px; font-family: 'Syne', sans-serif; font-size: 1.3rem;">Write a Review</h3>
+                            <form action="actions/add_review.php" method="POST">
+                                <input type="hidden" name="food_id" value="<?php echo (int) $food['id']; ?>">
+                                <div style="margin-bottom: 20px;">
+                                    <label style="font-weight: 600; display: block; margin-bottom: 8px;">Rating</label>
+                                    <select name="rating" required style="width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--cream2); outline: none; background: #fff; font-family: 'DM Sans', sans-serif;">
+                                        <option value="5">5 - Excellent! ⭐⭐⭐⭐⭐</option>
+                                        <option value="4">4 - Very Good ⭐⭐⭐⭐</option>
+                                        <option value="3">3 - Average ⭐⭐⭐</option>
+                                        <option value="2">2 - Poor ⭐⭐</option>
+                                        <option value="1">1 - Terrible ⭐</option>
+                                    </select>
+                                </div>
+                                <div style="margin-bottom: 20px;">
+                                    <label style="font-weight: 600; display: block; margin-bottom: 8px;">Comment</label>
+                                    <textarea name="comment" rows="3" placeholder="Share your experience format..." style="width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--cream2); outline: none; resize: vertical; font-family: 'DM Sans', sans-serif; background: #fff;"></textarea>
+                                </div>
+                                <button type="submit" style="padding: 14px 28px; background: var(--dark); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s;">Submit Review</button>
+                            </form>
+                        </div>
+                    <?php endif; ?>
                 <?php else: ?>
                     <p style="padding: 24px; background: var(--cream); border-radius: 20px; text-align: center; color: var(--muted); font-weight: 600; border: 2px solid var(--cream2);">Please <a href="auth/login.php" style="color: var(--orange); text-decoration: underline;">log in</a> to drop a review.</p>
                 <?php endif; ?>
@@ -799,6 +855,14 @@ $reviews = $revStmt->fetchAll(PDO::FETCH_ASSOC);
         const rToast = document.getElementById('reviewToast');
         if (rToast) {
             setTimeout(() => rToast.remove(), 3200);
+        }
+        const arToast = document.getElementById('alreadyReviewedToast');
+        if (arToast) {
+            setTimeout(() => arToast.remove(), 3200);
+        }
+        const ndToast = document.getElementById('notDeliveredToast');
+        if (ndToast) {
+            setTimeout(() => ndToast.remove(), 3200);
         }
     </script>
     <script src="assets/js/script.js"></script>
