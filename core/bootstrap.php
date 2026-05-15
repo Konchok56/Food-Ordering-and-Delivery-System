@@ -54,6 +54,10 @@ if (!isset($GLOBALS['pdo'])) {
 }
 $pdo = $GLOBALS['pdo'];
 
+// ── Auto-apply pending DB migrations ─────────────────────
+require_once __DIR__ . '/auto_migrate.php';
+runAutoMigrations($pdo);
+
 // ── Remember-me auto login ────────────────────────────────
 if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
     $stmt = $pdo->prepare("SELECT * FROM users WHERE remember_token = ? LIMIT 1");
