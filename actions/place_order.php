@@ -86,21 +86,39 @@ if (empty($promo_code)) {
 }
 
 $discountAmount = 0;
+$promo = null; // keep reference for usage tracking
 
 if ($promo_code !== null) {
     $stmtPromo = $pdo->prepare("SELECT * FROM promo_codes WHERE code = ? AND is_active = 1");
     $stmtPromo->execute([strtoupper($promo_code)]);
     $promo = $stmtPromo->fetch(PDO::FETCH_ASSOC);
     if ($promo && (empty($promo['expiry_date']) || strtotime($promo['expiry_date']) >= time())) {
-        if ($promo['type'] === 'percent') {
-            $discountAmount = ($promo['value'] / 100) * $subtotal;
-        } else {
-            $discountAmount = $promo['value'];
+        // ── GDODS-40: Check global usage limit ──
+        if ($promo['usage_limit'] !== null && (int)$promo['usage_count'] >= (int)$promo['usage_limit']) {
+            $promo = null;
+            $promo_code = null;
         }
-        if ($discountAmount > $subtotal)
-            $discountAmount = $subtotal;
-        $total -= $discountAmount;
+        // ── GDODS-40: Check per-user usage ──
+        if ($promo) {
+            $usChk = $pdo->prepare("SELECT id FROM promo_usage WHERE promo_code_id = ? AND user_id = ?");
+            $usChk->execute([$promo['id'], $user_id]);
+            if ($usChk->fetch()) {
+                $promo = null;
+                $promo_code = null;
+            }
+        }
+        if ($promo) {
+            if ($promo['type'] === 'percent') {
+                $discountAmount = ($promo['value'] / 100) * $subtotal;
+            } else {
+                $discountAmount = $promo['value'];
+            }
+            if ($discountAmount > $subtotal)
+                $discountAmount = $subtotal;
+            $total -= $discountAmount;
+        }
     } else {
+        $promo = null;
         $promo_code = null;
     }
 }
@@ -170,8 +188,24 @@ try {
         $pdo->prepare("UPDATE users SET phone = ?, address = ?, city = ? WHERE id = ?")->execute([$phone, $address, $city, $user_id]);
     }
 
+    // ── GDODS-40: Record promo usage and increment counter ──
+    if ($promo && $promo_code !== null) {
+        $pdo->prepare("INSERT INTO promo_usage (promo_code_id, user_id, order_id) VALUES (?, ?, ?)")
+            ->execute([$promo['id'], $user_id, $order_id]);
+        $pdo->prepare("UPDATE promo_codes SET usage_count = usage_count + 1 WHERE id = ?")
+            ->execute([$promo['id']]);
+    }
+
     // Commit
     $pdo->commit();
+
+    // ── GDODS-48: Auto-assign nearest available rider ──
+    try {
+        include_once('../core/rider_assignment_helper.php');
+        assignNearestRider($pdo, $order_id, $address);
+    } catch (Exception $e) {
+        // Non-critical — order still goes through if no rider available
+    }
 
     // Create notification
     $firstImage = null;

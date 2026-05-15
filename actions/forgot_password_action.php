@@ -53,13 +53,13 @@ $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 // Hash the OTP for storage (security best practice)
 $otp_hash = password_hash($otp, PASSWORD_DEFAULT);
 
-// Store OTP with 10-minute expiry
-$stmt = $pdo->prepare("UPDATE users SET reset_token = ?, token_expiry = NOW() + INTERVAL 10 MINUTE WHERE email = ?");
+// Store OTP with 10-minute expiry + reset DB attempt counter (GDODS-43)
+$stmt = $pdo->prepare("UPDATE users SET reset_token = ?, token_expiry = NOW() + INTERVAL 10 MINUTE, otp_attempts = 0 WHERE email = ?");
 $stmt->execute([$otp_hash, $email]);
 
 // Store email in session for step 2
 $_SESSION['otp_email'] = $email;
-$_SESSION['otp_attempts'] = 0;
+unset($_SESSION['otp_attempts']); // clean up legacy session key
 
 // --- 📧 SEND REAL EMAIL ---
 include_once('../core/mailer_helper.php');

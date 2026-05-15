@@ -10,9 +10,10 @@ if (isLoggedIn() && hasRole('user')) {
   }
 }
 
-// Riders should not access the main landing page, redirect them to their dashboard
-if (isLoggedIn() && hasRole('delivery_partner')) {
-  redirect('delivery/dashboard.php');
+// Riders and Restaurant owners should not access the main landing page
+if (isLoggedIn()) {
+  if (hasRole('delivery_partner')) redirect('delivery/dashboard.php');
+  if (hasRole('restaurant')) redirect('owner/dashboard.php');
 }
 ?>
 <!DOCTYPE html>
