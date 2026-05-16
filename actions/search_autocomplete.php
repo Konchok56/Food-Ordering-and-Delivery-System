@@ -52,21 +52,22 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
 // ── Restaurants ─────────────────────────────────────────────
 try {
     $stmt2 = $pdo->prepare(
-        "SELECT id, name, city, cuisine, logo_url
+        "SELECT id, name, city, cuisine_type, image_path, logo_emoji
          FROM restaurants
-         WHERE name LIKE ? OR city LIKE ? OR cuisine LIKE ?
+         WHERE name LIKE ? OR city LIKE ? OR cuisine_type LIKE ?
          ORDER BY name ASC
          LIMIT 4"
     );
     $stmt2->execute([$like, $like, $like]);
     foreach ($stmt2->fetchAll(PDO::FETCH_ASSOC) as $row) {
         $results['restaurants'][] = [
-            'id'       => (int) $row['id'],
-            'name'     => $row['name'],
-            'city'     => $row['city'] ?? '',
-            'cuisine'  => $row['cuisine'] ?? '',
-            'logo_url' => $row['logo_url'] ?? '',
-            'url'      => 'restaurant.php?id=' . (int) $row['id'],
+            'id'           => (int) $row['id'],
+            'name'         => $row['name'],
+            'city'         => $row['city'] ?? '',
+            'cuisine'      => $row['cuisine_type'] ?? '',
+            'logo_emoji'   => $row['logo_emoji'] ?? '🍴',
+            'image_path'   => $row['image_path'] ?? '',
+            'url'          => 'restaurant.php?id=' . (int) $row['id'],
         ];
     }
 } catch (PDOException $e) {

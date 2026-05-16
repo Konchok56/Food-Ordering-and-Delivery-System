@@ -36,11 +36,6 @@ if ($lat < -90 || $lat > 90 || $lng < -180 || $lng > 180) {
 try {
     $stmt = $pdo->prepare("UPDATE orders SET delivery_lat = ?, delivery_lng = ?, location_updated_at = NOW() WHERE id = ?");
     $stmt->execute([$lat, $lng, $order_id]);
-
-    // GDODS-48: Also save rider's last known GPS for nearest-rider assignment
-    $pdo->prepare("UPDATE users SET last_lat = ?, last_lng = ? WHERE id = ?")
-        ->execute([$lat, $lng, $_SESSION['user_id']]);
-
     echo json_encode(['success' => true, 'lat' => $lat, 'lng' => $lng]);
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'message' => 'DB error']);

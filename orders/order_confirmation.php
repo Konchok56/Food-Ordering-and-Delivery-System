@@ -21,13 +21,13 @@ if (!$order) {
 $cartCount = getCartCount($pdo, $user_id);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= currentLang() ?>" <?= isRtlLang() ? 'dir="rtl"' : '' ?>>
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Order Confirmed — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../assets/css/style.css?v=8" />
+    <link rel="stylesheet" href="../assets/css/style.css?v=9" />
     <style>
         .conf-page { min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 120px 24px 60px; }
         .conf-card { background: #fff; border-radius: 36px; padding: 50px 40px; text-align: center; max-width: 500px; width: 100%; box-shadow: 0 20px 60px rgba(52, 199, 89, 0.15); animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -94,7 +94,8 @@ $cartCount = getCartCount($pdo, $user_id);
     <?php include '../templates/floating_menu.php'; ?>
 
     <?php include '../templates/footer.php'; ?>
-    <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/theme.js"></script>
+<script src="../assets/js/script.js"></script>
     <script src="../assets/js/cart.js"></script>
 </body>
 </html>

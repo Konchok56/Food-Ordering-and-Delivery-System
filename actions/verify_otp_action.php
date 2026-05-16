@@ -22,24 +22,16 @@ if (empty($otp) || strlen($otp) !== 6 || !ctype_digit($otp)) {
     exit;
 }
 
-// ── GDODS-43: DB-based attempt tracking (not session-based) ──
-// Increment attempt counter in the database so clearing session/cookies
-// does NOT reset the counter. This prevents brute-force attacks.
-$pdo->prepare("UPDATE users SET otp_attempts = otp_attempts + 1 WHERE email = ?")
-    ->execute([$email]);
-
-$attStmt = $pdo->prepare("SELECT otp_attempts FROM users WHERE email = ?");
-$attStmt->execute([$email]);
-$attRow = $attStmt->fetch();
-$attempts = (int)($attRow['otp_attempts'] ?? 0);
-
-if ($attempts > 5) {
-    // Too many attempts — invalidate OTP and lock out
+// Check attempt limit (max 5 tries)
+$_SESSION['otp_attempts'] = ($_SESSION['otp_attempts'] ?? 0) + 1;
+if ($_SESSION['otp_attempts'] > 5) {
+    // Too many attempts - clear everything
     unset($_SESSION['otp_email'], $_SESSION['otp_attempts']);
-
-    $pdo->prepare("UPDATE users SET reset_token = NULL, token_expiry = NULL, otp_attempts = 0 WHERE email = ?")
-        ->execute([$email]);
-
+    
+    // Invalidate the OTP in DB
+    $stmt = $pdo->prepare("UPDATE users SET reset_token = NULL, token_expiry = NULL WHERE email = ?");
+    $stmt->execute([$email]);
+    
     $_SESSION['fp_error'] = 'Too many failed attempts. Please request a new OTP.';
     header('Location: ../auth/forgot_password.php');
     exit;
@@ -58,18 +50,15 @@ if (!$user) {
 
 // Verify OTP against hash
 if (!password_verify($otp, $user['reset_token'])) {
-    $remaining = 5 - $attempts;
+    $remaining = 5 - $_SESSION['otp_attempts'];
     $_SESSION['otp_error'] = "Invalid OTP code. You have $remaining attempt(s) remaining.";
     header('Location: ../auth/verify_otp.php');
     exit;
 }
 
-// ✅ OTP verified successfully — reset counter
-$pdo->prepare("UPDATE users SET otp_attempts = 0 WHERE email = ?")
-    ->execute([$email]);
-
+// ✅ OTP verified successfully!
 $_SESSION['otp_verified'] = true;
-unset($_SESSION['otp_attempts']); // clean up legacy session key
+$_SESSION['otp_attempts'] = 0;
 
 // Redirect to reset password page
 header('Location: ../auth/reset_password.php');

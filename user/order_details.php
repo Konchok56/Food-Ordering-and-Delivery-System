@@ -1,6 +1,5 @@
 <?php
 session_start();
-include('../core/config.php');
 include('../core/db.php');
 include('../core/cart_helper.php');
 include('../core/csrf.php');
@@ -36,13 +35,13 @@ $canCancel = ($order['status'] === 'pending') && (time() < $deadline);
 $deadlineMs = $deadline * 1000;
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= currentLang() ?>" <?= isRtlLang() ? 'dir="rtl"' : '' ?>>
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Order Details #<?php echo str_pad($order['id'], 5, '0', STR_PAD_LEFT); ?> — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../assets/css/style.css?v=8" />
+    <link rel="stylesheet" href="../assets/css/style.css?v=9" />
     <style>
         .page { padding: 100px 24px 60px; min-height: 100vh; background: var(--cream); }
         .inner { max-width: 800px; margin: 0 auto; }
@@ -332,7 +331,8 @@ $deadlineMs = $deadline * 1000;
 
     <?php include '../templates/floating_menu.php'; ?>
     <?php include '../templates/footer.php'; ?>
-    <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/theme.js"></script>
+<script src="../assets/js/script.js"></script>
     <script src="../assets/js/cart.js"></script>
 
     <?php if ($canCancel): ?>

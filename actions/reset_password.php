@@ -1,13 +1,9 @@
 <?php
-include('../core/db.php');
-
-$token = $_POST['token'];
-$newPassword = password_hash($_POST['password'], PASSWORD_DEFAULT);
-
-$stmt = $pdo->prepare("UPDATE users SET password=?, reset_token=NULL, token_expiry=NULL WHERE reset_token=?");
-$stmt->execute([$newPassword, $token]);
-
-echo "Password updated successfully! 
-<br><br><a href='../auth/login.php'>← Back to Login</a>";
-?>
-
+/**
+ * Legacy endpoint — redirects to the proper OTP-based password reset flow.
+ * The old token-based approach was insecure (no CSRF, no session check, 
+ * compared raw tokens against hashed tokens).
+ */
+session_start();
+header('Location: ../auth/forgot_password.php');
+exit;

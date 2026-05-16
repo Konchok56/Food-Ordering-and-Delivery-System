@@ -22,13 +22,13 @@ $csrfToken = generateCsrfToken();
 define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= currentLang() ?>" <?= isRtlLang() ? 'dir="rtl"' : '' ?>>
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Orders — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../assets/css/style.css?v=8" />
+    <link rel="stylesheet" href="../assets/css/style.css?v=9" />
     <style>
         .orders-page { padding: 100px 24px 60px; min-height: 100vh; background: var(--cream); }
         .orders-inner { max-width: 900px; margin: 0 auto; }
@@ -158,9 +158,9 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
     <!-- Cancel Confirmation Modal -->
     <div class="cancel-modal-overlay" id="cancelModal">
         <div class="cancel-modal">
-            <div class="modal-icon">🗑️</div>
+            <div class="modal-icon">❌</div>
             <h3>Cancel Order?</h3>
-            <p>Are you sure you want to cancel <strong id="modalOrderLabel">this order</strong>? This action <strong>cannot be undone</strong> and the order will be permanently removed.</p>
+            <p>Are you sure you want to cancel <strong id="modalOrderLabel">this order</strong>? This action <strong>cannot be undone</strong>.</p>
             <div class="modal-btns">
                 <button class="modal-keep" id="modalKeepBtn">Keep Order</button>
                 <button class="modal-confirm-cancel" id="modalCancelBtn">Yes, Cancel</button>
@@ -260,7 +260,8 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
     <?php include '../templates/floating_menu.php'; ?>
     <?php include '../templates/footer.php'; ?>
 
-    <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/theme.js"></script>
+<script src="../assets/js/script.js"></script>
     <script src="../assets/js/cart.js"></script>
     <script>
     (function () {
@@ -338,19 +339,24 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
                 .then(data => {
                     closeModal();
                     if (data.success) {
-                        // Animate card out and remove it
+                        // Update card to show cancelled status (don't remove — preserve history)
                         const card = document.getElementById('order-card-' + pendingOrderId);
                         if (card) {
-                            card.style.transition = 'all 0.45s ease';
-                            card.style.opacity    = '0';
-                            card.style.transform  = 'scale(0.95)';
-                            card.style.maxHeight  = card.offsetHeight + 'px';
-                            setTimeout(() => {
-                                card.style.maxHeight = '0';
-                                card.style.margin    = '0';
-                                card.style.padding   = '0';
-                                setTimeout(() => card.remove(), 300);
-                            }, 350);
+                            // Update status badge
+                            const statusEl = card.querySelector('.order-status');
+                            if (statusEl) {
+                                statusEl.className = 'order-status status-cancelled';
+                                statusEl.textContent = '❌ Cancelled';
+                            }
+                            // Remove cancel button and countdown
+                            const cancelBtn = document.getElementById('cancel-btn-' + pendingOrderId);
+                            const countdown = document.getElementById('countdown-' + pendingOrderId);
+                            if (cancelBtn) cancelBtn.remove();
+                            if (countdown) countdown.remove();
+                            // Brief highlight animation
+                            card.style.transition = 'box-shadow 0.4s ease';
+                            card.style.boxShadow  = '0 0 0 3px rgba(217,48,37,0.3)';
+                            setTimeout(() => { card.style.boxShadow = ''; }, 2000);
                         }
                         showToast('✅ ' + data.message, 'success');
                     } else {

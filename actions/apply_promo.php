@@ -11,7 +11,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $code = strtoupper(trim($_POST['promo_code'] ?? ''));
 $subtotal = (float) ($_POST['subtotal'] ?? 0);
-$user_id = $_SESSION['user_id'] ?? null;
 
 if (empty($code)) {
     echo json_encode(['success' => false, 'message' => 'Please enter a promo code']);
@@ -31,22 +30,6 @@ try {
     if (!empty($promo['expiry_date']) && strtotime($promo['expiry_date']) < time()) {
         echo json_encode(['success' => false, 'message' => 'This promo code has expired']);
         exit;
-    }
-
-    // ── GDODS-40: Check global usage limit ──────────────────
-    if ($promo['usage_limit'] !== null && (int)$promo['usage_count'] >= (int)$promo['usage_limit']) {
-        echo json_encode(['success' => false, 'message' => 'This promo code has reached its usage limit']);
-        exit;
-    }
-
-    // ── GDODS-40: Check per-user usage (one use per user) ───
-    if ($user_id) {
-        $usageStmt = $pdo->prepare("SELECT id FROM promo_usage WHERE promo_code_id = ? AND user_id = ?");
-        $usageStmt->execute([$promo['id'], $user_id]);
-        if ($usageStmt->fetch()) {
-            echo json_encode(['success' => false, 'message' => 'You have already used this promo code']);
-            exit;
-        }
     }
 
     $discountAmount = 0;

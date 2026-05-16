@@ -1,6 +1,11 @@
 <?php
 require_once '../core/bootstrap.php';
 
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../auth/login.php");
+    exit;
+}
+
 $user_id = $_SESSION['user_id'];
 
 // Handle "Clear All" action
@@ -37,7 +42,7 @@ $cartCount = getCartCount($pdo, $user_id);
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= currentLang() ?>" <?= isRtlLang() ? 'dir="rtl"' : '' ?>>
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -50,7 +55,7 @@ $cartCount = getCartCount($pdo, $user_id);
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
     <!-- CSS -->
-    <link rel="stylesheet" href="../assets/css/style.css?v=8" />
+    <link rel="stylesheet" href="../assets/css/style.css?v=9" />
 </head>
 
 <body>
@@ -277,6 +282,7 @@ $cartCount = getCartCount($pdo, $user_id);
     }
     </script>
     <script src="../assets/js/cart.js"></script>
-    <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/theme.js"></script>
+<script src="../assets/js/script.js"></script>
 </body>
 </html>

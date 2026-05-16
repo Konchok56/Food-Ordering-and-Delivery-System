@@ -6,7 +6,7 @@ $reason = $_SESSION['banned_reason'] ?? 'Violation of our Terms of Service.';
 // If no session reason is available, we simply show a generic message.
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= currentLang() ?>" <?= isRtlLang() ? 'dir="rtl"' : '' ?>>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

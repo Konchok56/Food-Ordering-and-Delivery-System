@@ -1,6 +1,5 @@
 <?php
 session_start();
-include('../core/config.php');
 include('../core/db.php');
 include('../core/csrf.php');
 include('../core/notification_helper.php');
@@ -63,32 +62,32 @@ if ($elapsed > CANCEL_WINDOW_SECONDS) {
     exit;
 }
 
-// All checks passed — delete from DB inside a transaction
+// All checks passed — update the order status (preserve data for history/analytics)
 try {
-    // Grab first food image before deleting items
+    // Grab first food image for the notification
     $imgStmt = $pdo->prepare("SELECT image_path FROM order_items WHERE order_id = ? AND image_path IS NOT NULL AND image_path != '' LIMIT 1");
     $imgStmt->execute([$order_id]);
     $cancelImage = $imgStmt->fetchColumn() ?: null;
 
-    $pdo->beginTransaction();
-
-    // Delete order items first (FK constraint)
-    $pdo->prepare("DELETE FROM order_items WHERE order_id = ?")->execute([$order_id]);
-
-    // Delete the order itself
-    $pdo->prepare("DELETE FROM orders WHERE id = ? AND user_id = ?")->execute([$order_id, $user_id]);
-
-    $pdo->commit();
+    // Update order status to 'cancelled' instead of deleting
+    // Try with cancelled_at timestamp; fall back to status-only if column doesn't exist yet
+    try {
+        $updateStmt = $pdo->prepare("UPDATE orders SET status = 'cancelled', cancelled_at = NOW() WHERE id = ? AND user_id = ?");
+        $updateStmt->execute([$order_id, $user_id]);
+    } catch (PDOException $colErr) {
+        $updateStmt = $pdo->prepare("UPDATE orders SET status = 'cancelled' WHERE id = ? AND user_id = ?");
+        $updateStmt->execute([$order_id, $user_id]);
+    }
 
     // Create cancellation notification
     $orderLabel = '#' . str_pad($order_id, 5, '0', STR_PAD_LEFT);
     addNotification(
         $pdo, $user_id, 'order_cancelled',
         'Order Cancelled',
-        'Your order ' . $orderLabel . ' has been cancelled and removed successfully.',
+        'Your order ' . $orderLabel . ' has been cancelled successfully.',
         '❌',
         $cancelImage,
-        SITE_BASE_URL . '/user/order_history.php'
+        null
     );
 
     // --- 📧 Send Cancellation Email ---
@@ -99,8 +98,7 @@ try {
         sendOrderCancelledByCustomerEmail($userEmailRow['email'], $userEmailRow['name'], $order_id);
     }
 
-    echo json_encode(['success' => true, 'message' => 'Your order has been cancelled and removed successfully.']);
+    echo json_encode(['success' => true, 'message' => 'Your order has been cancelled successfully.']);
 } catch (Exception $e) {
-    $pdo->rollBack();
     echo json_encode(['success' => false, 'message' => 'Something went wrong. Please try again.']);
 }

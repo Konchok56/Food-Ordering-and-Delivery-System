@@ -76,7 +76,7 @@ if (isset($_GET['edit'])) {
 $promos = $pdo->query("SELECT * FROM promo_codes ORDER BY created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= currentLang() ?>" <?= isRtlLang() ? 'dir="rtl"' : '' ?>>
 
 <head>
     <meta charset="UTF-8">

@@ -2680,3 +2680,161 @@ body {
 /* ── Footer stays dark intentionally ── */
 /* footer uses var(--dark) = #1a1004 – looks fine in both modes */
 
+
+/* ══════════════════════════════════════════════════════════
+   SwiftBite — Language Switcher Styles
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Language Switcher ───────────────────────────────────── */
+.lang-switcher {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.lang-globe {
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: 6px 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+  user-select: none;
+}
+
+.lang-switcher:hover .lang-globe {
+  background: rgba(255, 79, 0, 0.1);
+}
+
+/* Dropdown hidden by default */
+.lang-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #fff;
+  border: 1px solid #f0e8df;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  min-width: 130px;
+  overflow: hidden;
+  z-index: 9999;
+  flex-direction: column;
+}
+
+.lang-switcher:hover .lang-dropdown,
+.lang-switcher:focus-within .lang-dropdown {
+  display: flex;
+}
+
+.lang-option {
+  display: block;
+  padding: 10px 16px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #3d2c1e;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.lang-option:hover {
+  background: #fff4ee;
+  color: #ff4f00;
+}
+
+.lang-option.lang-active {
+  background: #ff4f00;
+  color: #fff;
+  font-weight: 700;
+}
+
+/* ── RTL support ─────────────────────────────────────────── */
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Flexbox automatically handles RTL if direction is rtl. 
+   We just need to fix absolute positioning, margins, and paddings. */
+[dir="rtl"] .lang-dropdown {
+  right: auto;
+  left: 0;
+}
+
+[dir="rtl"] .hero::before {
+  right: auto;
+  left: -100px;
+}
+
+[dir="rtl"] .hero::after {
+  left: auto;
+  right: -60px;
+}
+
+[dir="rtl"] .btn-outline-dark .play-icon svg {
+  margin-left: 0;
+  margin-right: 2px;
+  transform: rotate(180deg);
+}
+
+[dir="rtl"] .float-card[style*="right: -50px"] {
+  right: auto !important;
+  left: -50px !important;
+}
+
+[dir="rtl"] .float-card[style*="left: -70px"] {
+  left: auto !important;
+  right: -70px !important;
+}
+
+[dir="rtl"] .float-card[style*="left: -90px"] {
+  left: auto !important;
+  right: -90px !important;
+}
+
+[dir="rtl"] .nav-user-btn {
+  flex-direction: row;
+}
+
+[dir="rtl"] .nav-cart-link {
+  flex-direction: row;
+}
+
+[dir="rtl"] .promo-banner {
+  flex-direction: row;
+}
+
+[dir="rtl"] .footer-grid {
+  text-align: right;
+}
+
+[dir="rtl"] .footer-social {
+  justify-content: flex-start;
+}
+
+[dir="rtl"] .search-input-wrap svg {
+  margin-right: 0;
+  margin-left: 10px;
+}
+
+/* ── Dark Mode for Language Switcher ─────────────────────── */
+[data-theme="dark"] .lang-dropdown {
+  background: var(--surface);
+  border-color: rgba(255, 79, 0, 0.2);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 4px 16px rgba(255,79,0,0.1);
+}
+
+[data-theme="dark"] .lang-option {
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .lang-option:hover {
+  background: rgba(255, 79, 0, 0.1);
+  color: var(--orange);
+}
+
+[data-theme="dark"] .lang-option.lang-active {
+  background: var(--orange);
+  color: #fff;
+}

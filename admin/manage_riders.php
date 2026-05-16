@@ -43,13 +43,13 @@ $pending = $pdo->query("SELECT * FROM users WHERE role = 'delivery_partner' AND 
 $approved = $pdo->query("SELECT * FROM users WHERE role = 'delivery_partner' AND is_approved = 1 ORDER BY created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= currentLang() ?>" <?= isRtlLang() ? 'dir="rtl"' : '' ?>>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Riders — SwiftBite Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css?v=8">
+    <link rel="stylesheet" href="../assets/css/style.css?v=9">
     <style>
         .page { padding: 100px 24px 60px; min-height: 100vh; background: var(--cream); }
         .inner { max-width: 1100px; margin: 0 auto; }

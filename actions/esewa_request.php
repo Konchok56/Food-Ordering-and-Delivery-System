@@ -37,7 +37,7 @@ $success_url = $base_url . $folder_path . "/esewa_success.php";
 $failure_url = $base_url . $folder_path . "/esewa_failure.php";
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= currentLang() ?>" <?= isRtlLang() ? 'dir="rtl"' : '' ?>>
 
 <head>
     <meta charset="UTF-8">

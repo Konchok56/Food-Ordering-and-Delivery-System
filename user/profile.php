@@ -21,13 +21,13 @@ $error = $_SESSION['profile_error'] ?? '';
 unset($_SESSION['profile_success'], $_SESSION['profile_error']);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= currentLang() ?>" <?= isRtlLang() ? 'dir="rtl"' : '' ?>>
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Profile — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../assets/css/style.css?v=8" />
+    <link rel="stylesheet" href="../assets/css/style.css?v=9" />
     <style>
         .page { padding: 100px 24px 60px; min-height: 100vh; background: var(--cream); }
         .inner { max-width: 600px; margin: 0 auto; }
@@ -126,7 +126,8 @@ unset($_SESSION['profile_success'], $_SESSION['profile_error']);
     <?php include '../templates/floating_menu.php'; ?>
 
     <?php include '../templates/footer.php'; ?>
-    <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/theme.js"></script>
+<script src="../assets/js/script.js"></script>
     <script src="../assets/js/cart.js"></script>
 </body>
 </html>

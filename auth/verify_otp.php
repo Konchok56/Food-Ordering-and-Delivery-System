@@ -18,7 +18,7 @@ if ($at_pos > 2) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= currentLang() ?>" <?= isRtlLang() ? 'dir="rtl"' : '' ?>>
 <head>
     <title>Verify OTP — SwiftBite</title>
     <meta charset="UTF-8">

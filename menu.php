@@ -64,7 +64,7 @@ function menuUrl($extra=[]) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= currentLang() ?>" <?= isRtlLang() ? 'dir="rtl"' : '' ?>>
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -73,7 +73,7 @@ function menuUrl($extra=[]) {
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="assets/css/style.css?v=8" />
+    <link rel="stylesheet" href="assets/css/style.css?v=9" />
     <style>
         .menu-page { padding-top: 100px; min-height: 100vh; background: var(--cream, #fff9f5); }
 
@@ -87,8 +87,8 @@ function menuUrl($extra=[]) {
         .menu-search-wrap { max-width:700px; margin:0 auto 24px; padding:0 24px; }
         .menu-search-bar {
             display:flex; gap:10px; align-items:center;
-            background:#fff; border-radius:16px; padding:14px 20px;
-            box-shadow:0 2px 16px rgba(0,0,0,0.07); border:2px solid var(--cream2,#f0e8e0);
+            background:var(--surface, #fff); border-radius:16px; padding:14px 20px;
+            box-shadow:0 2px 16px rgba(0,0,0,0.07); border:2px solid var(--border-subtle, #f0e8e0);
             transition:border-color 0.2s;
         }
         .menu-search-bar:focus-within { border-color:var(--orange,#ff4f00); }
@@ -101,7 +101,7 @@ function menuUrl($extra=[]) {
         /* Category tabs */
         .menu-filters { display:flex; gap:10px; padding:0 24px 20px; overflow-x:auto; flex-wrap:wrap; justify-content:center; }
         .menu-filters::-webkit-scrollbar { display:none; }
-        .filter-tab { display:inline-flex; align-items:center; gap:6px; padding:9px 20px; border-radius:999px; border:2px solid var(--cream2,#f0e8e0); background:#fff; color:var(--text); font-weight:600; font-size:0.88rem; cursor:pointer; transition:all 0.22s; white-space:nowrap; text-decoration:none; }
+        .filter-tab { display:inline-flex; align-items:center; gap:6px; padding:9px 20px; border-radius:999px; border:2px solid var(--border-subtle,#f0e8e0); background:var(--surface, #fff); color:var(--text-main); font-weight:600; font-size:0.88rem; cursor:pointer; transition:all 0.22s; white-space:nowrap; text-decoration:none; }
         .filter-tab:hover { border-color:var(--orange,#ff4f00); color:var(--orange,#ff4f00); transform:translateY(-1px); }
         .filter-tab.active { background:var(--orange,#ff4f00); color:#fff; border-color:var(--orange,#ff4f00); box-shadow:0 4px 16px rgba(255,79,0,0.28); }
         .tab-count { background:rgba(0,0,0,0.1); padding:1px 7px; border-radius:999px; font-size:0.74rem; }
@@ -111,20 +111,20 @@ function menuUrl($extra=[]) {
         .menu-body { display:grid; grid-template-columns:260px 1fr; gap:24px; padding:0 24px 80px; max-width:1400px; margin:0 auto; align-items:start; }
 
         /* Sidebar */
-        .filter-sidebar { background:#fff; border-radius:20px; box-shadow:0 2px 20px rgba(0,0,0,0.07); padding:0; position:sticky; top:100px; overflow:hidden; box-sizing:border-box; width:100%; }
+        .filter-sidebar { background:var(--surface, #fff); border-radius:20px; box-shadow:0 2px 20px rgba(0,0,0,0.07); padding:0; position:sticky; top:100px; overflow:hidden; box-sizing:border-box; width:100%; border:1px solid var(--border-subtle); }
         .fs-section { padding:20px 22px 0; box-sizing:border-box; width:100%; overflow:hidden; }
         .fs-section:last-of-type { padding-bottom:22px; }
         .fs-title { font-size:0.72rem; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color:#aaa; margin-bottom:12px; display:flex; align-items:center; gap:7px; }
         .fs-title svg { color:var(--orange,#ff4f00); }
-        .fs-divider { height:1px; background:var(--cream2,#f0e8e0); margin:16px 0 0; }
+        .fs-divider { height:1px; background:var(--border-subtle,#f0e8e0); margin:16px 0 0; }
 
         /* Sort radio list */
         .sort-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:4px; }
         .sort-list li label {
             display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:10px;
-            cursor:pointer; font-size:0.9rem; font-weight:500; color:var(--text); transition:background 0.15s;
+            cursor:pointer; font-size:0.9rem; font-weight:500; color:var(--text-main); transition:background 0.15s;
         }
-        .sort-list li label:hover { background:var(--cream,#fff9f5); }
+        .sort-list li label:hover { background:var(--surface2, #fff9f5); }
         .sort-list li input[type=radio] { display:none; }
         .sort-radio-dot {
             width:16px; height:16px; border-radius:50%; border:2px solid #ccc;
@@ -138,25 +138,25 @@ function menuUrl($extra=[]) {
         .price-row { display:flex; align-items:center; gap:6px; width:100%; box-sizing:border-box; }
         .price-row input[type=number] {
             width:0; flex:1; min-width:0;
-            padding:9px 8px; border:2px solid var(--cream2,#f0e8e0);
+            padding:9px 8px; border:2px solid var(--border-subtle,#f0e8e0);
             border-radius:10px; font-size:0.88rem; font-family:'DM Sans',sans-serif;
-            color:var(--text); outline:none; transition:border-color 0.2s;
-            -moz-appearance:textfield; background:var(--cream,#fff9f5);
+            color:var(--text-main); outline:none; transition:border-color 0.2s;
+            -moz-appearance:textfield; background:var(--surface2,#fff9f5);
             box-sizing:border-box;
         }
         .price-row input[type=number]::-webkit-inner-spin-button,
         .price-row input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
-        .price-row input[type=number]:focus { border-color:var(--orange,#ff4f00); background:#fff; }
+        .price-row input[type=number]:focus { border-color:var(--orange,#ff4f00); background:var(--surface, #fff); }
         .price-sep { color:#bbb; font-weight:700; flex-shrink:0; font-size:1rem; }
 
         /* Rating checkboxes */
         .rating-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:4px; }
         .rating-list li label {
             display:flex; align-items:center; justify-content:space-between; padding:8px 10px;
-            border-radius:10px; cursor:pointer; font-size:0.88rem; font-weight:600; color:var(--text);
+            border-radius:10px; cursor:pointer; font-size:0.88rem; font-weight:600; color:var(--text-main);
             transition:all 0.15s; border:2px solid transparent;
         }
-        .rating-list li label:hover { background:var(--cream,#fff9f5); }
+        .rating-list li label:hover { background:var(--surface2,#fff9f5); }
         .rating-list li input[type=radio] { display:none; }
         .rating-list li input[type=radio]:checked + label { color:var(--orange,#ff4f00); background:rgba(255,79,0,0.07); border-color:rgba(255,79,0,0.2); }
         .rating-check { width:18px; height:18px; border-radius:50%; border:2px solid #ddd; display:flex; align-items:center; justify-content:center; font-size:0.7rem; transition:all 0.2s; flex-shrink:0; }
@@ -171,13 +171,13 @@ function menuUrl($extra=[]) {
         .sb-btn-row { display:flex; gap:0; }
         .apply-btn { flex:1; padding:13px 8px; border:none; border-radius:0 0 0 20px; background:linear-gradient(135deg,var(--orange,#ff4f00),#e63600); color:#fff; font-family:'DM Sans',sans-serif; font-weight:800; font-size:0.9rem; cursor:pointer; text-align:center; margin-top:20px; transition:all 0.2s; letter-spacing:0.02em; box-shadow:0 4px 16px rgba(255,79,0,0.3); }
         .apply-btn:hover { box-shadow:0 8px 24px rgba(255,79,0,0.45); filter:brightness(1.05); }
-        .reset-btn { flex:0 0 auto; padding:13px 16px; border:none; border-radius:0 0 20px 0; background:#f5f5f5; color:#888; font-family:'DM Sans',sans-serif; font-weight:700; font-size:0.88rem; cursor:pointer; text-align:center; margin-top:20px; transition:all 0.2s; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:5px; border-left:1px solid #e8e8e8; }
+        .reset-btn { flex:0 0 auto; padding:13px 16px; border:none; border-radius:0 0 20px 0; background:var(--surface2,#f5f5f5); color:var(--text-muted,#888); font-family:'DM Sans',sans-serif; font-weight:700; font-size:0.88rem; cursor:pointer; text-align:center; margin-top:20px; transition:all 0.2s; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:5px; border-left:1px solid var(--border-subtle); }
         .reset-btn:hover { background:#ffe8e0; color:var(--orange,#ff4f00); }
 
         /* Main content */
         .menu-main {}
         .menu-results-info { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; gap:12px; }
-        .results-count { font-weight:700; color:var(--dark); font-size:0.95rem; }
+        .results-count { font-weight:700; color:var(--text-head); font-size:0.95rem; }
         .results-count span { color:var(--orange,#ff4f00); }
         .view-all { color:var(--orange,#ff4f00); font-weight:700; font-size:0.88rem; text-decoration:none; }
         .view-all:hover { text-decoration:underline; }
@@ -189,7 +189,7 @@ function menuUrl($extra=[]) {
         /* Empty */
         .menu-empty { text-align:center; padding:80px 20px; grid-column:1/-1; }
         .menu-empty .empty-icon { font-size:3.5rem; margin-bottom:14px; }
-        .menu-empty h3 { font-family:'Syne',sans-serif; color:var(--dark); font-size:1.3rem; margin-bottom:8px; }
+        .menu-empty h3 { font-family:'Syne',sans-serif; color:var(--text-head); font-size:1.3rem; margin-bottom:8px; }
         .menu-empty p { color:var(--muted); margin-bottom:20px; }
         .menu-empty a { display:inline-flex; padding:11px 26px; background:var(--orange,#ff4f00); color:#fff; border-radius:999px; font-weight:700; text-decoration:none; }
 
@@ -211,9 +211,9 @@ function menuUrl($extra=[]) {
 <div class="menu-page">
     <!-- Hero -->
     <div class="menu-hero">
-        <div class="section-tag">&#x1F37D;&#xFE0F; Our Menu</div>
-        <div class="section-title">Explore Our<br />Full Menu</div>
-        <p>Discover all the delicious dishes we have to offer.</p>
+        <div class="section-tag">&#x1F37D;&#xFE0F; <?= __('nav.menu') ?></div>
+        <div class="section-title"><?= __('menu.title', [], true) ?></div>
+        <p><?= __('menu.subtitle') ?></p>
     </div>
 
     <!-- Search -->
@@ -222,8 +222,8 @@ function menuUrl($extra=[]) {
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
             <input type="text" name="keyword" id="menuSearchInput"
                    value="<?php echo htmlspecialchars($keyword); ?>"
-                   placeholder="Search food, category..."
-                   autocomplete="off" data-autocomplete aria-label="Search menu">
+                   placeholder="<?= __('menu.search_placeholder') ?>"
+                   autocomplete="off" data-autocomplete aria-label="<?= __('menu.search_placeholder') ?>">
             <?php if ($activeCategory): ?><input type="hidden" name="category" value="<?php echo htmlspecialchars($activeCategory); ?>"><?php endif; ?>
             <?php if ($sortBy !== 'featured'): ?><input type="hidden" name="sort" value="<?php echo htmlspecialchars($sortBy); ?>"><?php endif; ?>
             <?php if ($minPrice !== ''): ?><input type="hidden" name="min_price" value="<?php echo (float)$minPrice; ?>"><?php endif; ?>
@@ -238,7 +238,7 @@ function menuUrl($extra=[]) {
     <!-- Category Tabs -->
     <div class="menu-filters">
         <a href="<?php echo menuUrl(['category'=>null]); ?>" class="filter-tab <?php echo $activeCategory===''?'active':''; ?>">
-            All <span class="tab-count"><?php echo array_sum(array_column($categories,'count')); ?></span>
+            <?= __('menu.all_categories') ?> <span class="tab-count"><?php echo array_sum(array_column($categories,'count')); ?></span>
         </a>
         <?php foreach ($categories as $cat): ?>
             <a href="<?php echo menuUrl(['category'=>$cat['category']]); ?>"
@@ -263,11 +263,11 @@ function menuUrl($extra=[]) {
                 <div class="fs-section">
                     <div class="fs-title">
                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 6h18M6 12h12M9 18h6"/></svg>
-                        Sort By
+                        <?= __('menu.sort_by') ?>
                     </div>
                     <ul class="sort-list">
                         <?php
-                        $sorts = ['featured'=>'Featured (Default)','rating'=>'Top Rated','newest'=>'Newest Arrivals','price_asc'=>'Price: Low to High','price_desc'=>'Price: High to Low'];
+                        $sorts = ['featured'=>__('menu.sort_featured'),'rating'=>__('menu.sort_rating'),'newest'=>__('menu.sort_newest'),'price_asc'=>__('menu.sort_price_asc'),'price_desc'=>__('menu.sort_price_desc')];
                         foreach ($sorts as $val=>$label): ?>
                             <li>
                                 <input type="radio" name="sort" id="sort_<?php echo $val; ?>" value="<?php echo $val; ?>" <?php echo $sortBy===$val?'checked':''; ?>>
@@ -286,13 +286,13 @@ function menuUrl($extra=[]) {
                 <div class="fs-section" style="padding-top:16px;">
                     <div class="fs-title">
                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 1 0 0 7h5a3.5 3.5 0 1 1 0 7H6"/></svg>
-                        Price Range
+                        <?= __('menu.price_range') ?>
                     </div>
                     <div class="price-row">
-                        <input type="number" name="min_price" placeholder="Min" min="0" step="1"
+                        <input type="number" name="min_price" placeholder="<?= __('menu.min') ?>" min="0" step="1"
                                value="<?php echo $minPrice!==''?(int)$minPrice:''; ?>">
                         <span class="price-sep">&mdash;</span>
-                        <input type="number" name="max_price" placeholder="Max" min="0" step="1"
+                        <input type="number" name="max_price" placeholder="<?= __('menu.max') ?>" min="0" step="1"
                                value="<?php echo $maxPrice!==''?(int)$maxPrice:''; ?>">
                     </div>
                 </div>
@@ -303,7 +303,7 @@ function menuUrl($extra=[]) {
                 <div class="fs-section" style="padding-top:16px;">
                     <div class="fs-title">
                         <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24" style="color:var(--orange,#ff4f00)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                        Min Rating
+                        <?= __('menu.min_rating') ?>
                     </div>
                     <ul class="rating-list">
                         <?php
@@ -319,14 +319,14 @@ function menuUrl($extra=[]) {
                         <?php endforeach; ?>
                     </ul>
                     <a href="<?php echo menuUrl(['min_rating'=>null]); ?>"
-                       class="any-rating-btn <?php echo $minRating===''?'active':''; ?>">Any Rating</a>
+                       class="any-rating-btn <?php echo $minRating===''?'active':''; ?>"><?= __('menu.any_rating') ?></a>
                 </div>
 
                 <div class="sb-btn-row">
-                    <button type="submit" class="apply-btn">Apply Filters</button>
+                    <button type="submit" class="apply-btn"><?= __('menu.apply_filters') ?></button>
                     <a href="menu.php<?php echo $keyword ? '?keyword='.urlencode($keyword) : ''; ?>" class="reset-btn" title="Reset all filters">
                         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                        Reset
+                        <?= __('menu.reset') ?>
                     </a>
                 </div>
             </form>
@@ -336,14 +336,14 @@ function menuUrl($extra=[]) {
         <div class="menu-main">
             <div class="menu-results-info">
                 <div class="results-count">
-                    Showing <span><?php echo count($foods); ?></span> item<?php echo count($foods)!==1?'s':''; ?>
-                    <?php if ($keyword): ?> for <span>"<?php echo htmlspecialchars($keyword); ?>"</span><?php endif; ?>
+                    <?= __('menu.showing') ?> <span><?php echo count($foods); ?></span> <?= __('menu.items') ?>
+                    <?php if ($keyword): ?> <?= __('menu.for') ?> <span>"<?php echo htmlspecialchars($keyword); ?>"</span><?php endif; ?>
                     <?php if ($activeCategory): ?>
                         <span class="search-tag"><?php echo htmlspecialchars($getCatEmoji($activeCategory).' '.$activeCategory); ?></span>
                     <?php endif; ?>
                 </div>
                 <?php if ($keyword||$activeCategory||$activeCity||$minPrice!==''||$maxPrice!==''||$minRating!==''||$sortBy!=='featured'): ?>
-                    <a href="menu.php" class="view-all">Clear filters &times;</a>
+                    <a href="menu.php" class="view-all"><?= __('menu.clear_filters', [], true) ?></a>
                 <?php endif; ?>
             </div>
 
@@ -351,9 +351,9 @@ function menuUrl($extra=[]) {
                 <?php if (empty($foods)): ?>
                     <div class="menu-empty">
                         <div class="empty-icon">&#x1F50D;</div>
-                        <h3>No results found</h3>
-                        <p><?php echo $keyword ? 'Nothing matched "'.htmlspecialchars($keyword).'". Try a different keyword.' : 'No items match your filters.'; ?></p>
-                        <a href="menu.php">View All Items</a>
+                        <h3><?= __('menu.no_results') ?></h3>
+                        <p><?php echo $keyword ? str_replace(':keyword', htmlspecialchars($keyword), __('menu.nothing_matched')) : __('menu.no_match_filters'); ?></p>
+                        <a href="menu.php"><?= __('menu.view_all_items') ?></a>
                     </div>
                 <?php else: ?>
                     <?php foreach ($foods as $food): ?>
@@ -402,6 +402,7 @@ function menuUrl($extra=[]) {
 
 <?php include 'templates/footer.php'; ?>
 <?php include 'templates/floating_menu.php'; ?>
+<script src="assets/js/theme.js"></script>
 <script src="assets/js/script.js"></script>
 <script src="assets/js/cart.js"></script>
 <script src="assets/js/search_autocomplete.js"></script>

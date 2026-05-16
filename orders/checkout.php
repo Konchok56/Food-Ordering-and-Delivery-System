@@ -42,7 +42,7 @@ $total = $subtotal + $deliveryFee;
 $cartCount = getCartCount($pdo, $user_id);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= currentLang() ?>" <?= isRtlLang() ? 'dir="rtl"' : '' ?>>
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -50,7 +50,7 @@ $cartCount = getCartCount($pdo, $user_id);
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../assets/css/style.css?v=8" />
+    <link rel="stylesheet" href="../assets/css/style.css?v=9" />
     <style>
         .checkout-page { padding: 100px 24px 60px; min-height: 100vh; }
         .checkout-inner { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 380px; gap: 32px; align-items: start; }
@@ -236,7 +236,8 @@ $cartCount = getCartCount($pdo, $user_id);
     </div>
 
     <?php include '../templates/footer.php'; ?>
-    <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/theme.js"></script>
+<script src="../assets/js/script.js"></script>
     <script>
         const originalTotal = <?php echo $total; ?>;
         const subtotal = <?php echo $subtotal; ?>;

@@ -7,10 +7,10 @@ $foods = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <section class="section" id="menu" style="padding-top: 0;">
   <div class="section-header">
     <div>
-      <div class="section-tag">Today's Picks</div>
-      <div class="section-title">Most Popular<br />Right Now</div>
+      <div class="section-tag"><?= __('section.foods_tag') ?></div>
+      <div class="section-title"><?= __('section.foods_title', [], true) ?></div>
     </div>
-    <a href="menu.php" class="view-all">View All →</a>
+    <a href="menu.php" class="view-all"><?= __('btn.view_all') ?></a>
   </div>
 
   <div class="foods-grid">

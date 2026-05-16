@@ -11,7 +11,7 @@ $error = $_SESSION['rp_error'] ?? '';
 unset($_SESSION['rp_error']);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= currentLang() ?>" <?= isRtlLang() ? 'dir="rtl"' : '' ?>>
 <head>
     <title>Reset Password — SwiftBite</title>
     <meta charset="UTF-8">

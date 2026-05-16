@@ -18,10 +18,10 @@ try {
 <section class="section" id="categories">
   <div class="section-header">
     <div>
-      <div class="section-tag">Browse Categories</div>
-      <div class="section-title">What Are You<br />Craving Today?</div>
+      <div class="section-tag"><?= __('section.categories_tag') ?></div>
+      <div class="section-title"><?= __('section.categories_title', [], true) ?></div>
     </div>
-    <a href="menu.php" class="view-all">View All →</a>
+    <a href="menu.php" class="view-all"><?= __('btn.view_all') ?></a>
   </div>
 
   <div class="categories-grid">

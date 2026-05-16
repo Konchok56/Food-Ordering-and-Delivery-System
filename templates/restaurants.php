@@ -24,10 +24,10 @@ if (!empty($featuredRests)):
 <section class="section" id="restaurants">
   <div class="section-header">
     <div>
-      <div class="section-tag">Popular Restaurants</div>
-      <div class="section-title">Top Rated<br />Near You</div>
+      <div class="section-tag"><?= __('section.restaurants_tag') ?></div>
+      <div class="section-title"><?= __('section.restaurants_title', [], true) ?></div>
     </div>
-    <a href="restaurants.php" class="view-all">View All →</a>
+    <a href="restaurants.php" class="view-all"><?= __('btn.view_all') ?></a>
   </div>
 
   <div class="rest-home-grid">

@@ -1,16 +1,10 @@
 <?php
 session_start();
-include('../core/config.php');
 include('../core/db.php');
 include('../core/csrf.php');
 include('../core/validation.php');
 include('../core/notification_helper.php');
 include_once('../core/mailer_helper.php');
-
-
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 
 // Validate CSRF
 requireCsrf();
@@ -67,7 +61,7 @@ if (empty($cart)) {
 $order_restaurant_id = null;
 foreach ($cart as $item) {
     if (!empty($item['food_restaurant_id'])) {
-        $order_restaurant_id = (int) $item['food_restaurant_id'];
+        $order_restaurant_id = (int)$item['food_restaurant_id'];
         break;
     }
 }
@@ -86,39 +80,20 @@ if (empty($promo_code)) {
 }
 
 $discountAmount = 0;
-$promo = null; // keep reference for usage tracking
 
 if ($promo_code !== null) {
     $stmtPromo = $pdo->prepare("SELECT * FROM promo_codes WHERE code = ? AND is_active = 1");
     $stmtPromo->execute([strtoupper($promo_code)]);
     $promo = $stmtPromo->fetch(PDO::FETCH_ASSOC);
     if ($promo && (empty($promo['expiry_date']) || strtotime($promo['expiry_date']) >= time())) {
-        // ── GDODS-40: Check global usage limit ──
-        if ($promo['usage_limit'] !== null && (int)$promo['usage_count'] >= (int)$promo['usage_limit']) {
-            $promo = null;
-            $promo_code = null;
+        if ($promo['type'] === 'percent') {
+            $discountAmount = ($promo['value'] / 100) * $subtotal;
+        } else {
+            $discountAmount = $promo['value'];
         }
-        // ── GDODS-40: Check per-user usage ──
-        if ($promo) {
-            $usChk = $pdo->prepare("SELECT id FROM promo_usage WHERE promo_code_id = ? AND user_id = ?");
-            $usChk->execute([$promo['id'], $user_id]);
-            if ($usChk->fetch()) {
-                $promo = null;
-                $promo_code = null;
-            }
-        }
-        if ($promo) {
-            if ($promo['type'] === 'percent') {
-                $discountAmount = ($promo['value'] / 100) * $subtotal;
-            } else {
-                $discountAmount = $promo['value'];
-            }
-            if ($discountAmount > $subtotal)
-                $discountAmount = $subtotal;
-            $total -= $discountAmount;
-        }
+        if ($discountAmount > $subtotal) $discountAmount = $subtotal;
+        $total -= $discountAmount;
     } else {
-        $promo = null;
         $promo_code = null;
     }
 }
@@ -134,22 +109,10 @@ try {
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)
     ");
     $stmt->execute([
-        $user_id,
-        $name,
-        $email,
-        $phone,
-        $address,
-        $city,
-        $payment_method,
-        $subtotal,
-        $deliveryFee,
-        $discountAmount,
-        $promo_code,
-        $total,
-        $order_restaurant_id,
-        $notes
+        $user_id, $name, $email, $phone, $address, $city, $payment_method, 
+        $subtotal, $deliveryFee, $discountAmount, $promo_code, $total, $order_restaurant_id, $notes
     ]);
-
+    
     $order_id = $pdo->lastInsertId();
 
     // 5. Insert Order Items
@@ -165,13 +128,13 @@ try {
         $itemSubtotal = $item['price'] * $item['quantity'];
 
         $itemStmt->execute([
-            $order_id,
-            $item['food_id'] ?? null,
-            $item['food_name'],
-            $item['price'],
-            $item['quantity'],
-            $itemSubtotal,
-            $imgPath,
+            $order_id, 
+            $item['fid'] ?? null, 
+            $item['food_name'], 
+            $item['price'], 
+            $item['quantity'], 
+            $itemSubtotal, 
+            $imgPath, 
             $emojiIcon
         ]);
     }
@@ -183,52 +146,28 @@ try {
     $userStmt = $pdo->prepare("SELECT phone, address FROM users WHERE id = ?");
     $userStmt->execute([$user_id]);
     $userRow = $userStmt->fetch(PDO::FETCH_ASSOC);
-
+    
     if (empty($userRow['phone']) || empty($userRow['address'])) {
         $pdo->prepare("UPDATE users SET phone = ?, address = ?, city = ? WHERE id = ?")->execute([$phone, $address, $city, $user_id]);
-    }
-
-    // ── GDODS-40: Record promo usage and increment counter ──
-    if ($promo && $promo_code !== null) {
-        $pdo->prepare("INSERT INTO promo_usage (promo_code_id, user_id, order_id) VALUES (?, ?, ?)")
-            ->execute([$promo['id'], $user_id, $order_id]);
-        $pdo->prepare("UPDATE promo_codes SET usage_count = usage_count + 1 WHERE id = ?")
-            ->execute([$promo['id']]);
     }
 
     // Commit
     $pdo->commit();
 
-    // ── GDODS-48: Auto-assign nearest available rider ──
-    try {
-        include_once('../core/rider_assignment_helper.php');
-        assignNearestRider($pdo, $order_id, $address);
-    } catch (Exception $e) {
-        // Non-critical — order still goes through if no rider available
-    }
-
     // Create notification
     $firstImage = null;
     foreach ($cart as $ci) {
-        if (!empty($ci['food_image'])) {
-            $firstImage = $ci['food_image'];
-            break;
-        }
-        if (!empty($ci['image_path'])) {
-            $firstImage = $ci['image_path'];
-            break;
-        }
+        if (!empty($ci['food_image'])) { $firstImage = $ci['food_image']; break; }
+        if (!empty($ci['image_path'])) { $firstImage = $ci['image_path']; break; }
     }
     $orderLabel = '#' . str_pad($order_id, 5, '0', STR_PAD_LEFT);
     addNotification(
-        $pdo,
-        $user_id,
-        'order_placed',
+        $pdo, $user_id, 'order_placed',
         'Order Placed Successfully! 🎉',
         'Your order ' . $orderLabel . ' has been placed. Total: Rs. ' . number_format($total, 2) . '. We\'ll start preparing it soon!',
         '🛒',
         $firstImage,
-        SITE_BASE_URL . '/orders/order_confirmation.php?id=' . $order_id
+        '../orders/order_confirmation.php?id=' . $order_id
     );
 
     // --- 📧 Send Order Confirmation Email ---

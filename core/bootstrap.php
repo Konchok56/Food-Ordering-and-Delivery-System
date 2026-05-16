@@ -9,12 +9,29 @@
 require_once __DIR__ . '/config.php';
 
 // ── Error reporting based on environment ──────────────────
+// (Must be before any other includes so errors are visible during setup)
 if (APP_ENV === 'development') {
     ini_set('display_errors', 1);
     error_reporting(E_ALL);
 } else {
     ini_set('display_errors', 0);
     error_reporting(0);
+}
+
+// ── Language / Localization ────────────────────────────────
+if (file_exists(__DIR__ . '/lang.php')) {
+    require_once __DIR__ . '/lang.php';
+} else {
+    // Fallback: define a no-op __ function so pages don't crash
+    // if lang.php is not yet installed
+    if (!function_exists('__')) {
+        function __(string $key, array $replace = [], bool $allowHtml = false): string {
+            return $key;
+        }
+        function currentLang(): string { return 'en'; }
+        function isRtlLang(): bool { return false; }
+        function langSwitchUrl(string $code): string { return '?lang=' . $code; }
+    }
 }
 
 // ── Security headers ──────────────────────────────────────
@@ -53,10 +70,6 @@ if (!isset($GLOBALS['pdo'])) {
     }
 }
 $pdo = $GLOBALS['pdo'];
-
-// ── Auto-apply pending DB migrations ─────────────────────
-// require_once __DIR__ . '/auto_migrate.php';
-// runAutoMigrations($pdo);
 
 // ── Remember-me auto login ────────────────────────────────
 if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
@@ -181,7 +194,7 @@ function renderError(int $code, string $title, string $message): string {
     http_response_code($code);
     return <<<HTML
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang="<?= currentLang() ?>" <?= isRtlLang() ? 'dir="rtl"' : '' ?>>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width,initial-scale=1">

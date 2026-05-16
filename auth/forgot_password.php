@@ -6,7 +6,7 @@ $success = $_SESSION['fp_success'] ?? '';
 unset($_SESSION['fp_error'], $_SESSION['fp_success']);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= currentLang() ?>" <?= isRtlLang() ? 'dir="rtl"' : '' ?>>
 <head>
     <title>Forgot Password — SwiftBite</title>
     <meta charset="UTF-8">

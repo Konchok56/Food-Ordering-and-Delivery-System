@@ -2,8 +2,8 @@
   <div class="how-section">
     <div class="section-header" style="margin-bottom: 0;">
       <div>
-        <div class="section-tag">Simple Steps</div>
-        <div class="section-title">How SwiftBite Works</div>
+        <div class="section-tag"><?= __('section.how_tag') ?></div>
+        <div class="section-title"><?= __('section.how_title') ?></div>
       </div>
     </div>
 

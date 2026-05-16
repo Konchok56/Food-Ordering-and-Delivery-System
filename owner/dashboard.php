@@ -71,7 +71,7 @@ $statusConfig = [
 ];
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= currentLang() ?>" <?= isRtlLang() ? 'dir="rtl"' : '' ?>>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -131,7 +131,7 @@ $statusConfig = [
         <a href="dashboard.php" class="<?php echo $filter === 'all' ? 'active' : ''; ?>">📊 Dashboard</a>
         <a href="dashboard.php?filter=pending" class="<?php echo $filter === 'pending' ? 'active' : ''; ?>">🔔 Pending</a>
         <a href="dashboard.php?filter=preparing" class="<?php echo $filter === 'preparing' ? 'active' : ''; ?>">👩‍🍳 Preparing</a>
-        <a href="analytics.php">📈 Analytics</a>
+        <a href="../index.php">🌐 View Main Site</a>
     </nav>
     <div class="sidebar-footer">
         <a href="../auth/logout.php" style="color:var(--muted);text-decoration:none;font-size:0.9rem;font-weight:600;">🚪 Logout</a>

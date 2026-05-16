@@ -12,13 +12,19 @@
 
   // Wire toggle button once DOM is ready
   document.addEventListener('DOMContentLoaded', function () {
-    const btn = document.getElementById('theme-toggle');
+    const btn      = document.getElementById('theme-toggle');
     if (!btn) return;
+
+    const iconLight = btn.querySelector('.theme-icon-light');
+    const iconDark  = btn.querySelector('.theme-icon-dark');
 
     function syncBtn(theme) {
       btn.title = theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode';
       btn.setAttribute('aria-label', btn.title);
       btn.setAttribute('data-active-theme', theme);
+      // Show moon in light mode (click to go dark), sun in dark mode (click to go light)
+      if (iconLight) iconLight.style.display = theme === 'dark' ? 'none'   : 'inline';
+      if (iconDark)  iconDark.style.display  = theme === 'dark' ? 'inline' : 'none';
     }
 
     syncBtn(saved);

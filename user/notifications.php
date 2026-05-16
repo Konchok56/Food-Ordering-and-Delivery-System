@@ -19,14 +19,14 @@ $notifications = getNotifications($pdo, $user_id, 100);
 markAllNotificationsRead($pdo, $user_id);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= currentLang() ?>" <?= isRtlLang() ? 'dir="rtl"' : '' ?>>
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Notifications — SwiftBite</title>
     <meta name="description" content="View all your SwiftBite notifications — order updates, delivery status, account changes and more.">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../assets/css/style.css?v=8" />
+    <link rel="stylesheet" href="../assets/css/style.css?v=9" />
     <style>
         .notif-page {
             padding: 100px 24px 60px;
@@ -448,7 +448,8 @@ markAllNotificationsRead($pdo, $user_id);
     <?php include '../templates/floating_menu.php'; ?>
     <?php include '../templates/footer.php'; ?>
 
-    <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/theme.js"></script>
+<script src="../assets/js/script.js"></script>
     <script src="../assets/js/cart.js"></script>
     <script>
     // Filter tabs

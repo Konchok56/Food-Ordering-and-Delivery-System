@@ -26,7 +26,7 @@ $totalToday    = $pdo->query("SELECT COUNT(*) FROM orders WHERE status='delivere
 $totalRiders   = $pdo->query("SELECT COUNT(*) FROM users WHERE role='delivery_partner' AND is_approved=1")->fetchColumn();
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= currentLang() ?>" <?= isRtlLang() ? 'dir="rtl"' : '' ?>>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
