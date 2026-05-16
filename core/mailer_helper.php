@@ -63,7 +63,7 @@ function _swiftbiteEmailWrapper($content)
             <table width='600' cellpadding='0' cellspacing='0' style='max-width:600px; width:100%;'>
               <tr>
                 <td style='background: linear-gradient(135deg, #1a0a00, #3d1f00); padding: 28px 32px; border-radius: 16px 16px 0 0; text-align: center;'>
-                  <h1 style='color:#ff6b1a; margin:0; font-size:26px; letter-spacing:2px;'><i class="fa-solid fa-burger"></i> SwiftBite</h1>
+                  <h1 style='color:#ff6b1a; margin:0; font-size:26px; letter-spacing:2px;'><i class=\"fa-solid fa-burger\"></i> SwiftBite</h1>
                   <p style='color:#c9a07d; margin:6px 0 0; font-size:13px;'>Fast. Fresh. Delivered.</p>
                 </td>
               </tr>
@@ -106,7 +106,7 @@ function sendOrderPlacedEmail(
   if (is_array($items)) {
     foreach ($items as $item) {
       $itemName = htmlspecialchars((string)($item['food_name'] ?? 'Item'));
-      $itemEmoji = htmlspecialchars((string)($item['emoji'] ?? ($item['food_emoji'] ?? '<i class="fa-solid fa-utensils"></i>')));
+      $itemEmoji = htmlspecialchars((string)($item['emoji'] ?? ($item['food_emoji'] ?? '<i class=\"fa-solid fa-utensils\"></i>')));
       $qty = (int)($item['quantity'] ?? 1);
       $price = (float)($item['price'] ?? 0);
       $itemTotal = number_format($price * $qty, 2);
@@ -130,7 +130,7 @@ function sendOrderPlacedEmail(
   }
 
   $content = "
-      <h2 style='color:#ff6b1a; margin:0 0 6px;'>Order Confirmed! <i class="fa-solid fa-champagne-glasses" style="color:#22c55e"></i></h2>
+      <h2 style='color:#ff6b1a; margin:0 0 6px;'>Order Confirmed! <i class=\"fa-solid fa-champagne-glasses\" style=\"color:#22c55e\"></i></h2>
       <p style='color:#3d2600; margin:0 0 20px;'>Hi $firstName, your order <strong>$orderLabel</strong> has been placed successfully.</p>
       <div style='background:#fff8f0; border-radius:10px; padding:16px 20px; margin-bottom:24px;'>
         <table width='100%' cellpadding='0' cellspacing='0'>
@@ -151,12 +151,12 @@ function sendOrderPlacedEmail(
         </table>
       </div>
       <div style='background:linear-gradient(135deg,#fff3e8,#ffe0c2); border-radius:10px; padding:16px 20px; text-align:center;'>
-        <p style='margin:0; color:#3d2600; font-size:14px;'><i class="fa-solid fa-motorcycle"></i> We're preparing your order. You'll get another email when it's on its way!</p>
+        <p style='margin:0; color:#3d2600; font-size:14px;'><i class=\"fa-solid fa-motorcycle\"></i> We're preparing your order. You'll get another email when it's on its way!</p>
       </div>
     ";
 
   $body = _swiftbiteEmailWrapper($content);
-  $subject = "<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> Order $orderLabel Confirmed — SwiftBite";
+  $subject = "<i class=\"fa-solid fa-circle-check\" style=\"color:#22c55e\"></i> Order $orderLabel Confirmed — SwiftBite";
   return sendSwiftBiteEmail($to, $subject, $body);
 }
 
@@ -166,7 +166,7 @@ function sendOrderCancelledByCustomerEmail($to, $customerName, $order_id)
   $firstName = htmlspecialchars(explode(' ', trim($customerName))[0]);
 
   $content = "
-      <h2 style='color:#d93025; margin:0 0 6px;'>Order Cancelled <i class="fa-solid fa-trash"></i></h2>
+      <h2 style='color:#d93025; margin:0 0 6px;'>Order Cancelled <i class=\"fa-solid fa-trash\"></i></h2>
       <p style='color:#3d2600; margin:0 0 20px;'>Hi $firstName, your order <strong>$orderLabel</strong> has been successfully cancelled as per your request.</p>
       <div style='background:#fff0f0; border:1px solid #ffcccb; border-radius:10px; padding:16px 20px; margin-bottom:24px;'>
         <p style='margin:0; color:#3d2600; font-size:14px;'>The order has been removed from our system. If you change your mind, we're always here to serve you again!</p>
@@ -177,7 +177,7 @@ function sendOrderCancelledByCustomerEmail($to, $customerName, $order_id)
     ";
 
   $body = _swiftbiteEmailWrapper($content);
-  $subject = "<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> Order $orderLabel Cancelled — SwiftBite";
+  $subject = "<i class=\"fa-solid fa-circle-xmark\" style=\"color:#ef4444\"></i> Order $orderLabel Cancelled — SwiftBite";
   return sendSwiftBiteEmail($to, $subject, $body);
 }
 ?>
