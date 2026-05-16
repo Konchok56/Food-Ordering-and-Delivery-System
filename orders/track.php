@@ -187,8 +187,8 @@ if (!empty($order['restaurant_id'])) {
         const restLat = <?php echo $restaurantLat; ?>;
         const restLng = <?php echo $restaurantLng; ?>;
         // Destination offset (approx — replace with real coords if available)
-        const destLat = riderLat + 0.008;
-        const destLng = riderLng + 0.005;
+        const destLat = <?php echo (float)($order['customer_lat'] ?: 27.7172); ?>;
+        const destLng = <?php echo (float)($order['customer_lng'] ?: 85.3240); ?>;
 
         // ── Icons ──
         const riderIcon = L.divIcon({

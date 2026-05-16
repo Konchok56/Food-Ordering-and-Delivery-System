@@ -130,8 +130,8 @@ try {
     // 4. Insert Order
     $stmt = $pdo->prepare("
         INSERT INTO orders 
-        (user_id, customer_name, customer_email, customer_phone, delivery_address, delivery_city, payment_method, subtotal, delivery_fee, discount_amount, promo_code, total, status, restaurant_id, notes) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)
+        (user_id, customer_name, customer_email, customer_phone, delivery_address, delivery_city, customer_lat, customer_lng, payment_method, subtotal, delivery_fee, discount_amount, promo_code, total, status, restaurant_id, notes) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)
     ");
     $stmt->execute([
         $user_id,
@@ -140,6 +140,9 @@ try {
         $phone,
         $address,
         $city,
+        // GDODS-50: Store customer coordinates (Default Kathmandu if not in POST)
+        (float)($_POST['lat'] ?? 27.7172),
+        (float)($_POST['lng'] ?? 85.3240),
         $payment_method,
         $subtotal,
         $deliveryFee,
