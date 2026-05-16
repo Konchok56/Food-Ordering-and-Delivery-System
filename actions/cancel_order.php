@@ -29,7 +29,7 @@ if ($order_id <= 0) {
 }
 
 // Fetch the order — must belong to this user
-$stmt = $pdo->prepare("SELECT id, status, created_at FROM orders WHERE id = ? AND user_id = ? LIMIT 1");
+$stmt = $pdo->prepare("SELECT id, status, created_at, assigned_rider_id FROM orders WHERE id = ? AND user_id = ? LIMIT 1");
 $stmt->execute([$order_id, $user_id]);
 $order = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -38,8 +38,8 @@ if (!$order) {
     exit;
 }
 
-// Only 'pending' orders may be cancelled by the user
-if ($order['status'] !== 'pending') {
+// Only 'pending' or 'confirmed' orders may be cancelled by the user
+if (!in_array($order['status'], ['pending', 'confirmed'])) {
     $statusLabels = [
         'confirmed'        => 'already confirmed',
         'preparing'        => 'already being prepared',
@@ -90,6 +90,18 @@ try {
         $cancelImage,
         SITE_BASE_URL . '/user/order_history.php'
     );
+    
+    // Notify the rider if one was assigned
+    if (!empty($order['assigned_rider_id'])) {
+        addNotification(
+            $pdo, (int)$order['assigned_rider_id'], 'order_cancelled',
+            'Order Cancelled by Customer ❌',
+            'The order ' . $orderLabel . ' you were assigned to has been cancelled by the customer.',
+            '🚫',
+            $cancelImage,
+            SITE_BASE_URL . '/delivery/dashboard.php'
+        );
+    }
 
     // --- 📧 Send Cancellation Email ---
     $userEmailStmt = $pdo->prepare("SELECT email, name FROM users WHERE id = ? LIMIT 1");
