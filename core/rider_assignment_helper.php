@@ -39,17 +39,19 @@ function assignNearestRider($pdo, $orderId, $customerAddress) {
     $rider = $riderStmt->fetch(PDO::FETCH_ASSOC);
 
     if ($rider) {
-        // 3. Assign rider to order
+        // 3. Assign rider to order (Pending Acceptance)
         $update = $pdo->prepare("
             UPDATE orders 
-            SET delivery_partner_name = ?, 
+            SET delivery_partner_id = ?,
+                delivery_partner_name = ?, 
                 delivery_partner_phone = ?, 
                 delivery_lat = ?, 
                 delivery_lng = ?,
-                status = 'confirmed' 
+                status = 'assigned' 
             WHERE id = ?
         ");
         $update->execute([
+            $rider['id'],
             $rider['name'], 
             $rider['phone'], 
             $rider['last_lat'], 

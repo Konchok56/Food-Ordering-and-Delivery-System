@@ -22,7 +22,7 @@ unset($_SESSION['delivery_success'], $_SESSION['delivery_error']);
 
 // Stats
 $statsRow = $pdo->query("SELECT
-    COUNT(CASE WHEN status IN ('pending','confirmed','preparing','out_for_delivery') THEN 1 END) AS active_count,
+    COUNT(CASE WHEN status IN ('pending','confirmed','assigned','preparing','picked_up','out_for_delivery') THEN 1 END) AS active_count,
     COUNT(CASE WHEN status = 'out_for_delivery' THEN 1 END) AS in_transit,
     COUNT(CASE WHEN status = 'delivered' AND DATE(updated_at) = CURDATE() THEN 1 END) AS delivered_today
     FROM orders")->fetch(PDO::FETCH_ASSOC);
@@ -40,9 +40,9 @@ $activeOrders = $pdo->query("
            COUNT(oi.id) AS item_count
     FROM orders o
     LEFT JOIN order_items oi ON oi.order_id = o.id
-    WHERE o.status IN ('pending','confirmed','preparing','out_for_delivery')
+    WHERE o.status IN ('pending','confirmed','assigned','preparing','picked_up','out_for_delivery')
     GROUP BY o.id
-    ORDER BY FIELD(o.status,'out_for_delivery','preparing','confirmed','pending'), o.created_at ASC
+    ORDER BY FIELD(o.status,'assigned','out_for_delivery','picked_up','preparing','confirmed','pending'), o.created_at ASC
 ")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
@@ -169,8 +169,10 @@ $activeOrders = $pdo->query("
         .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
         .s-pending        { background: rgba(255,184,48,0.15); color: #f0b429; }
         .s-confirmed      { background: rgba(0,122,255,0.12); color: #5ac8fa; }
+        .s-assigned       { background: rgba(255,79,0,0.2); color: var(--orange); border: 2px solid var(--orange); animation: pulse-border 1.5s infinite; }
         .s-preparing      { background: rgba(175,82,222,0.15); color: #bf5af2; }
-        .s-out_for_delivery { background: rgba(255,79,0,0.15); color: var(--orange); animation: pulse-border 2s infinite; }
+        .s-picked_up      { background: rgba(0,210,255,0.15); color: #00d2ff; }
+        .s-out_for_delivery { background: rgba(255,79,0,0.15); color: var(--orange); }
         .s-delivered      { background: rgba(52,199,89,0.15); color: #30d158; }
 
         @keyframes pulse-border { 0%,100%{opacity:1} 50%{opacity:0.7} }
@@ -373,12 +375,30 @@ $activeOrders = $pdo->query("
                     $statusLabels = [
                         'pending'          => ['⏳', 'Pending'],
                         'confirmed'        => ['👍', 'Confirmed'],
+                        'assigned'         => ['🔔', 'Assigned to You'],
                         'preparing'        => ['🧑‍🍳', 'Preparing'],
+                        'picked_up'        => ['📦', 'Picked Up'],
                         'out_for_delivery' => ['🛵', 'Out for Delivery'],
                     ];
                     [$sIcon, $sLabel] = $statusLabels[$order['status']] ?? ['📦', ucfirst($order['status'])];
                 ?>
-                <div class="order-card <?php echo $isPriority ? 'priority' : ''; ?>">
+                <div class="order-card <?php echo $order['status'] === 'assigned' ? 'priority' : ''; ?>">
+                    
+                    <!-- New Delivery Request Banner -->
+                    <?php if ($order['status'] === 'assigned'): ?>
+                    <div style="background: linear-gradient(135deg, var(--orange), #ff2400); color: #fff; padding: 24px; border-bottom: 4px solid rgba(0,0,0,0.15);">
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
+                            <div>
+                                <h3 style="margin:0; font-family:'Syne', sans-serif; font-size:1.4rem; font-weight:800;">🔔 New Delivery Request!</h3>
+                                <p style="margin:5px 0 0; opacity:0.9; font-weight:600;">You have been assigned this order. Please respond quickly.</p>
+                            </div>
+                            <div style="display: flex; gap: 12px;">
+                                <button type="button" class="btn-respond accept" data-order-id="<?php echo $order['id']; ?>" style="background:#fff; color:var(--orange); border:none; padding:12px 24px; border-radius:14px; font-weight:800; cursor:pointer; font-size:1rem; box-shadow:0 8px 20px rgba(0,0,0,0.2);">✅ Accept</button>
+                                <button type="button" class="btn-respond reject" data-order-id="<?php echo $order['id']; ?>" style="background:rgba(0,0,0,0.3); color:#fff; border:none; padding:12px 24px; border-radius:14px; font-weight:700; cursor:pointer; font-size:1rem; border: 1px solid rgba(255,255,255,0.3);">❌ Reject</button>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
 
                     <!-- Card Header -->
                     <div class="card-header">
@@ -389,7 +409,8 @@ $activeOrders = $pdo->query("
                         <div class="status-pill <?php echo $statusClass; ?>"><?php echo $sIcon . ' ' . $sLabel; ?></div>
                     </div>
 
-                    <!-- Rider + Status form inline fields -->
+                    <!-- Rider + Status form (Hidden if 'assigned') -->
+                    <?php if ($order['status'] !== 'assigned'): ?>
                     <form action="../actions/update_order_status.php" method="POST">
                         <?php echo csrfInput(); ?>
                         <input type="hidden" name="order_id" value="<?php echo (int)$order['id']; ?>">
@@ -410,7 +431,7 @@ $activeOrders = $pdo->query("
                             <div>
                                 <label class="inp-label">Update Status</label>
                                 <select class="sel" name="status" required>
-                                    <?php foreach (['pending','confirmed','preparing','out_for_delivery','delivered','cancelled'] as $s): ?>
+                                    <?php foreach (['pending','confirmed','assigned','preparing','picked_up','out_for_delivery','delivered','cancelled'] as $s): ?>
                                         <option value="<?php echo $s; ?>" <?php echo $order['status'] === $s ? 'selected' : ''; ?>>
                                             <?php echo ucwords(str_replace('_', ' ', $s)); ?>
                                         </option>
@@ -422,6 +443,7 @@ $activeOrders = $pdo->query("
                             </div>
                         </div>
                     </form>
+                    <?php endif; ?>
 
                     <!-- Customer & Order Info -->
                     <div class="card-body">
@@ -869,6 +891,45 @@ if (availToggle) {
         }
     });
 }
+
+// ── New Feature: Accept/Reject Handlers ──
+document.querySelectorAll('.btn-respond').forEach(btn => {
+    btn.addEventListener('click', async function() {
+        const orderId = this.dataset.orderId;
+        const action = this.classList.contains('accept') ? 'accept' : 'reject';
+        const originalText = this.textContent;
+        
+        if (!confirm(`Are you sure you want to ${action} this order?`)) return;
+        
+        this.disabled = true;
+        this.textContent = 'Processing...';
+        
+        try {
+            const fd = new FormData();
+            fd.append('order_id', orderId);
+            fd.append('action', action);
+            fd.append('csrf_token', '<?php echo generateCsrfToken(); ?>');
+            
+            const res = await fetch('../actions/rider_respond_order.php', {
+                method: 'POST',
+                body: fd
+            });
+            const data = await res.json();
+            
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error: ' + data.message);
+                this.disabled = false;
+                this.textContent = originalText;
+            }
+        } catch (e) {
+            alert('Connection error.');
+            this.disabled = false;
+            this.textContent = originalText;
+        }
+    });
+});
 </script>
 </body>
 </html>
