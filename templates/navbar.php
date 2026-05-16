@@ -25,6 +25,8 @@ if (!function_exists('getCartCount')) {
     include_once($nav_helper_path);
 }
 ?>
+<!-- GDODS-38: Multi-language CSS -->
+<link rel="stylesheet" href="<?php echo $nav_base_url; ?>assets/css/lang.css">
 
 <script>
     window.SwiftBiteConfig = {
