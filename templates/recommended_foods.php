@@ -6,7 +6,7 @@ if (!empty($recommended_foods)):
   <section class="section" id="recommended" style="padding-top: 0; margin-top: 32px;">
     <div class="section-header">
       <div>
-        <div class="section-tag" style="background-color: var(--accent); color: white;">✨ Recommended For You</div>
+        <div class="section-tag" style="background-color: var(--accent); color: white;"><i class="fa-solid fa-wand-magic-sparkles" style="color:#f59e0b"></i> Recommended For You</div>
         <div class="section-title">Based on Your Past Orders</div>
       </div>
     </div>
@@ -23,13 +23,13 @@ if (!empty($recommended_foods)):
                     <?php echo htmlspecialchars($food['emoji']); ?>
                   <?php endif; ?>
               <span class="food-badge new">Recommended</span>
-              <div class="food-fav"><?php echo $food['is_favorite'] ? '❤️' : '🤍'; ?></div>
+              <div class="food-fav"><?php echo $food['is_favorite'] ? '<i class="fa-solid fa-heart" style="color:#ef4444"></i>' : '<i class="fa-regular fa-heart"></i>'; ?></div>
             </div>
 
             <div class="food-info">
               <div class="food-meta">
                 <span class="food-category"><?php echo htmlspecialchars($food['category']); ?></span>
-                <span class="food-rating">⭐ <?php echo htmlspecialchars($food['rating']); ?></span>
+                <span class="food-rating"><i class="fa-solid fa-star" style="color:#f59e0b"></i> <?php echo htmlspecialchars($food['rating']); ?></span>
               </div>
 
               <div class="food-name"><?php echo htmlspecialchars($food['name']); ?></div>

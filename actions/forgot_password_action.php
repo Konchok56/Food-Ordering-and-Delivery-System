@@ -61,7 +61,7 @@ $stmt->execute([$otp_hash, $email]);
 $_SESSION['otp_email'] = $email;
 unset($_SESSION['otp_attempts']); // clean up legacy session key
 
-// --- 📧 SEND REAL EMAIL ---
+// --- <i class="fa-solid fa-envelope"></i> SEND REAL EMAIL ---
 include_once('../core/mailer_helper.php');
 $subject = "Your SwiftBite Verification Code: $otp";
 $body = "

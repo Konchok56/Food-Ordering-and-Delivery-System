@@ -17,7 +17,7 @@ session_start();
 </head>
 <body>
     <div class="card">
-        <h2>Payment Failed! ❌</h2>
+        <h2>Payment Failed! <i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i></h2>
         <p>Your eSewa payment was cancelled or failed. Your order has not been placed.</p>
         <a href="../orders/cart.php">Return to Cart</a>
     </div>

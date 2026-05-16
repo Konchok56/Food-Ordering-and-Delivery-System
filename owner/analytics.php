@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../core/bootstrap.php';
 
 // Require restaurant role
@@ -134,6 +134,7 @@ $fulfillmentRate = $summary['total_orders'] > 0
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analytics — <?php echo htmlspecialchars($restaurant['name']); ?> | SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
     <style>
         :root {
@@ -225,11 +226,11 @@ $fulfillmentRate = $summary['total_orders'] > 0
 <aside class="sidebar">
     <div class="logo">Swift<span>Bite</span></div>
     <nav class="nav-links">
-        <a href="dashboard.php">📊 Dashboard</a>
+        <a href="dashboard.php"><i class="fa-solid fa-chart-bar"></i> Dashboard</a>
         <a href="analytics.php" class="active">📈 Analytics</a>
     </nav>
     <div class="sidebar-footer">
-        <a href="../auth/logout.php" style="color:var(--muted);text-decoration:none;font-size:0.9rem;font-weight:600;">🚪 Logout</a>
+        <a href="../auth/logout.php" style="color:var(--muted);text-decoration:none;font-size:0.9rem;font-weight:600;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
     </div>
 </aside>
 
@@ -248,17 +249,17 @@ $fulfillmentRate = $summary['total_orders'] > 0
     <!-- Summary Stats -->
     <div class="stats-grid">
         <div class="stat-card orange">
-            <div class="stat-icon">💰</div>
+            <div class="stat-icon"><i class="fa-solid fa-coins"></i></div>
             <div class="stat-label">Total Revenue</div>
             <div class="stat-value orange">Rs. <?php echo number_format($summary['revenue'], 0); ?></div>
         </div>
         <div class="stat-card blue">
-            <div class="stat-icon">📦</div>
+            <div class="stat-icon"><i class="fa-solid fa-box"></i></div>
             <div class="stat-label">Total Orders</div>
             <div class="stat-value blue"><?php echo (int)$summary['total_orders']; ?></div>
         </div>
         <div class="stat-card green">
-            <div class="stat-icon">✅</div>
+            <div class="stat-icon"><i class="fa-solid fa-circle-check" style="color:#22c55e"></i></div>
             <div class="stat-label">Fulfillment Rate</div>
             <div class="stat-value green"><?php echo $fulfillmentRate; ?>%</div>
         </div>
@@ -273,7 +274,7 @@ $fulfillmentRate = $summary['total_orders'] > 0
             <div class="stat-value blue"><?php echo (int)$summary['unique_customers']; ?></div>
         </div>
         <div class="stat-card orange">
-            <div class="stat-icon">❌</div>
+            <div class="stat-icon"><i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i></div>
             <div class="stat-label">Cancelled</div>
             <div class="stat-value" style="color:var(--red);"><?php echo (int)$summary['cancelled']; ?></div>
         </div>
@@ -283,13 +284,13 @@ $fulfillmentRate = $summary['total_orders'] > 0
     <div class="charts-grid">
         <!-- Revenue Trend -->
         <div class="chart-card">
-            <div class="chart-title">💰 Revenue Trend</div>
+            <div class="chart-title"><i class="fa-solid fa-coins"></i> Revenue Trend</div>
             <div class="chart-wrap"><canvas id="revenueChart"></canvas></div>
         </div>
 
         <!-- Order Volume -->
         <div class="chart-card">
-            <div class="chart-title">📦 Order Volume</div>
+            <div class="chart-title"><i class="fa-solid fa-box"></i> Order Volume</div>
             <div class="chart-wrap"><canvas id="ordersChart"></canvas></div>
         </div>
 
@@ -301,7 +302,7 @@ $fulfillmentRate = $summary['total_orders'] > 0
 
         <!-- Status Distribution -->
         <div class="chart-card">
-            <div class="chart-title">📊 Order Status Distribution</div>
+            <div class="chart-title"><i class="fa-solid fa-chart-bar"></i> Order Status Distribution</div>
             <div class="chart-wrap"><canvas id="statusChart"></canvas></div>
         </div>
     </div>
@@ -319,7 +320,7 @@ $fulfillmentRate = $summary['total_orders'] > 0
                 ?>
                 <div class="item-row">
                     <div class="item-rank <?php echo $rankClass; ?>"><?php echo $i + 1; ?></div>
-                    <div class="item-emoji"><?php echo htmlspecialchars($item['emoji'] ?? '🍔'); ?></div>
+                    <div class="item-emoji"><?php echo htmlspecialchars($item['emoji'] ?? '<i class="fa-solid fa-burger"></i>'); ?></div>
                     <div class="item-info">
                         <div class="item-name"><?php echo htmlspecialchars($item['food_name']); ?></div>
                         <div class="item-meta"><?php echo (int)$item['total_qty']; ?> sold</div>

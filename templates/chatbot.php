@@ -294,9 +294,9 @@ $base_url = !file_exists('core/db.php') ? '../' : '';
     <div class="chat-chips-wrap" id="chatChips">
       <div class="chat-chips-label">Quick questions</div>
       <div class="chat-chips">
-        <button class="chat-chip">📦 Where is my order?</button>
-        <button class="chat-chip">🍕 Recommend me food</button>
-        <button class="chat-chip">🛒 Add burger to cart</button>
+        <button class="chat-chip"><i class="fa-solid fa-box"></i> Where is my order?</button>
+        <button class="chat-chip"><i class="fa-solid fa-pizza-slice"></i> Recommend me food</button>
+        <button class="chat-chip"><i class="fa-solid fa-cart-shopping"></i> Add burger to cart</button>
       </div>
     </div>
 

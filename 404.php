@@ -1,4 +1,4 @@
-<?php http_response_code(404); ?>
+﻿<?php http_response_code(404); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +7,7 @@
     <title>404 — Page Not Found | SwiftBite</title>
     <meta name="robots" content="noindex">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -167,7 +168,7 @@
     <div class="blob blob-2"></div>
 
     <div class="card">
-        <div class="plate">🍽️</div>
+        <div class="plate"><i class="fa-solid fa-utensils"></i></div>
         <div class="error-code">404</div>
         <div class="error-title">Oops! Page Not Found</div>
         <p class="error-desc">
@@ -175,17 +176,17 @@
         </p>
 
         <div class="btn-group">
-            <a href="/food/swiftbite_php_starter/index.php" class="btn btn-primary">🏠 Back to Home</a>
+            <a href="/food/swiftbite_php_starter/index.php" class="btn btn-primary"><i class="fa-solid fa-house"></i> Back to Home</a>
             <a href="javascript:history.back()" class="btn btn-ghost">← Go Back</a>
         </div>
 
         <div class="suggestions">
             <p>Or explore</p>
             <div class="suggestion-links">
-                <a href="/food/swiftbite_php_starter/menu.php">🍕 Menu</a>
+                <a href="/food/swiftbite_php_starter/menu.php"><i class="fa-solid fa-pizza-slice"></i> Menu</a>
                 <a href="/food/swiftbite_php_starter/restaurants.php">🏪 Restaurants</a>
-                <a href="/food/swiftbite_php_starter/orders/cart.php">🛒 Cart</a>
-                <a href="/food/swiftbite_php_starter/auth/login.php">🔑 Login</a>
+                <a href="/food/swiftbite_php_starter/orders/cart.php"><i class="fa-solid fa-cart-shopping"></i> Cart</a>
+                <a href="/food/swiftbite_php_starter/auth/login.php"><i class="fa-solid fa-key"></i> Login</a>
             </div>
         </div>
     </div>

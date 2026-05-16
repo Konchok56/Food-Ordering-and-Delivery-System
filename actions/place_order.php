@@ -161,7 +161,7 @@ try {
 
     foreach ($cart as $item) {
         $imgPath = !empty($item['food_image']) ? $item['food_image'] : ($item['image_path'] ?? '');
-        $emojiIcon = !empty($item['food_emoji']) ? $item['food_emoji'] : ($item['emoji'] ?? '🍔');
+        $emojiIcon = !empty($item['food_emoji']) ? $item['food_emoji'] : ($item['emoji'] ?? '<i class="fa-solid fa-burger"></i>');
         $itemSubtotal = $item['price'] * $item['quantity'];
 
         $itemStmt->execute([
@@ -224,14 +224,14 @@ try {
         $pdo,
         $user_id,
         'order_placed',
-        'Order Placed Successfully! 🎉',
+        'Order Placed Successfully! <i class="fa-solid fa-champagne-glasses" style="color:#22c55e"></i>',
         'Your order ' . $orderLabel . ' has been placed. Total: Rs. ' . number_format($total, 2) . '. We\'ll start preparing it soon!',
-        '🛒',
+        '<i class="fa-solid fa-cart-shopping"></i>',
         $firstImage,
         SITE_BASE_URL . '/orders/order_confirmation.php?id=' . $order_id
     );
 
-    // --- 📧 Send Order Confirmation Email ---
+    // --- <i class="fa-solid fa-envelope"></i> Send Order Confirmation Email ---
     if (!empty($email)) {
         sendOrderPlacedEmail(
             $email,

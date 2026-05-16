@@ -23,7 +23,7 @@ $redirect  = isset($_POST['redirect']) ? $_POST['redirect'] : '../orders/cart.ph
 
 // Lookup food details for image_path and emoji if food_id provided
 $image_path = '';
-$emoji = '🍔';
+$emoji = '<i class="fa-solid fa-burger"></i>';
 if ($food_id) {
     $foodStmt = $pdo->prepare("SELECT name, image_path, emoji FROM foods WHERE id = ?");
     $foodStmt->execute([$food_id]);
@@ -31,7 +31,7 @@ if ($food_id) {
     if ($foodRow) {
         if (empty($food_name)) $food_name = $foodRow['name'];
         $image_path = $foodRow['image_path'] ?? '';
-        $emoji = $foodRow['emoji'] ?? '🍔';
+        $emoji = $foodRow['emoji'] ?? '<i class="fa-solid fa-burger"></i>';
     }
 } elseif ($food_name) {
     // Fallback: lookup by name
@@ -41,7 +41,7 @@ if ($food_id) {
     if ($foodRow) {
         $food_id = (int) $foodRow['id'];
         $image_path = $foodRow['image_path'] ?? '';
-        $emoji = $foodRow['emoji'] ?? '🍔';
+        $emoji = $foodRow['emoji'] ?? '<i class="fa-solid fa-burger"></i>';
     }
 }
 

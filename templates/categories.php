@@ -34,7 +34,7 @@ try {
             <?php if (!empty($cat['category_image'])): ?>
               <img src="<?php echo htmlspecialchars($cat['category_image']); ?>" alt="<?php echo htmlspecialchars($cat['category']); ?>" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
             <?php else: ?>
-              <?php echo htmlspecialchars($cat['emoji'] ?: '🍛'); ?>
+              <?php echo htmlspecialchars($cat['emoji'] ?: '<i class="fa-solid fa-bowl-food"></i>'); ?>
             <?php endif; ?>
           </div>
           <div class="cat-name"><?php echo htmlspecialchars($cat['category']); ?></div>

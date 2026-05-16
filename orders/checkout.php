@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../core/bootstrap.php';
 
 // Redirect to login if not logged in
@@ -48,6 +48,7 @@ $cartCount = getCartCount($pdo, $user_id);
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Checkout — SwiftBite</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="../assets/css/style.css?v=8" />
@@ -120,7 +121,7 @@ $cartCount = getCartCount($pdo, $user_id);
                 
                 <!-- 1. Contact & Delivery -->
                 <div class="checkout-block">
-                    <h2>📍 Delivery Details</h2>
+                    <h2><i class="fa-solid fa-location-dot"></i> Delivery Details</h2>
                     <div class="form-grid">
                         <div class="form-group full">
                             <label for="name">Full Name *</label>
@@ -172,13 +173,13 @@ $cartCount = getCartCount($pdo, $user_id);
 
             <!-- Sidebar Summary -->
             <div class="checkout-block summary-block">
-                <h2>🛒 Order Summary</h2>
+                <h2><i class="fa-solid fa-cart-shopping"></i> Order Summary</h2>
                 
                 <div class="summary-items" style="margin-bottom: 20px;">
                     <?php foreach ($cart as $item): ?>
                         <?php 
                             $imgPath = !empty($item['food_image']) ? $item['food_image'] : (!empty($item['image_path']) ? $item['image_path'] : '');
-                            $emojiIcon = !empty($item['food_emoji']) ? $item['food_emoji'] : (!empty($item['emoji']) ? $item['emoji'] : '🍔');
+                            $emojiIcon = !empty($item['food_emoji']) ? $item['food_emoji'] : (!empty($item['emoji']) ? $item['emoji'] : '<i class="fa-solid fa-burger"></i>');
                         ?>
                         <div class="summary-item">
                             <div class="summary-img">
@@ -224,11 +225,11 @@ $cartCount = getCartCount($pdo, $user_id);
 
                 <?php if (($user['status'] ?? 'active') === 'inactive'): ?>
                     <div style="margin-top: 24px; padding: 14px; background: rgba(255,59,48,0.1); border: 1px solid rgba(255,59,48,0.2); border-radius: 12px; color: #cc2d25; font-size: 0.9rem; font-weight: 600; text-align: center;">
-                        ❌ You need to be active to order. Please update your status in your profile.
+                        <i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> You need to be active to order. Please update your status in your profile.
                     </div>
-                    <button type="button" class="place-order-btn" style="background:#ccc; box-shadow:none; cursor:not-allowed;" disabled>🚀 Place Order</button>
+                    <button type="button" class="place-order-btn" style="background:#ccc; box-shadow:none; cursor:not-allowed;" disabled><i class="fa-solid fa-rocket"></i> Place Order</button>
                 <?php else: ?>
-                    <button type="submit" form="checkoutForm" class="place-order-btn">🚀 Place Order</button>
+                    <button type="submit" form="checkoutForm" class="place-order-btn"><i class="fa-solid fa-rocket"></i> Place Order</button>
                 <?php endif; ?>
             </div>
 
@@ -269,7 +270,7 @@ $cartCount = getCartCount($pdo, $user_id);
                 applyPromoBtn.textContent = 'Apply';
 
                 if (data.success) {
-                    promoMessage.textContent = '✅ ' + data.message;
+                    promoMessage.textContent = '<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> ' + data.message;
                     promoMessage.style.color = '#34c759';
                     
                     hiddenPromoCode.value = data.code;
@@ -282,7 +283,7 @@ $cartCount = getCartCount($pdo, $user_id);
                     
                     finalTotalStr.textContent = 'Rs. ' + Math.max(0, newTotal).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                 } else {
-                    promoMessage.textContent = '❌ ' + data.message;
+                    promoMessage.textContent = '<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> ' + data.message;
                     promoMessage.style.color = '#ff2400';
                     
                     hiddenPromoCode.value = '';

@@ -64,7 +64,7 @@ if (!password_verify($otp, $user['reset_token'])) {
     exit;
 }
 
-// ✅ OTP verified successfully — reset counter
+// <i class="fa-solid fa-circle-check" style="color:#22c55e"></i> OTP verified successfully — reset counter
 $pdo->prepare("UPDATE users SET otp_attempts = 0 WHERE email = ?")
     ->execute([$email]);
 

@@ -63,9 +63,9 @@ try {
         $statusMessages = [
             'confirmed'        => ['👍', 'Order Confirmed!', 'Your order has been confirmed and will be prepared shortly.'],
             'preparing'        => ['🧑‍🍳', 'Preparing Your Food', 'The kitchen is now preparing your order. Hang tight!'],
-            'out_for_delivery' => ['🛵', 'Out for Delivery!', 'Your order is on its way! Delivery partner: ' . $deliveryPartnerName . '.'],
-            'delivered'        => ['🎉', 'Order Delivered!', 'Your order has been delivered. Enjoy your meal!'],
-            'cancelled'        => ['❌', 'Order Cancelled', 'Your order has been cancelled by the admin.'],
+            'out_for_delivery' => ['<i class="fa-solid fa-motorcycle"></i>', 'Out for Delivery!', 'Your order is on its way! Delivery partner: ' . $deliveryPartnerName . '.'],
+            'delivered'        => ['<i class="fa-solid fa-champagne-glasses" style="color:#22c55e"></i>', 'Order Delivered!', 'Your order has been delivered. Enjoy your meal!'],
+            'cancelled'        => ['<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i>', 'Order Cancelled', 'Your order has been cancelled by the admin.'],
         ];
         $orderLabel = '#' . str_pad($order_id, 5, '0', STR_PAD_LEFT);
         // Get first image from order items
@@ -86,7 +86,7 @@ try {
             );
 
             /* 
-            // --- 📧 Send Order Status Email ---
+            // --- <i class="fa-solid fa-envelope"></i> Send Order Status Email ---
             $custEmailStmt = $pdo->prepare("SELECT email, name FROM users WHERE id = ? LIMIT 1");
             $custEmailStmt->execute([(int)$ownerRow['user_id']]);
             $custEmailRow = $custEmailStmt->fetch(PDO::FETCH_ASSOC);

@@ -54,8 +54,8 @@ if (!function_exists('getCartCount')) {
         <!-- Theme Toggle -->
         <button id="theme-toggle" class="theme-toggle-btn" title="Switch to Dark Mode"
             aria-label="Toggle dark/light mode">
-            <span class="theme-icon theme-icon-sun">&#9728;&#65039;</span>
-            <span class="theme-icon theme-icon-moon">&#127769;</span>
+            <span class="theme-icon theme-icon-sun"><i class="fa-solid fa-sun"></i></span>
+            <span class="theme-icon theme-icon-moon"><i class="fa-solid fa-moon"></i></span>
         </button>
 
         <a class="btn-ghost" href="#support">Support</a>
@@ -63,29 +63,29 @@ if (!function_exists('getCartCount')) {
         <?php if (isset($_SESSION['user_name'])): ?>
             <!-- Logged-in user nav buttons -->
             <a class="nav-user-btn" href="<?php echo $nav_base_url; ?>user/profile.php" title="My Profile">
-                <span class="nav-user-icon">👤</span>
+                <span class="nav-user-icon"><i class="fa-solid fa-user"></i></span>
                 <span class="nav-user-label"><?php echo htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]); ?></span>
             </a>
 
             <a class="nav-user-btn" href="<?php echo $nav_base_url; ?>user/user_dashboard.php" title="My Dashboard">
-                <span class="nav-user-icon">📊</span>
+                <span class="nav-user-icon"><i class="fa-solid fa-chart-bar"></i></span>
                 <span class="nav-user-label">Dashboard</span>
             </a>
 
             <a class="nav-user-btn" href="<?php echo $nav_base_url; ?>user/order_history.php" title="My Orders">
-                <span class="nav-user-icon">📦</span>
+                <span class="nav-user-icon"><i class="fa-solid fa-box"></i></span>
                 <span class="nav-user-label">Orders</span>
             </a>
             <?php if ($nav_role === 'admin'): ?>
                 <a class="nav-user-btn nav-admin-btn" href="<?php echo $nav_base_url; ?>admin/dashboard.php"
                     title="Admin Panel">
-                    <span class="nav-user-icon">👨‍💼</span>
+                    <span class="nav-user-icon"><i class="fa-solid fa-user-tie"></i></span>
                     <span class="nav-user-label">Admin</span>
                 </a>
 
                 <a class="nav-user-btn nav-admin-btn" href="<?php echo $nav_base_url; ?>admin/delivery_partner.php"
                     title="Delivery Partner Panel">
-                    <span class="nav-user-icon">🚚</span>
+                    <span class="nav-user-icon"><i class="fa-solid fa-truck"></i></span>
                     <span class="nav-user-label">Delivery</span>
                 </a>
             <?php endif; ?>
@@ -93,12 +93,12 @@ if (!function_exists('getCartCount')) {
             <?php if ($nav_role === 'restaurant'): ?>
                 <a class="nav-user-btn" href="<?php echo $nav_base_url; ?>owner/dashboard.php" title="My Restaurant"
                     style="background:rgba(255,79,0,0.08); border:1px solid rgba(255,79,0,0.2);">
-                    <span class="nav-user-icon">🍽️</span>
+                    <span class="nav-user-icon"><i class="fa-solid fa-utensils"></i></span>
                     <span class="nav-user-label">My Restaurant</span>
                 </a>
             <?php endif; ?>
             <a class="nav-user-btn nav-logout-btn" href="<?php echo $nav_base_url; ?>auth/logout.php" title="Logout">
-                <span class="nav-user-icon">🚪</span>
+                <span class="nav-user-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
                 <span class="nav-user-label">Logout</span>
             </a>
         <?php else: ?>
@@ -112,6 +112,6 @@ if (!function_exists('getCartCount')) {
     </div>
 
     <button class="mobile-menu-btn" type="button" data-mobile-toggle>
-        ☰
+        <i class="fa-solid fa-bars"></i>
     </button>
 </nav>

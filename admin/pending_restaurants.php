@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 include('../core/db.php');
 
@@ -16,12 +16,12 @@ if (isset($_GET['action'], $_GET['user_id'])) {
         $pdo->prepare("UPDATE users SET is_approved = 1 WHERE id = ? AND role = 'restaurant'")->execute([$uid]);
         // Also make the restaurant visible
         $pdo->prepare("UPDATE restaurants SET is_open = 1 WHERE owner_id = ?")->execute([$uid]);
-        $msg = ['type' => 'success', 'text' => '✅ Restaurant approved and is now live!'];
+        $msg = ['type' => 'success', 'text' => '<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> Restaurant approved and is now live!'];
     } elseif ($action === 'reject') {
         // Delete the linked restaurant row and user
         $pdo->prepare("DELETE FROM restaurants WHERE owner_id = ?")->execute([$uid]);
         $pdo->prepare("DELETE FROM users WHERE id = ? AND role = 'restaurant'")->execute([$uid]);
-        $msg = ['type' => 'danger', 'text' => '🗑️ Restaurant registration rejected and removed.'];
+        $msg = ['type' => 'danger', 'text' => '<i class="fa-solid fa-trash"></i> Restaurant registration rejected and removed.'];
     }
 }
 
@@ -52,6 +52,7 @@ $approved = $pdo->query("
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Restaurant Approvals — SwiftBite Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -140,16 +141,16 @@ $approved = $pdo->query("
         <span class="admin-tag">Admin Panel</span>
     </div>
     <div class="topbar-links">
-        <a href="dashboard.php">📊 Dashboard</a>
+        <a href="dashboard.php"><i class="fa-solid fa-chart-bar"></i> Dashboard</a>
         <a href="manage_restaurants.php">🏪 Restaurants</a>
-        <a href="manage_foods.php">🍔 Menu</a>
-        <a href="pending_restaurants.php" style="color:#fff;background:rgba(255,255,255,0.08);">🔔 Approvals</a>
-        <a href="../index.php">🏠 View Site</a>
+        <a href="manage_foods.php"><i class="fa-solid fa-burger"></i> Menu</a>
+        <a href="pending_restaurants.php" style="color:#fff;background:rgba(255,255,255,0.08);"><i class="fa-solid fa-bell"></i> Approvals</a>
+        <a href="../index.php"><i class="fa-solid fa-house"></i> View Site</a>
     </div>
 </div>
 
 <div class="wrapper">
-    <h1>🔔 Restaurant <em>Approvals</em></h1>
+    <h1><i class="fa-solid fa-bell"></i> Restaurant <em>Approvals</em></h1>
     <p class="subtitle">Review new restaurant registrations before they go live.</p>
 
     <?php if (isset($msg)): ?>
@@ -158,13 +159,13 @@ $approved = $pdo->query("
 
     <!-- Pending -->
     <div class="section-title">
-        ⏳ Pending Approval
+        <i class="fa-solid fa-hourglass-half" style="color:#f59e0b"></i> Pending Approval
         <span class="badge badge-pending"><?php echo count($pending); ?> pending</span>
     </div>
 
     <?php if (empty($pending)): ?>
         <div class="empty-state" style="margin-bottom:36px;">
-            <div class="emoji">🎉</div>
+            <div class="emoji"><i class="fa-solid fa-champagne-glasses" style="color:#22c55e"></i></div>
             <p>No pending restaurant registrations. You're all caught up!</p>
         </div>
     <?php else: ?>
@@ -176,9 +177,9 @@ $approved = $pdo->query("
                         <div>
                             <div class="rest-name"><?php echo htmlspecialchars($p['rest_name'] ?? 'Unnamed Restaurant'); ?></div>
                             <div class="rest-meta">
-                                📍 <?php echo htmlspecialchars($p['city'] ?? '—'); ?> &nbsp;•&nbsp;
-                                🍽️ <?php echo htmlspecialchars($p['cuisine_type'] ?? '—'); ?><br>
-                                📞 <?php echo htmlspecialchars($p['phone'] ?? '—'); ?><br>
+                                <i class="fa-solid fa-location-dot"></i> <?php echo htmlspecialchars($p['city'] ?? '—'); ?> &nbsp;•&nbsp;
+                                <i class="fa-solid fa-utensils"></i> <?php echo htmlspecialchars($p['cuisine_type'] ?? '—'); ?><br>
+                                <i class="fa-solid fa-phone"></i> <?php echo htmlspecialchars($p['phone'] ?? '—'); ?><br>
                                 🕐 Registered: <?php echo date('M d, Y', strtotime($p['created_at'])); ?>
                             </div>
                         </div>
@@ -191,7 +192,7 @@ $approved = $pdo->query("
                         </div>
                     </div>
                     <div class="card-actions">
-                        <a href="?action=approve&user_id=<?php echo (int)$p['id']; ?>" class="btn btn-approve">✅ Approve</a>
+                        <a href="?action=approve&user_id=<?php echo (int)$p['id']; ?>" class="btn btn-approve"><i class="fa-solid fa-circle-check" style="color:#22c55e"></i> Approve</a>
                         <a href="?action=reject&user_id=<?php echo (int)$p['id']; ?>"
                            class="btn btn-reject"
                            onclick="return confirm('Reject and delete this registration?')">✗ Reject</a>
@@ -203,7 +204,7 @@ $approved = $pdo->query("
 
     <!-- Approved -->
     <div class="section-title">
-        ✅ Approved Restaurants
+        <i class="fa-solid fa-circle-check" style="color:#22c55e"></i> Approved Restaurants
         <span class="badge badge-approved"><?php echo count($approved); ?> active</span>
     </div>
 

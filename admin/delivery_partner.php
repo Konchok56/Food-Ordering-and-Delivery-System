@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 include('../core/db.php');
 include('../core/csrf.php');
@@ -57,6 +57,7 @@ $counts = $countsStmt->fetch(PDO::FETCH_ASSOC) ?: [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delivery Partner Panel - SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../assets/css/style.css?v=8" />
     <style>
         .page { padding: 100px 24px 60px; min-height: 100vh; background: var(--cream); }
@@ -137,10 +138,10 @@ $counts = $countsStmt->fetch(PDO::FETCH_ASSOC) ?: [
             </div>
 
             <?php if ($flashSuccess): ?>
-                <div class="flash flash-success">✅ <?php echo htmlspecialchars($flashSuccess); ?></div>
+                <div class="flash flash-success"><i class="fa-solid fa-circle-check" style="color:#22c55e"></i> <?php echo htmlspecialchars($flashSuccess); ?></div>
             <?php endif; ?>
             <?php if ($flashError): ?>
-                <div class="flash flash-error">❌ <?php echo htmlspecialchars($flashError); ?></div>
+                <div class="flash flash-error"><i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> <?php echo htmlspecialchars($flashError); ?></div>
             <?php endif; ?>
 
             <div class="stats">

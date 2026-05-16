@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 include('../core/db.php');
 include('../core/cart_helper.php');
@@ -26,6 +26,7 @@ markAllNotificationsRead($pdo, $user_id);
     <title>Notifications — SwiftBite</title>
     <meta name="description" content="View all your SwiftBite notifications — order updates, delivery status, account changes and more.">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../assets/css/style.css?v=8" />
     <style>
         .notif-page {
@@ -344,7 +345,7 @@ markAllNotificationsRead($pdo, $user_id);
         <div class="notif-inner">
 
             <div class="notif-header">
-                <h1>🔔 Notifications</h1>
+                <h1><i class="fa-solid fa-bell"></i> Notifications</h1>
                 <?php
                     $unreadCount = 0;
                     foreach ($notifications as $n) {
@@ -359,17 +360,17 @@ markAllNotificationsRead($pdo, $user_id);
             <!-- Filter Tabs -->
             <div class="notif-filters">
                 <button class="notif-filter-btn active" data-filter="all">All</button>
-                <button class="notif-filter-btn" data-filter="order_placed">🛒 Orders</button>
-                <button class="notif-filter-btn" data-filter="order_delivered">🎉 Delivered</button>
-                <button class="notif-filter-btn" data-filter="order_cancelled">❌ Cancelled</button>
-                <button class="notif-filter-btn" data-filter="order_status">📦 Status</button>
+                <button class="notif-filter-btn" data-filter="order_placed"><i class="fa-solid fa-cart-shopping"></i> Orders</button>
+                <button class="notif-filter-btn" data-filter="order_delivered"><i class="fa-solid fa-champagne-glasses" style="color:#22c55e"></i> Delivered</button>
+                <button class="notif-filter-btn" data-filter="order_cancelled"><i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> Cancelled</button>
+                <button class="notif-filter-btn" data-filter="order_status"><i class="fa-solid fa-box"></i> Status</button>
                 <button class="notif-filter-btn" data-filter="password_changed">🔒 Security</button>
-                <button class="notif-filter-btn" data-filter="profile_updated">👤 Profile</button>
+                <button class="notif-filter-btn" data-filter="profile_updated"><i class="fa-solid fa-user"></i> Profile</button>
             </div>
 
             <?php if (empty($notifications)): ?>
                 <div class="empty-state">
-                    <div class="empty-icon">🔔</div>
+                    <div class="empty-icon"><i class="fa-solid fa-bell"></i></div>
                     <h3>No notifications yet</h3>
                     <p>When you place orders, update your profile, or make account changes, you'll see notifications here!</p>
                     <a href="../menu.php" class="empty-btn">Explore Menu</a>

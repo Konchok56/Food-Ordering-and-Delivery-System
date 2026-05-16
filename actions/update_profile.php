@@ -54,7 +54,7 @@ try {
         $pdo, $user_id, 'profile_updated',
         'Profile Updated',
         'Your profile information was updated on ' . date('M d, Y \a\t h:i A') . '.',
-        '👤',
+        '<i class="fa-solid fa-user"></i>',
         null,
         SITE_BASE_URL . '/user/profile.php'
     );

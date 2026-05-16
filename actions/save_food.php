@@ -28,7 +28,7 @@ $price         = floatval($_POST['price'] ?? 0);
 $delivery_time = trim($_POST['delivery_time'] ?? '');
 $rating        = floatval($_POST['rating'] ?? 4.5);
 $badge         = trim($_POST['badge'] ?? '');
-$emoji         = trim($_POST['emoji'] ?? '🍽️');
+$emoji         = trim($_POST['emoji'] ?? '<i class="fa-solid fa-utensils"></i>');
 $is_featured   = isset($_POST['is_featured']) ? 1 : 0;
 $is_favorite   = isset($_POST['is_favorite']) ? 1 : 0;
 $restaurant_id = !empty($_POST['restaurant_id']) ? (int)$_POST['restaurant_id'] : null;

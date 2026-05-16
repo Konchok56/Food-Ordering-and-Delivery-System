@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 include('../core/db.php');
 
@@ -35,6 +35,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - SwiftBite</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -99,13 +100,13 @@ try {
 </head>
 <body>
     <div class="dashboard">
-        <div class="logo">🍽️ SwiftBite</div>
-        <h1>👨‍💼 Admin Dashboard</h1>
+        <div class="logo"><i class="fa-solid fa-utensils"></i> SwiftBite</div>
+        <h1><i class="fa-solid fa-user-tie"></i> Admin Dashboard</h1>
         <p class="welcome">Welcome back, <strong>Admin</strong>! You have full access to all controls.</p>
 
         <div class="grid">
             <a href="manage_foods.php" class="btn btn-orange">
-                <span class="icon">🍔</span>
+                <span class="icon"><i class="fa-solid fa-burger"></i></span>
                 Manage Menu
             </a>
 
@@ -115,7 +116,7 @@ try {
             </a>
 
             <a href="pending_restaurants.php" class="btn btn-purple">
-                <span class="icon">🔔</span>
+                <span class="icon"><i class="fa-solid fa-bell"></i></span>
                 Approvals
                 <?php if ($pendingCount > 0): ?>
                     <span class="pending-badge"><?php echo (int)$pendingCount; ?></span>
@@ -128,7 +129,7 @@ try {
             </a>
 
             <a href="delivery_partner.php" class="btn btn-sky">
-                <span class="icon">🚚</span>
+                <span class="icon"><i class="fa-solid fa-truck"></i></span>
                 Delivery
             </a>
 
@@ -138,7 +139,7 @@ try {
             </a>
 
             <a href="../index.php" class="btn btn-dark">
-                <span class="icon">🏠</span>
+                <span class="icon"><i class="fa-solid fa-house"></i></span>
                 View Site
             </a>
 
@@ -148,7 +149,7 @@ try {
             </a>
 
             <a href="manage_riders.php" class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-                <span class="icon">🛵</span>
+                <span class="icon"><i class="fa-solid fa-motorcycle"></i></span>
                 Manage Riders
                 <?php if ($pendingRiders > 0): ?>
                     <span class="pending-badge"><?php echo $pendingRiders; ?></span>

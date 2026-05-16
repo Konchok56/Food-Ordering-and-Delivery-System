@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../core/bootstrap.php';
 
 if (isLoggedIn()) { redirect('index.php'); }
@@ -14,6 +14,7 @@ $selectedRole = $old['role'] ?? 'user';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/style.css?v=8">
     <script>(function(){var t=localStorage.getItem('sb-theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
@@ -196,7 +197,7 @@ $selectedRole = $old['role'] ?? 'user';
             <!-- Theme Toggle -->
             <button id="theme-toggle" class="theme-toggle-btn" style="width:32px; height:32px; font-size:0.85rem; background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2); color:#fff;" title="Toggle theme">
                 <span class="theme-icon theme-icon-sun">&#9728;</span>
-                <span class="theme-icon theme-icon-moon">&#127769;</span>
+                <span class="theme-icon theme-icon-moon"><i class="fa-solid fa-moon"></i></span>
             </button>
         </div>
         <div class="auth-tagline">Fast. Fresh. Delivered.</div>
@@ -204,21 +205,21 @@ $selectedRole = $old['role'] ?? 'user';
         <div class="role-label">Choose account type</div>
 
         <button type="button" class="role-btn <?php echo $selectedRole==='user'?'active':''; ?>" id="btnUser" onclick="setRole('user')">
-            <span class="ri">👤</span> Customer
+            <span class="ri"><i class="fa-solid fa-user"></i></span> Customer
             <span class="role-check">✓</span>
         </button>
         <button type="button" class="role-btn <?php echo $selectedRole==='restaurant'?'active':''; ?>" id="btnRestaurant" onclick="setRole('restaurant')">
-            <span class="ri">🍽️</span> Restaurant Owner
+            <span class="ri"><i class="fa-solid fa-utensils"></i></span> Restaurant Owner
             <span class="role-check">✓</span>
         </button>
         <button type="button" class="role-btn <?php echo $selectedRole==='delivery_partner'?'active':''; ?>" id="btnRider" onclick="setRole('delivery_partner')">
-            <span class="ri">🛵</span> Delivery Rider
+            <span class="ri"><i class="fa-solid fa-motorcycle"></i></span> Delivery Rider
             <span class="role-check">✓</span>
         </button>
 
         <div class="approval-notice" id="approvalNotice"
              <?php echo in_array($selectedRole,['restaurant','delivery_partner']) ? 'style="display:block"' : ''; ?>>
-            <strong>⏳ Pending Approval</strong>
+            <strong><i class="fa-solid fa-hourglass-half" style="color:#f59e0b"></i> Pending Approval</strong>
             Your account will be reviewed by an admin before you can log in.
         </div>
     </div>
@@ -288,7 +289,7 @@ $selectedRole = $old['role'] ?? 'user';
             <!-- ── Rider fields ── -->
             <div class="extra-fields" id="riderFields"
                  <?php echo $selectedRole==='delivery_partner' ? 'style="display:block"' : ''; ?>>
-                <div class="section-label">🛵 Rider Details</div>
+                <div class="section-label"><i class="fa-solid fa-motorcycle"></i> Rider Details</div>
                 <div class="field-row">
                     <div class="auth-field">
                         <label>Phone Number</label>
@@ -298,9 +299,9 @@ $selectedRole = $old['role'] ?? 'user';
                     <div class="auth-field">
                         <label>Vehicle Type</label>
                         <select name="rider_vehicle">
-                            <option value="Motorcycle" <?php echo ($old['rider_vehicle']??'')==='Motorcycle'?'selected':''; ?>>🏍️ Motorcycle</option>
-                            <option value="Bicycle"    <?php echo ($old['rider_vehicle']??'')==='Bicycle'?'selected':''; ?>>🚲 Bicycle</option>
-                            <option value="Scooter"    <?php echo ($old['rider_vehicle']??'')==='Scooter'?'selected':''; ?>>🛵 Scooter</option>
+                            <option value="Motorcycle" <?php echo ($old['rider_vehicle']??'')==='Motorcycle'?'selected':''; ?>><i class="fa-solid fa-motorcycle"></i> Motorcycle</option>
+                            <option value="Bicycle"    <?php echo ($old['rider_vehicle']??'')==='Bicycle'?'selected':''; ?>><i class="fa-solid fa-bicycle"></i> Bicycle</option>
+                            <option value="Scooter"    <?php echo ($old['rider_vehicle']??'')==='Scooter'?'selected':''; ?>><i class="fa-solid fa-motorcycle"></i> Scooter</option>
                             <option value="Car"        <?php echo ($old['rider_vehicle']??'')==='Car'?'selected':''; ?>>🚗 Car</option>
                         </select>
                     </div>
@@ -337,8 +338,8 @@ $selectedRole = $old['role'] ?? 'user';
 <script>
 const titles = {
     user:             'Create Account',
-    restaurant:       '🍽️ Register Restaurant',
-    delivery_partner: '🛵 Apply as Rider'
+    restaurant:       '<i class="fa-solid fa-utensils"></i> Register Restaurant',
+    delivery_partner: '<i class="fa-solid fa-motorcycle"></i> Apply as Rider'
 };
 const btnMap = {
     user: 'btnUser', restaurant: 'btnRestaurant', delivery_partner: 'btnRider'

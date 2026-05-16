@@ -34,6 +34,6 @@ function requireCsrf() {
             exit;
         }
         http_response_code(403);
-        die('<h2 style="color:red;text-align:center;margin-top:50px;">⚠️ Security error: Invalid form token. Please go back and try again.</h2>');
+        die('<h2 style="color:red;text-align:center;margin-top:50px;"><i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b"></i> Security error: Invalid form token. Please go back and try again.</h2>');
     }
 }

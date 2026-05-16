@@ -36,10 +36,10 @@ $searchCats = $pdo->query("SELECT DISTINCT category FROM foods ORDER BY category
 
     <div class="search-cat">
       <select name="city">
-        <option value="">📍 All Cities</option>
-        <option value="Kathmandu">📍 Kathmandu</option>
-        <option value="Lalitpur">📍 Lalitpur</option>
-        <option value="Bhaktapur">📍 Bhaktapur</option>
+        <option value=""><i class="fa-solid fa-location-dot"></i> All Cities</option>
+        <option value="Kathmandu"><i class="fa-solid fa-location-dot"></i> Kathmandu</option>
+        <option value="Lalitpur"><i class="fa-solid fa-location-dot"></i> Lalitpur</option>
+        <option value="Bhaktapur"><i class="fa-solid fa-location-dot"></i> Bhaktapur</option>
       </select>
     </div>
 

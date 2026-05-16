@@ -1,4 +1,4 @@
-<?php 
+﻿<?php 
 require_once '../core/bootstrap.php';
 
 // Must have verified OTP
@@ -17,6 +17,7 @@ unset($_SESSION['rp_error']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
@@ -83,7 +84,7 @@ unset($_SESSION['rp_error']);
         <div class="auth-subtitle">Your identity has been verified! Create a strong new password for your account.</div>
 
         <?php if ($error): ?>
-            <div class="auth-alert error">❌ <?php echo htmlspecialchars($error); ?></div>
+            <div class="auth-alert error"><i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> <?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
         <form action="../actions/reset_password_action.php" method="POST">

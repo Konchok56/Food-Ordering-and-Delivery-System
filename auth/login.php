@@ -1,4 +1,4 @@
-<?php 
+﻿<?php 
 require_once '../core/bootstrap.php';
 
 if (isLoggedIn()) { redirect('index.php'); }
@@ -10,6 +10,7 @@ if (isLoggedIn()) { redirect('index.php'); }
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/style.css?v=8">
     <script>(function(){var t=localStorage.getItem('sb-theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
@@ -162,20 +163,20 @@ if (isLoggedIn()) { redirect('index.php'); }
             <!-- Theme Toggle -->
             <button id="theme-toggle" class="theme-toggle-btn" style="width:36px; height:36px; font-size:0.9rem; background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2); color:#fff;" title="Toggle theme">
                 <span class="theme-icon theme-icon-sun">&#9728;</span>
-                <span class="theme-icon theme-icon-moon">&#127769;</span>
+                <span class="theme-icon theme-icon-moon"><i class="fa-solid fa-moon"></i></span>
             </button>
         </div>
 
         <div class="left-perks">
             <div class="perk">
-                <div class="perk-icon">🍔</div>
+                <div class="perk-icon"><i class="fa-solid fa-burger"></i></div>
                 <div class="perk-text">
                     <strong>100+ Menu Items</strong>
                     <span>From local favourites to global bites</span>
                 </div>
             </div>
             <div class="perk">
-                <div class="perk-icon">🛵</div>
+                <div class="perk-icon"><i class="fa-solid fa-motorcycle"></i></div>
                 <div class="perk-text">
                     <strong>Fast Delivery</strong>
                     <span>Hot food at your door in 30 mins</span>
@@ -189,7 +190,7 @@ if (isLoggedIn()) { redirect('index.php'); }
                 </div>
             </div>
             <div class="perk">
-                <div class="perk-icon">📍</div>
+                <div class="perk-icon"><i class="fa-solid fa-location-dot"></i></div>
                 <div class="perk-text">
                     <strong>Live Tracking</strong>
                     <span>Watch your order arrive in real time</span>

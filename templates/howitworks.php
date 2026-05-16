@@ -10,13 +10,13 @@
     <div class="steps-grid">
       <div class="step reveal-on-scroll">
         <div class="step-num">01</div>
-        <div class="step-icon">📍</div>
+        <div class="step-icon"><i class="fa-solid fa-location-dot"></i></div>
         <div class="step-title">Set Your Location</div>
         <div class="step-desc">Enter your delivery address and find restaurants near you in seconds.</div>
       </div>
       <div class="step reveal-on-scroll">
         <div class="step-num">02</div>
-        <div class="step-icon">🍽️</div>
+        <div class="step-icon"><i class="fa-solid fa-utensils"></i></div>
         <div class="step-title">Choose Your Meal</div>
         <div class="step-desc">Browse menus, read reviews, and add your favourite dishes to cart.</div>
       </div>
@@ -28,7 +28,7 @@
       </div>
       <div class="step reveal-on-scroll">
         <div class="step-num">04</div>
-        <div class="step-icon">🛵</div>
+        <div class="step-icon"><i class="fa-solid fa-motorcycle"></i></div>
         <div class="step-title">Track &amp; Enjoy</div>
         <div class="step-desc">Live-track your order while your rider rushes to your door.</div>
       </div>

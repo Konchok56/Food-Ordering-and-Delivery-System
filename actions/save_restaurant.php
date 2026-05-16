@@ -22,7 +22,7 @@ $rating = (float)($_POST['rating'] ?? 4.5);
 $delivery_time = trim($_POST['delivery_time'] ?? '30-45 min');
 $delivery_fee = (float)($_POST['delivery_fee'] ?? 50.00);
 $min_order = (float)($_POST['min_order'] ?? 200.00);
-$logo_emoji = trim($_POST['logo_emoji'] ?? '🍴');
+$logo_emoji = trim($_POST['logo_emoji'] ?? '<i class="fa-solid fa-utensils"></i>');
 $is_featured = isset($_POST['is_featured']) ? 1 : 0;
 $is_open = isset($_POST['is_open']) ? 1 : 0;
 

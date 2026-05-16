@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 
 // Remember me auto-login
@@ -70,10 +70,10 @@ while ($row = $foodCountStmt->fetch(PDO::FETCH_ASSOC)) {
 
 // Cuisine emoji map
 $cuisineEmojis = [
-    'Fast Food' => '🍔', 'Nepali' => '🥘', 'Italian' => '🍕', 'Chinese' => '🥡',
-    'Japanese' => '🍣', 'Healthy' => '🥗', 'Indian' => '🍛', 'Thai' => '🍜',
-    'Mexican' => '🌮', 'Korean' => '🥟', 'BBQ' => '🥩', 'Cafe' => '☕',
-    'Bakery' => '🧁', 'Seafood' => '🦐', 'Mixed' => '🍴',
+    'Fast Food' => '<i class="fa-solid fa-burger"></i>', 'Nepali' => '<i class="fa-solid fa-bowl-food"></i>', 'Italian' => '<i class="fa-solid fa-pizza-slice"></i>', 'Chinese' => '<i class="fa-solid fa-bowl-rice"></i>',
+    'Japanese' => '<i class="fa-solid fa-fish"></i>', 'Healthy' => '<i class="fa-solid fa-leaf"></i>', 'Indian' => '<i class="fa-solid fa-bowl-food"></i>', 'Thai' => '<i class="fa-solid fa-bowl-food"></i>',
+    'Mexican' => '<i class="fa-solid fa-bowl-food"></i>', 'Korean' => '<i class="fa-solid fa-bowl-food"></i>', 'BBQ' => '<i class="fa-solid fa-drumstick-bite"></i>', 'Cafe' => '<i class="fa-solid fa-mug-hot"></i>',
+    'Bakery' => '<i class="fa-solid fa-cake-candles"></i>', 'Seafood' => '<i class="fa-solid fa-fish"></i>', 'Mixed' => '<i class="fa-solid fa-utensils"></i>',
 ];
 ?>
 <!DOCTYPE html>
@@ -84,6 +84,7 @@ $cuisineEmojis = [
     <title><?php echo $activeCuisine !== 'all' ? htmlspecialchars($activeCuisine) . ' Restaurants — ' : ''; ?>Restaurants — SwiftBite</title>
     <meta name="description" content="Browse top-rated restaurants near you. Order from your favorite local spots on SwiftBite." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="assets/css/style.css?v=8" />
@@ -345,10 +346,10 @@ $cuisineEmojis = [
                 <input style="flex: 1;" type="text" name="q" placeholder="Search restaurants..." value="<?php echo htmlspecialchars($searchQuery); ?>" autocomplete="off" data-autocomplete aria-label="Search restaurants" aria-autocomplete="list" aria-haspopup="listbox">
             </div>
             <select name="city">
-                <option value="all">📍 All Cities</option>
+                <option value="all"><i class="fa-solid fa-location-dot"></i> All Cities</option>
                 <?php foreach ($cities as $c): ?>
                     <option value="<?php echo htmlspecialchars($c); ?>" <?php echo $activeCity === $c ? 'selected' : ''; ?>>
-                        📍 <?php echo htmlspecialchars($c); ?>
+                        <i class="fa-solid fa-location-dot"></i> <?php echo htmlspecialchars($c); ?>
                     </option>
                 <?php endforeach; ?>
             </select>
@@ -362,13 +363,13 @@ $cuisineEmojis = [
         <div class="rest-filters">
             <a href="restaurants.php<?php echo $activeCity !== 'all' ? '?city=' . urlencode($activeCity) : ''; ?>"
                class="filter-tab <?php echo $activeCuisine === 'all' ? 'active' : ''; ?>">
-                🍽️ All
+                <i class="fa-solid fa-utensils"></i> All
                 <span class="tab-count"><?php echo array_sum(array_column($cuisines, 'count')); ?></span>
             </a>
             <?php foreach ($cuisines as $cuisine): ?>
                 <a href="restaurants.php?cuisine=<?php echo urlencode($cuisine['cuisine_type']); ?><?php echo $activeCity !== 'all' ? '&city=' . urlencode($activeCity) : ''; ?>"
                    class="filter-tab <?php echo $activeCuisine === $cuisine['cuisine_type'] ? 'active' : ''; ?>">
-                    <?php echo $cuisineEmojis[$cuisine['cuisine_type']] ?? '🍴'; ?>
+                    <?php echo $cuisineEmojis[$cuisine['cuisine_type']] ?? '<i class="fa-solid fa-utensils"></i>'; ?>
                     <?php echo htmlspecialchars($cuisine['cuisine_type']); ?>
                     <span class="tab-count"><?php echo $cuisine['count']; ?></span>
                 </a>
@@ -410,22 +411,22 @@ $cuisineEmojis = [
                                         <?php echo $rest['is_open'] ? '● Open' : '● Closed'; ?>
                                     </span>
                                     <span class="rest-cuisine-badge">
-                                        <?php echo $cuisineEmojis[$rest['cuisine_type']] ?? '🍴'; ?>
+                                        <?php echo $cuisineEmojis[$rest['cuisine_type']] ?? '<i class="fa-solid fa-utensils"></i>'; ?>
                                         <?php echo htmlspecialchars($rest['cuisine_type']); ?>
                                     </span>
                                 </div>
                                 <div class="rest-card-body">
                                     <div class="rest-card-top">
                                         <div class="rest-card-name"><?php echo htmlspecialchars($rest['name']); ?></div>
-                                        <div class="rest-card-rating">⭐ <?php echo htmlspecialchars($rest['rating']); ?></div>
+                                        <div class="rest-card-rating"><i class="fa-solid fa-star" style="color:#f59e0b"></i> <?php echo htmlspecialchars($rest['rating']); ?></div>
                                     </div>
                                     <div class="rest-card-desc"><?php echo htmlspecialchars($rest['description']); ?></div>
                                     <div class="rest-card-meta">
                                         <span class="rest-meta-pill">🕐 <?php echo htmlspecialchars($rest['delivery_time']); ?></span>
-                                        <span class="rest-meta-pill">🚚 Rs. <?php echo number_format((float) $rest['delivery_fee'], 0); ?></span>
-                                        <span class="rest-meta-pill">📦 Min Rs. <?php echo number_format((float) $rest['min_order'], 0); ?></span>
+                                        <span class="rest-meta-pill"><i class="fa-solid fa-truck"></i> Rs. <?php echo number_format((float) $rest['delivery_fee'], 0); ?></span>
+                                        <span class="rest-meta-pill"><i class="fa-solid fa-box"></i> Min Rs. <?php echo number_format((float) $rest['min_order'], 0); ?></span>
                                         <?php if (isset($foodCounts[$rest['id']])): ?>
-                                            <span class="rest-meta-pill">🍽️ <?php echo $foodCounts[$rest['id']]; ?> items</span>
+                                            <span class="rest-meta-pill"><i class="fa-solid fa-utensils"></i> <?php echo $foodCounts[$rest['id']]; ?> items</span>
                                         <?php endif; ?>
                                     </div>
                                 </div>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once 'core/bootstrap.php';
 
 $keyword        = trim($_GET['keyword']    ?? '');
@@ -71,6 +71,7 @@ function menuUrl($extra=[]) {
     <title><?php echo htmlspecialchars($pageTitle); ?></title>
     <meta name="description" content="Browse the full SwiftBite menu." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="assets/css/style.css?v=8" />
@@ -211,7 +212,7 @@ function menuUrl($extra=[]) {
 <div class="menu-page">
     <!-- Hero -->
     <div class="menu-hero">
-        <div class="section-tag">&#x1F37D;&#xFE0F; Our Menu</div>
+        <div class="section-tag"><i class="fa-solid fa-utensils"></i> Our Menu</div>
         <div class="section-title">Explore Our<br />Full Menu</div>
         <p>Discover all the delicious dishes we have to offer.</p>
     </div>
@@ -313,7 +314,7 @@ function menuUrl($extra=[]) {
                                 <input type="radio" name="min_rating" id="r<?php echo str_replace('.','_',$val); ?>" value="<?php echo $val; ?>" <?php echo $minRating==$val?'checked':''; ?>>
                                 <label for="r<?php echo str_replace('.','_',$val); ?>">
                                     <span><?php echo $label; ?></span>
-                                    <span class="rating-check">&#10003;</span>
+                                    <span class="rating-check"><i class="fa-solid fa-check"></i></span>
                                 </label>
                             </li>
                         <?php endforeach; ?>
@@ -350,7 +351,7 @@ function menuUrl($extra=[]) {
             <div class="menu-grid">
                 <?php if (empty($foods)): ?>
                     <div class="menu-empty">
-                        <div class="empty-icon">&#x1F50D;</div>
+                        <div class="empty-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
                         <h3>No results found</h3>
                         <p><?php echo $keyword ? 'Nothing matched "'.htmlspecialchars($keyword).'". Try a different keyword.' : 'No items match your filters.'; ?></p>
                         <a href="menu.php">View All Items</a>
@@ -368,18 +369,18 @@ function menuUrl($extra=[]) {
                                 <?php if (!empty($food['badge'])): ?>
                                     <span class="food-badge<?php echo $food['badge']==='New'?' new':''; ?>"><?php echo htmlspecialchars($food['badge']); ?></span>
                                 <?php endif; ?>
-                                <div class="food-fav"><?php echo $food['is_favorite'] ? '&#x2764;&#xFE0F;' : '&#x1F90D;'; ?></div>
+                                <div class="food-fav"><?php echo $food['is_favorite'] ? '<i class="fa-solid fa-heart" style="color:#ef4444"></i>' : '<i class="fa-regular fa-heart"></i>'; ?></div>
                             </div>
                             <div class="food-info">
                                 <div class="food-meta">
                                     <span class="food-category"><?php echo htmlspecialchars($food['category']); ?></span>
-                                    <span class="food-rating">&#9733; <?php echo htmlspecialchars($food['rating']); ?></span>
+                                    <span class="food-rating"><i class="fa-solid fa-star" style="color:#f59e0b"></i> <?php echo htmlspecialchars($food['rating']); ?></span>
                                 </div>
                                 <div class="food-name"><?php echo htmlspecialchars($food['name']); ?></div>
                                 <div class="food-desc"><?php echo htmlspecialchars($food['description']); ?></div>
                                 <div class="food-footer">
                                     <div>
-                                        <div class="food-time">&#x1F550; <?php echo htmlspecialchars($food['delivery_time']); ?></div>
+                                        <div class="food-time"><i class="fa-regular fa-clock"></i> <?php echo htmlspecialchars($food['delivery_time']); ?></div>
                                         <div class="food-price">Rs. <?php echo number_format((float)$food['price'],2); ?></div>
                                     </div>
                                     <form action="actions/add_to_cart.php" method="post" onclick="event.stopPropagation();">

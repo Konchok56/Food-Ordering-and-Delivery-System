@@ -13,10 +13,10 @@ while ($row = $fcStmt->fetch(PDO::FETCH_ASSOC)) {
 }
 
 $cuisineEmojis = [
-    'Fast Food' => '🍔', 'Nepali' => '🥘', 'Italian' => '🍕', 'Chinese' => '🥡',
-    'Japanese' => '🍣', 'Healthy' => '🥗', 'Indian' => '🍛', 'Thai' => '🍜',
-    'Mexican' => '🌮', 'Korean' => '🥟', 'BBQ' => '🥩', 'Cafe' => '☕',
-    'Bakery' => '🧁', 'Seafood' => '🦐', 'Mixed' => '🍴',
+    'Fast Food' => '<i class="fa-solid fa-burger"></i>', 'Nepali' => '<i class="fa-solid fa-bowl-food"></i>', 'Italian' => '<i class="fa-solid fa-pizza-slice"></i>', 'Chinese' => '<i class="fa-solid fa-bowl-rice"></i>',
+    'Japanese' => '<i class="fa-solid fa-fish"></i>', 'Healthy' => '<i class="fa-solid fa-leaf"></i>', 'Indian' => '<i class="fa-solid fa-bowl-food"></i>', 'Thai' => '<i class="fa-solid fa-bowl-food"></i>',
+    'Mexican' => '<i class="fa-solid fa-bowl-food"></i>', 'Korean' => '<i class="fa-solid fa-bowl-food"></i>', 'BBQ' => '<i class="fa-solid fa-drumstick-bite"></i>', 'Cafe' => '<i class="fa-solid fa-mug-hot"></i>',
+    'Bakery' => '<i class="fa-solid fa-cake-candles"></i>', 'Seafood' => '<i class="fa-solid fa-fish"></i>', 'Mixed' => '<i class="fa-solid fa-utensils"></i>',
 ];
 
 if (!empty($featuredRests)):
@@ -49,17 +49,17 @@ if (!empty($featuredRests)):
               <div>
                 <div class="rest-home-name"><?php echo htmlspecialchars($rest['name']); ?></div>
                 <div class="rest-home-cuisine">
-                  <?php echo $cuisineEmojis[$rest['cuisine_type']] ?? '🍴'; ?>
+                  <?php echo $cuisineEmojis[$rest['cuisine_type']] ?? '<i class="fa-solid fa-utensils"></i>'; ?>
                   <?php echo htmlspecialchars($rest['cuisine_type']); ?>
                 </div>
               </div>
-              <div class="rest-home-rating">⭐ <?php echo htmlspecialchars($rest['rating']); ?></div>
+              <div class="rest-home-rating"><i class="fa-solid fa-star" style="color:#f59e0b"></i> <?php echo htmlspecialchars($rest['rating']); ?></div>
             </div>
             <div class="rest-home-meta">
               <span>🕐 <?php echo htmlspecialchars($rest['delivery_time']); ?></span>
-              <span>🚚 Rs. <?php echo number_format((float) $rest['delivery_fee'], 0); ?></span>
+              <span><i class="fa-solid fa-truck"></i> Rs. <?php echo number_format((float) $rest['delivery_fee'], 0); ?></span>
               <?php if (isset($foodCounts[$rest['id']])): ?>
-                <span>🍽️ <?php echo $foodCounts[$rest['id']]; ?> items</span>
+                <span><i class="fa-solid fa-utensils"></i> <?php echo $foodCounts[$rest['id']]; ?> items</span>
               <?php endif; ?>
             </div>
           </div>

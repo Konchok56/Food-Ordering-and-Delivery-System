@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 include('../core/db.php');
 
@@ -83,6 +83,7 @@ $promos = $pdo->query("SELECT * FROM promo_codes ORDER BY created_at DESC")->fet
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Promos — SwiftBite Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
         href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap"
@@ -393,11 +394,11 @@ $promos = $pdo->query("SELECT * FROM promo_codes ORDER BY created_at DESC")->fet
             <div class="logo">Swift<span>Bite</span></div>
         </div>
         <div class="topbar-links">
-            <a href="dashboard.php">📊 Dashboard</a>
-            <a href="manage_foods.php">🍔 Menu</a>
+            <a href="dashboard.php"><i class="fa-solid fa-chart-bar"></i> Dashboard</a>
+            <a href="manage_foods.php"><i class="fa-solid fa-burger"></i> Menu</a>
             <a href="manage_restaurants.php">🏪 Restaurants</a>
             <a href="manage_promos.php" style="color:#fff; background:rgba(255,255,255,0.08);">💸 Promos</a>
-            <a href="../index.php">🏠 View Site</a>
+            <a href="../index.php"><i class="fa-solid fa-house"></i> View Site</a>
         </div>
     </div>
 
@@ -411,9 +412,9 @@ $promos = $pdo->query("SELECT * FROM promo_codes ORDER BY created_at DESC")->fet
         </div>
 
         <?php if ($success): ?>
-            <div class="alert alert-success">✅ <?php echo htmlspecialchars($success); ?></div><?php endif; ?>
+            <div class="alert alert-success"><i class="fa-solid fa-circle-check" style="color:#22c55e"></i> <?php echo htmlspecialchars($success); ?></div><?php endif; ?>
         <?php if ($error): ?>
-            <div class="alert alert-error">❌ <?php echo htmlspecialchars($error); ?></div><?php endif; ?>
+            <div class="alert alert-error"><i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> <?php echo htmlspecialchars($error); ?></div><?php endif; ?>
 
         <!-- Form -->
         <div class="form-card" id="promoForm">
@@ -506,7 +507,7 @@ $promos = $pdo->query("SELECT * FROM promo_codes ORDER BY created_at DESC")->fet
                                         style="background:rgba(255,184,48,0.2); color:#e6a200;">✏️</a>
                                     <a href="manage_promos.php?delete=<?php echo $p['id']; ?>" class="action-btn"
                                         style="background:rgba(255,59,48,0.1); color:var(--red);"
-                                        onclick="return confirm('Delete this code?');">🗑️</a>
+                                        onclick="return confirm('Delete this code?');"><i class="fa-solid fa-trash"></i></a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

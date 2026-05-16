@@ -150,7 +150,7 @@ if (isset($_SESSION['user_id'])) {
 <button class="notif-fab" type="button" aria-label="Notifications"
   id="notifFabBtn"
   onclick="window.location.href='<?php echo $base_url; ?>user/notifications.php'">
-    <span class="bell-icon">🔔</span>
+    <span class="bell-icon"><i class="fa-solid fa-bell"></i></span>
     <span class="notif-badge" id="notifCountBadge" data-count="<?php echo $notifCount; ?>">
         <?php echo $notifCount > 0 ? $notifCount : ''; ?>
     </span>
@@ -162,7 +162,7 @@ if (isset($_SESSION['user_id'])) {
   id="cartFabBtn"
   style="position:fixed!important;bottom:40px!important;right:40px!important;z-index:9999!important;display:flex!important;visibility:visible!important;opacity:1!important;"
   onclick="window.location.href='<?php echo $base_url; ?>orders/cart.php'">
-    <span class="cart-fab-icon">🛒</span>
+    <span class="cart-fab-icon"><i class="fa-solid fa-cart-shopping"></i></span>
     <span class="cart-count" id="cartCountBadge"><?php echo $displayCount; ?></span>
 </button>
 <script>

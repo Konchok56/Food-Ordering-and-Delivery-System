@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 include('../core/db.php');
 
@@ -37,6 +37,7 @@ while ($row = $fcStmt->fetch(PDO::FETCH_ASSOC)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Restaurants — SwiftBite Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
@@ -172,10 +173,10 @@ while ($row = $fcStmt->fetch(PDO::FETCH_ASSOC)) {
             <span class="admin-tag">Admin Panel</span>
         </div>
         <div class="topbar-links">
-            <a href="dashboard.php">📊 Dashboard</a>
-            <a href="manage_foods.php">🍔 Menu</a>
+            <a href="dashboard.php"><i class="fa-solid fa-chart-bar"></i> Dashboard</a>
+            <a href="manage_foods.php"><i class="fa-solid fa-burger"></i> Menu</a>
             <a href="manage_restaurants.php" style="color:#fff; background:rgba(255,255,255,0.08);">🏪 Restaurants</a>
-            <a href="../index.php">🏠 View Site</a>
+            <a href="../index.php"><i class="fa-solid fa-house"></i> View Site</a>
         </div>
     </div>
 
@@ -190,10 +191,10 @@ while ($row = $fcStmt->fetch(PDO::FETCH_ASSOC)) {
         </div>
 
         <?php if ($success): ?>
-            <div class="alert alert-success">✅ <?php echo htmlspecialchars($success); ?></div>
+            <div class="alert alert-success"><i class="fa-solid fa-circle-check" style="color:#22c55e"></i> <?php echo htmlspecialchars($success); ?></div>
         <?php endif; ?>
         <?php if ($error): ?>
-            <div class="alert alert-error">❌ <?php echo htmlspecialchars($error); ?></div>
+            <div class="alert alert-error"><i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> <?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
         <!-- Add/Edit Form -->
@@ -265,8 +266,8 @@ while ($row = $fcStmt->fetch(PDO::FETCH_ASSOC)) {
                     </div>
                     <div class="form-group">
                         <label for="logo_emoji">Logo Emoji *</label>
-                        <input type="text" id="logo_emoji" name="logo_emoji" required placeholder="🍔"
-                               value="<?php echo $editRest ? htmlspecialchars($editRest['logo_emoji']) : '🍴'; ?>">
+                        <input type="text" id="logo_emoji" name="logo_emoji" required placeholder="<i class="fa-solid fa-burger"></i>"
+                               value="<?php echo $editRest ? htmlspecialchars($editRest['logo_emoji']) : '<i class="fa-solid fa-utensils"></i>'; ?>">
                     </div>
                     <div class="form-group">
                         <label>Options</label>
@@ -351,9 +352,9 @@ while ($row = $fcStmt->fetch(PDO::FETCH_ASSOC)) {
                         </div>
                         <div class="rest-admin-desc"><?php echo htmlspecialchars($r['description']); ?></div>
                         <div class="rest-admin-stats">
-                            <span class="rest-admin-stat">⭐ <?php echo $r['rating']; ?></span>
+                            <span class="rest-admin-stat"><i class="fa-solid fa-star" style="color:#f59e0b"></i> <?php echo $r['rating']; ?></span>
                             <span class="rest-admin-stat">🕐 <?php echo $r['delivery_time']; ?></span>
-                            <span class="rest-admin-stat">🍽️ <?php echo $foodCounts[$r['id']] ?? 0; ?> items</span>
+                            <span class="rest-admin-stat"><i class="fa-solid fa-utensils"></i> <?php echo $foodCounts[$r['id']] ?? 0; ?> items</span>
                             <span class="rest-admin-stat" style="<?php echo $r['is_open'] ? 'color:var(--green);' : 'color:var(--red);'; ?>">
                                 <?php echo $r['is_open'] ? '● Open' : '● Closed'; ?>
                             </span>
@@ -361,12 +362,12 @@ while ($row = $fcStmt->fetch(PDO::FETCH_ASSOC)) {
                         <div class="rest-admin-actions" style="flex-wrap:wrap;">
                             <a href="manage_foods.php?restaurant_id=<?php echo (int)$r['id']; ?>" class="action-btn" title="Manage Foods"
                                style="background:rgba(52,199,89,0.12);color:#1a7a34;width:auto;padding:0 12px;font-size:0.78rem;font-weight:700;gap:4px;">
-                                🍽️ Foods (<?php echo $foodCounts[$r['id']] ?? 0; ?>)
+                                <i class="fa-solid fa-utensils"></i> Foods (<?php echo $foodCounts[$r['id']] ?? 0; ?>)
                             </a>
                             <a href="manage_restaurants.php?edit=<?php echo (int)$r['id']; ?>#restForm" class="action-btn action-edit" title="Edit">✏️</a>
                             <button type="button" class="action-btn action-delete" title="Delete"
                                     onclick="confirmDelete(<?php echo (int)$r['id']; ?>, '<?php echo htmlspecialchars(addslashes($r['name'])); ?>')">
-                                🗑️
+                                <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
                     </div>
@@ -378,12 +379,12 @@ while ($row = $fcStmt->fetch(PDO::FETCH_ASSOC)) {
     <!-- Delete Modal -->
     <div class="modal-overlay" id="deleteModal">
         <div class="modal-box">
-            <div class="modal-icon">⚠️</div>
+            <div class="modal-icon"><i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b"></i></div>
             <h3>Delete Restaurant?</h3>
             <p>Are you sure you want to delete <strong id="deleteName"></strong>? This action cannot be undone.</p>
             <div class="modal-actions">
                 <button class="btn btn-outline btn-sm" onclick="closeModal()">Cancel</button>
-                <a id="deleteLink" href="#" class="btn btn-danger btn-sm">🗑️ Delete</a>
+                <a id="deleteLink" href="#" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i> Delete</a>
             </div>
         </div>
     </div>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 include('../core/config.php');
 include('../core/db.php');
@@ -42,6 +42,7 @@ $deadlineMs = $deadline * 1000;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Order Details #<?php echo str_pad($order['id'], 5, '0', STR_PAD_LEFT); ?> — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../assets/css/style.css?v=8" />
     <style>
         .page { padding: 100px 24px 60px; min-height: 100vh; background: var(--cream); }
@@ -189,7 +190,7 @@ $deadlineMs = $deadline * 1000;
     <!-- Cancel Confirmation Modal -->
     <div class="cancel-modal-overlay" id="cancelModal">
         <div class="cancel-modal">
-            <div class="modal-icon">🗑️</div>
+            <div class="modal-icon"><i class="fa-solid fa-trash"></i></div>
             <h3>Cancel Order?</h3>
             <p>Are you sure you want to cancel <strong>Order #<?php echo str_pad($order['id'], 5, '0', STR_PAD_LEFT); ?></strong>? This action <strong>cannot be undone</strong> and the order will be permanently removed.</p>
             <div class="modal-btns">
@@ -213,18 +214,18 @@ $deadlineMs = $deadline * 1000;
             <?php if ($canCancel): ?>
                 <div class="cancel-section" id="cancelSection">
                     <div class="cancel-section-info">
-                        <h3>🗑️ Cancel This Order</h3>
+                        <h3><i class="fa-solid fa-trash"></i> Cancel This Order</h3>
                         <p>You can cancel this order while it's still pending. Once confirmed or being prepared, cancellation is no longer possible.</p>
                         <div class="cancel-countdown-detail">
                             <span>Cancellation window closes in:</span>
                             <span class="timer-pill" id="detailTimer">--:--</span>
                         </div>
                     </div>
-                    <button class="cancel-detail-btn" id="openCancelModal">🗑️ Cancel Order</button>
+                    <button class="cancel-detail-btn" id="openCancelModal"><i class="fa-solid fa-trash"></i> Cancel Order</button>
                 </div>
             <?php elseif ($order['status'] === 'pending'): ?>
                 <div class="cancel-expired">
-                    <span>⏰</span>
+                    <span><i class="fa-regular fa-clock"></i></span>
                     <span>The 30-minute cancellation window for this order has expired. Please contact support if you need assistance.</span>
                 </div>
             <?php endif; ?>
@@ -234,11 +235,11 @@ $deadlineMs = $deadline * 1000;
                 <div class="card" style="border: 2px solid var(--orange); background: linear-gradient(135deg, #fff, #fff8f0);">
                     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
                         <div>
-                            <h3 style="font-family:'Syne', sans-serif; font-size:1.3rem; margin:0 0 4px; color:var(--dark);">🛵 Your order is on the way!</h3>
+                            <h3 style="font-family:'Syne', sans-serif; font-size:1.3rem; margin:0 0 4px; color:var(--dark);"><i class="fa-solid fa-motorcycle"></i> Your order is on the way!</h3>
                             <p style="color:var(--muted); margin:0; font-size:0.95rem;">Track your rider's live location on the map.</p>
                         </div>
                         <a href="../orders/track.php?id=<?php echo $order['id']; ?>" class="cancel-detail-btn" style="background:var(--orange); box-shadow: 0 8px 24px rgba(255,79,0,0.3); text-decoration:none; display:inline-block;">
-                            📍 Track Live Location
+                            <i class="fa-solid fa-location-dot"></i> Track Live Location
                         </a>
                     </div>
                 </div>
@@ -392,19 +393,19 @@ $deadlineMs = $deadline * 1000;
                 .then(data => {
                     closeModal();
                     if (data.success) {
-                        showToast('✅ ' + data.message, 'success');
+                        showToast('<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> ' + data.message, 'success');
                         setTimeout(() => {
                             window.location.href = 'order_history.php';
                         }, 2000);
                     } else {
                         confirmBtn.disabled    = false;
                         confirmBtn.textContent = 'Yes, Cancel';
-                        showToast('❌ ' + data.message, 'error');
+                        showToast('<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> ' + data.message, 'error');
                     }
                 })
                 .catch(() => {
                     closeModal();
-                    showToast('❌ Network error. Please try again.', 'error');
+                    showToast('<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> Network error. Please try again.', 'error');
                 });
         });
 

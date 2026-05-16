@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 include('../core/db.php');
 
@@ -32,6 +32,7 @@ $totalRiders   = $pdo->query("SELECT COUNT(*) FROM users WHERE role='delivery_pa
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Rider Map — Admin | SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root { --orange: #ff4f00; --dark: #1a0a00; --white: #ffffff; --shadow: 0 8px 32px rgba(26,10,0,0.15); }
@@ -129,9 +130,9 @@ $totalRiders   = $pdo->query("SELECT COUNT(*) FROM users WHERE role='delivery_pa
 
         <div class="stat-chips">
             <div class="chip">🟡 Active <span><?php echo (int)$totalActive; ?></span></div>
-            <div class="chip">🛵 In Transit <span><?php echo (int)$totalTransit; ?></span></div>
-            <div class="chip">✅ Today <span><?php echo (int)$totalToday; ?></span></div>
-            <div class="chip">👤 Riders <span><?php echo (int)$totalRiders; ?></span></div>
+            <div class="chip"><i class="fa-solid fa-motorcycle"></i> In Transit <span><?php echo (int)$totalTransit; ?></span></div>
+            <div class="chip"><i class="fa-solid fa-circle-check" style="color:#22c55e"></i> Today <span><?php echo (int)$totalToday; ?></span></div>
+            <div class="chip"><i class="fa-solid fa-user"></i> Riders <span><?php echo (int)$totalRiders; ?></span></div>
         </div>
 
         <a href="dashboard.php" class="back-link">← Admin Panel</a>
@@ -140,7 +141,7 @@ $totalRiders   = $pdo->query("SELECT COUNT(*) FROM users WHERE role='delivery_pa
     <!-- Side Panel -->
     <div class="side-panel">
         <div class="panel-header">
-            <h3>🛵 Active Riders</h3>
+            <h3><i class="fa-solid fa-motorcycle"></i> Active Riders</h3>
             <p><?php echo count($riders); ?> rider(s) with live location</p>
         </div>
 
@@ -204,7 +205,7 @@ $totalRiders   = $pdo->query("SELECT COUNT(*) FROM users WHERE role='delivery_pa
 
             const icon = L.divIcon({
                 className: '',
-                html: `<div class="map-marker-wrap${isTransit ? ' pulse' : ''}">${isTransit ? '🛵' : '🏍️'}</div>`,
+                html: `<div class="map-marker-wrap${isTransit ? ' pulse' : ''}">${isTransit ? '<i class="fa-solid fa-motorcycle"></i>' : '<i class="fa-solid fa-motorcycle"></i>'}</div>`,
                 iconSize: [44, 44],
                 iconAnchor: [22, 22]
             });
@@ -213,9 +214,9 @@ $totalRiders   = $pdo->query("SELECT COUNT(*) FROM users WHERE role='delivery_pa
                 <div style="font-family:'DM Sans',sans-serif;min-width:200px;">
                     <strong style="font-size:1rem;">${rider.delivery_partner_name || 'Rider'}</strong><br>
                     <span style="color:#8b6a44;font-size:0.82rem;">Order #${String(rider.id).padStart(5,'0')}</span><br><br>
-                    👤 ${rider.customer_name}<br>
-                    📍 ${rider.delivery_address}, ${rider.delivery_city}<br>
-                    💰 Rs. ${parseFloat(rider.total).toLocaleString()}<br>
+                    <i class="fa-solid fa-user"></i> ${rider.customer_name}<br>
+                    <i class="fa-solid fa-location-dot"></i> ${rider.delivery_address}, ${rider.delivery_city}<br>
+                    <i class="fa-solid fa-coins"></i> Rs. ${parseFloat(rider.total).toLocaleString()}<br>
                     <span style="display:inline-block;margin-top:6px;padding:3px 10px;background:rgba(255,79,0,0.1);color:#ff4f00;border-radius:999px;font-size:0.75rem;font-weight:700;text-transform:uppercase;">${rider.status.replace(/_/g,' ')}</span>
                 </div>`;
 

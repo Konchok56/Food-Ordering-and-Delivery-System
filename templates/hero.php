@@ -42,7 +42,7 @@
 
   <div class="hero-visual">
     <div class="food-circle">
-      <div class="food-circle-inner">🍔</div>
+      <div class="food-circle-inner"><i class="fa-solid fa-burger"></i></div>
 
       <div class="float-card" style="top: 30px; right: -50px;">
         <div class="fc-icon orange">⚡</div>
@@ -61,7 +61,7 @@
       </div>
 
       <div class="float-card" style="top: 200px; left: -90px; animation-delay: 1.4s;">
-        <div class="fc-icon yellow">🎉</div>
+        <div class="fc-icon yellow"><i class="fa-solid fa-champagne-glasses" style="color:#22c55e"></i></div>
         <div>
           <div class="fc-label">Orders Today</div>
           <div class="fc-value">2,410</div>

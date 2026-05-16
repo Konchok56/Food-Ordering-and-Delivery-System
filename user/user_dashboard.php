@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 include('../core/db.php');
 include('../core/cart_helper.php');
@@ -51,14 +51,14 @@ $recentOrders = $recentStmt->fetchAll(PDO::FETCH_ASSOC);
 function orderStatusMeta(string $status): array
 {
     $map = [
-        'pending' => ['icon' => '⏳', 'label' => 'Pending'],
-        'confirmed' => ['icon' => '✅', 'label' => 'Confirmed'],
-        'preparing' => ['icon' => '👨‍🍳', 'label' => 'Preparing'],
-        'out_for_delivery' => ['icon' => '🛵', 'label' => 'Out for delivery'],
-        'delivered' => ['icon' => '🎉', 'label' => 'Delivered'],
-        'cancelled' => ['icon' => '❌', 'label' => 'Cancelled'],
+        'pending' => ['icon' => '<i class="fa-solid fa-hourglass-half" style="color:#f59e0b"></i>', 'label' => 'Pending'],
+        'confirmed' => ['icon' => '<i class="fa-solid fa-circle-check" style="color:#22c55e"></i>', 'label' => 'Confirmed'],
+        'preparing' => ['icon' => '<i class="fa-solid fa-kitchen-set"></i>', 'label' => 'Preparing'],
+        'out_for_delivery' => ['icon' => '<i class="fa-solid fa-motorcycle"></i>', 'label' => 'Out for delivery'],
+        'delivered' => ['icon' => '<i class="fa-solid fa-champagne-glasses" style="color:#22c55e"></i>', 'label' => 'Delivered'],
+        'cancelled' => ['icon' => '<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i>', 'label' => 'Cancelled'],
     ];
-    return $map[$status] ?? ['icon' => '📦', 'label' => ucfirst(str_replace('_', ' ', $status))];
+    return $map[$status] ?? ['icon' => '<i class="fa-solid fa-box"></i>', 'label' => ucfirst(str_replace('_', ' ', $status))];
 }
 ?>
 <!DOCTYPE html>
@@ -71,6 +71,7 @@ function orderStatusMeta(string $status): array
     <link
         href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../assets/css/style.css?v=8" />
     <style>
         .dash-page {
@@ -425,9 +426,9 @@ function orderStatusMeta(string $status): array
                     <p>Profile summary, order history, and delivery tracking in one place.</p>
                 </div>
                 <div class="quick-links">
-                    <a class="quick-link" href="user/profile.php">👤 Edit Profile</a>
-                    <a class="quick-link" href="user/order_history.php">📦 Full Order History</a>
-                    <a class="quick-link" href="menu.php">🍔 Browse Menu</a>
+                    <a class="quick-link" href="user/profile.php"><i class="fa-solid fa-user"></i> Edit Profile</a>
+                    <a class="quick-link" href="user/order_history.php"><i class="fa-solid fa-box"></i> Full Order History</a>
+                    <a class="quick-link" href="menu.php"><i class="fa-solid fa-burger"></i> Browse Menu</a>
                 </div>
             </div>
 

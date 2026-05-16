@@ -86,12 +86,12 @@ try {
         $pdo, $user_id, 'order_cancelled',
         'Order Cancelled',
         'Your order ' . $orderLabel . ' has been cancelled and removed successfully.',
-        '❌',
+        '<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i>',
         $cancelImage,
         SITE_BASE_URL . '/user/order_history.php'
     );
 
-    // --- 📧 Send Cancellation Email ---
+    // --- <i class="fa-solid fa-envelope"></i> Send Cancellation Email ---
     $userEmailStmt = $pdo->prepare("SELECT email, name FROM users WHERE id = ? LIMIT 1");
     $userEmailStmt->execute([$user_id]);
     $userEmailRow = $userEmailStmt->fetch(PDO::FETCH_ASSOC);
