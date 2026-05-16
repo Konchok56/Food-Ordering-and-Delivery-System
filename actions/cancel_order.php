@@ -72,11 +72,8 @@ try {
 
     $pdo->beginTransaction();
 
-    // Delete order items first (FK constraint)
-    $pdo->prepare("DELETE FROM order_items WHERE order_id = ?")->execute([$order_id]);
-
-    // Delete the order itself
-    $pdo->prepare("DELETE FROM orders WHERE id = ? AND user_id = ?")->execute([$order_id, $user_id]);
+    // GDODS-42: Update status to 'cancelled' instead of deleting records
+    $pdo->prepare("UPDATE orders SET status = 'cancelled', updated_at = NOW() WHERE id = ? AND user_id = ?")->execute([$order_id, $user_id]);
 
     $pdo->commit();
 
@@ -85,7 +82,7 @@ try {
     addNotification(
         $pdo, $user_id, 'order_cancelled',
         'Order Cancelled',
-        'Your order ' . $orderLabel . ' has been cancelled and removed successfully.',
+        'Your order ' . $orderLabel . ' has been cancelled successfully.',
         '❌',
         $cancelImage,
         SITE_BASE_URL . '/user/order_history.php'
@@ -99,7 +96,7 @@ try {
         sendOrderCancelledByCustomerEmail($userEmailRow['email'], $userEmailRow['name'], $order_id);
     }
 
-    echo json_encode(['success' => true, 'message' => 'Your order has been cancelled and removed successfully.']);
+    echo json_encode(['success' => true, 'message' => 'Your order has been cancelled successfully.']);
 } catch (Exception $e) {
     $pdo->rollBack();
     echo json_encode(['success' => false, 'message' => 'Something went wrong. Please try again.']);
