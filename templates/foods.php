@@ -10,7 +10,7 @@ $foods = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <div class="section-tag">Today's Picks</div>
       <div class="section-title">Most Popular<br />Right Now</div>
     </div>
-    <a href="menu.php" class="view-all">View All →</a>
+    <a href="menu.php" class="view-all">View All <i class="fa-solid fa-arrow-right"></i></a>
   </div>
 
   <div class="foods-grid">

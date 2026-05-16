@@ -12,7 +12,7 @@ unset($_SESSION['fp_error'], $_SESSION['fp_success']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
@@ -91,7 +91,7 @@ unset($_SESSION['fp_error'], $_SESSION['fp_success']);
                 <label for="email">Email Address</label>
                 <input type="email" name="email" id="email" placeholder="you@example.com" required>
             </div>
-            <button class="auth-btn" type="submit">Send OTP Code →</button>
+            <button class="auth-btn" type="submit">Send OTP Code <i class="fa-solid fa-arrow-right"></i></button>
         </form>
 
         <a href="login.php" class="auth-back">← Back to Login</a>

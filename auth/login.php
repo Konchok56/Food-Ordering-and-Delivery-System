@@ -10,7 +10,7 @@ if (isLoggedIn()) { redirect('index.php'); }
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/style.css?v=8">
     <script>(function(){var t=localStorage.getItem('sb-theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
@@ -203,7 +203,7 @@ if (isLoggedIn()) { redirect('index.php'); }
 
     <!-- Right -->
     <div class="auth-right">
-        <div class="auth-title">Welcome Back 👋</div>
+        <div class="auth-title">Welcome Back <i class="fa-solid fa-hand-wave"></i></div>
         <div class="auth-subtitle">Sign in to your SwiftBite account</div>
 
         <?php echo renderFlash(); ?>
@@ -226,7 +226,7 @@ if (isLoggedIn()) { redirect('index.php'); }
                 <a href="forgot_password.php">Forgot password?</a>
             </div>
 
-            <button class="auth-btn" type="submit">Sign In →</button>
+            <button class="auth-btn" type="submit">Sign In <i class="fa-solid fa-arrow-right"></i></button>
         </form>
 
         <div class="divider"><span>New to SwiftBite?</span></div>

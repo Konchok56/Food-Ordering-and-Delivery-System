@@ -97,7 +97,7 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
     <title><?php echo htmlspecialchars($food['name']); ?> — SwiftBite</title>
     <meta name="description" content="<?php echo htmlspecialchars(substr($food['description'], 0, 155)); ?>" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="assets/css/style.css?v=8" />
@@ -617,7 +617,7 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
                 <div class="detail-delivery-row">
                     <div class="detail-pill">🕐 <?php echo htmlspecialchars($food['delivery_time']); ?></div>
                     <?php if ($food['is_featured']): ?>
-                        <div class="detail-pill">⚡ Featured</div>
+                        <div class="detail-pill"><i class="fa-solid fa-bolt"></i> Featured</div>
                     <?php endif; ?>
                     <?php if ($food['is_favorite']): ?>
                         <div class="detail-pill"><i class="fa-solid fa-heart" style="color:#ef4444"></i> Favorite</div>
@@ -674,7 +674,7 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
                         <div class="highlight-value"><?php echo htmlspecialchars($food['category']); ?></div>
                     </div>
                     <div class="highlight-card">
-                        <div class="highlight-icon"><?php echo $food['is_featured'] ? '⚡' : '📋'; ?></div>
+                        <div class="highlight-icon"><?php echo $food['is_featured'] ? '<i class="fa-solid fa-bolt"></i>' : '📋'; ?></div>
                         <div class="highlight-label">Status</div>
                         <div class="highlight-value"><?php echo $food['is_featured'] ? 'Featured' : 'Regular'; ?></div>
                     </div>
@@ -761,7 +761,7 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
                     <div class="section-tag">You May Also Like</div>
                     <div class="section-title">Similar Dishes</div>
                 </div>
-                <a href="menu.php?category=<?php echo urlencode($food['category']); ?>" class="view-all">View All →</a>
+                <a href="menu.php?category=<?php echo urlencode($food['category']); ?>" class="view-all">View All <i class="fa-solid fa-arrow-right"></i></a>
             </div>
 
             <div class="foods-grid" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">

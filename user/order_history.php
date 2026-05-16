@@ -28,7 +28,7 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Orders — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../assets/css/style.css?v=8" />
     <style>
         .orders-page { padding: 100px 24px 60px; min-height: 100vh; background: var(--cream); }
@@ -232,7 +232,7 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
                             </div>
 
                             <div class="order-actions">
-                                <a href="order_details.php?id=<?php echo $order['id']; ?>" class="view-btn">View Details →</a>
+                                <a href="order_details.php?id=<?php echo $order['id']; ?>" class="view-btn">View Details <i class="fa-solid fa-arrow-right"></i></a>
 
                                 <?php if ($canCancel): ?>
                                     <button

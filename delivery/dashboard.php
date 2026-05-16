@@ -52,7 +52,7 @@ $activeOrders = $pdo->query("
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rider Dashboard — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../assets/css/style.css?v=8">
     <!-- Apply saved theme before first paint -->
     <script>(function(){var t=localStorage.getItem('sb-theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
@@ -565,7 +565,7 @@ let refreshTimeout = setTimeout(() => location.reload(), 60000);
 // ═══════════════════════════════════════════════════
 // 🎬 SIMULATION ENGINE
 // ═══════════════════════════════════════════════════
-const activeSimulations = {}; // orderId → interval handle
+const activeSimulations = {}; // orderId <i class="fa-solid fa-arrow-right"></i> interval handle
 
 // Initialize Leaflet mini-maps for each order card
 const miniMaps = {};
@@ -714,7 +714,7 @@ const miniMaps = {};
 // ══════════════════════════════════════════════
 // 📡 REAL GPS LIVE TRACKING ENGINE
 // ══════════════════════════════════════════════
-const gpsWatchIds = {}; // orderId → watchPosition ID
+const gpsWatchIds = {}; // orderId <i class="fa-solid fa-arrow-right"></i> watchPosition ID
 
 document.querySelectorAll('.btn-toggle-tracking').forEach(btn => {
     btn.addEventListener('click', function() {

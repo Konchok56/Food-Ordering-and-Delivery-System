@@ -27,7 +27,7 @@ if (!empty($featuredRests)):
       <div class="section-tag">Popular Restaurants</div>
       <div class="section-title">Top Rated<br />Near You</div>
     </div>
-    <a href="restaurants.php" class="view-all">View All →</a>
+    <a href="restaurants.php" class="view-all">View All <i class="fa-solid fa-arrow-right"></i></a>
   </div>
 
   <div class="rest-home-grid">

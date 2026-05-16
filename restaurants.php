@@ -84,7 +84,7 @@ $cuisineEmojis = [
     <title><?php echo $activeCuisine !== 'all' ? htmlspecialchars($activeCuisine) . ' Restaurants — ' : ''; ?>Restaurants — SwiftBite</title>
     <meta name="description" content="Browse top-rated restaurants near you. Order from your favorite local spots on SwiftBite." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eecIs/bztOx154gcB1agC9atiA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="assets/css/style.css?v=8" />
@@ -385,7 +385,7 @@ $cuisineEmojis = [
                     <?php if ($activeCity !== 'all'): ?> — <span><?php echo htmlspecialchars($activeCity); ?></span><?php endif; ?>
                 </div>
                 <?php if ($activeCuisine !== 'all' || $activeCity !== 'all' || $searchQuery !== ''): ?>
-                    <a href="restaurants.php" class="view-all">Clear Filters →</a>
+                    <a href="restaurants.php" class="view-all">Clear Filters <i class="fa-solid fa-arrow-right"></i></a>
                 <?php endif; ?>
             </div>
 

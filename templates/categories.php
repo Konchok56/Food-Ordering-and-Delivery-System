@@ -21,7 +21,7 @@ try {
       <div class="section-tag">Browse Categories</div>
       <div class="section-title">What Are You<br />Craving Today?</div>
     </div>
-    <a href="menu.php" class="view-all">View All →</a>
+    <a href="menu.php" class="view-all">View All <i class="fa-solid fa-arrow-right"></i></a>
   </div>
 
   <div class="categories-grid">

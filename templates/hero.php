@@ -13,7 +13,7 @@
     </p>
 
     <div class="hero-actions">
-      <a class="btn-lg btn-orange" href="#menu">Order Now →</a>
+      <a class="btn-lg btn-orange" href="#menu">Order Now <i class="fa-solid fa-arrow-right"></i></a>
       <a class="btn-lg btn-outline-dark" href="#how-it-works">
         <span class="play-icon">
           <svg width="10" height="12" viewBox="0 0 10 12" aria-hidden="true">
@@ -45,7 +45,7 @@
       <div class="food-circle-inner"><i class="fa-solid fa-burger"></i></div>
 
       <div class="float-card" style="top: 30px; right: -50px;">
-        <div class="fc-icon orange">⚡</div>
+        <div class="fc-icon orange"><i class="fa-solid fa-bolt"></i></div>
         <div>
           <div class="fc-label">Delivery Time</div>
           <div class="fc-value">28 mins</div>
@@ -53,7 +53,7 @@
       </div>
 
       <div class="float-card" style="bottom: 60px; left: -70px; animation-delay: .8s;">
-        <div class="fc-icon green">🌟</div>
+        <div class="fc-icon green"><i class="fa-solid fa-star"></i></div>
         <div>
           <div class="fc-label">Customer Rating</div>
           <div class="fc-value">4.9 / 5.0</div>
