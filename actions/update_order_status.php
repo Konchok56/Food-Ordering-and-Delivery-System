@@ -29,7 +29,7 @@ $status = trim((string) ($_POST['status'] ?? ''));
 $deliveryPartnerName = sanitize($_POST['delivery_partner_name'] ?? '');
 $deliveryPartnerPhone = sanitize($_POST['delivery_partner_phone'] ?? '');
 
-$allowedStatuses = ['pending', 'confirmed', 'preparing', 'out_for_delivery', 'delivered', 'cancelled'];
+$allowedStatuses = ['pending', 'confirmed', 'preparing', 'picked_up', 'out_for_delivery', 'delivered', 'cancelled'];
 if ($order_id <= 0 || !in_array($status, $allowedStatuses, true)) {
     $_SESSION['delivery_error'] = 'Invalid order or status.';
     header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '../delivery/dashboard.php'));
@@ -63,6 +63,7 @@ try {
         $statusMessages = [
             'confirmed'        => ['👍', 'Order Confirmed!', 'Your order has been confirmed and will be prepared shortly.'],
             'preparing'        => ['🧑‍🍳', 'Preparing Your Food', 'The kitchen is now preparing your order. Hang tight!'],
+            'picked_up'        => ['📦', 'Order Picked Up!', 'Your delivery partner has picked up your order and is heading your way.'],
             'out_for_delivery' => ['🛵', 'Out for Delivery!', 'Your order is on its way! Delivery partner: ' . $deliveryPartnerName . '.'],
             'delivered'        => ['🎉', 'Order Delivered!', 'Your order has been delivered. Enjoy your meal!'],
             'cancelled'        => ['❌', 'Order Cancelled', 'Your order has been cancelled by the admin.'],

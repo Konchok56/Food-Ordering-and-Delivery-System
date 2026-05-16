@@ -22,7 +22,7 @@ unset($_SESSION['delivery_success'], $_SESSION['delivery_error']);
 
 // Stats
 $statsRow = $pdo->query("SELECT
-    COUNT(CASE WHEN status IN ('pending','confirmed','preparing','out_for_delivery') THEN 1 END) AS active_count,
+    COUNT(CASE WHEN status IN ('pending','confirmed','preparing','picked_up','out_for_delivery') THEN 1 END) AS active_count,
     COUNT(CASE WHEN status = 'out_for_delivery' THEN 1 END) AS in_transit,
     COUNT(CASE WHEN status = 'delivered' AND DATE(updated_at) = CURDATE() THEN 1 END) AS delivered_today
     FROM orders")->fetch(PDO::FETCH_ASSOC);
@@ -40,9 +40,9 @@ $activeOrders = $pdo->query("
            COUNT(oi.id) AS item_count
     FROM orders o
     LEFT JOIN order_items oi ON oi.order_id = o.id
-    WHERE o.status IN ('pending','confirmed','preparing','out_for_delivery')
+    WHERE o.status IN ('pending','confirmed','preparing','picked_up','out_for_delivery')
     GROUP BY o.id
-    ORDER BY FIELD(o.status,'out_for_delivery','preparing','confirmed','pending'), o.created_at ASC
+    ORDER BY FIELD(o.status,'out_for_delivery','picked_up','preparing','confirmed','pending'), o.created_at ASC
 ")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
@@ -204,6 +204,50 @@ $activeOrders = $pdo->query("
         .sim-progress-bar-bg { height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
         .sim-progress-bar-fill { height: 100%; background: linear-gradient(90deg, #6c47ff, #a78bfa); width: 0%; transition: width 0.4s ease; border-radius: 3px; }
         .sim-status-text { font-size: 0.78rem; color: #a78bfa; font-weight: 600; }
+
+        /* Smart Action Button */
+        .smart-action-btn {
+            background: linear-gradient(135deg, var(--orange), #ff2400);
+            color: #fff;
+            border: none;
+            width: 100%;
+            padding: 18px;
+            border-radius: 18px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 24px rgba(255, 79, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        .smart-action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(255, 79, 0, 0.35);
+        }
+        .smart-action-btn:active { transform: translateY(0); }
+        .smart-action-btn .btn-icon { font-size: 1.4rem; }
+        .smart-action-btn .btn-arrow { margin-left: auto; opacity: 0.6; font-size: 1.2rem; transition: transform 0.3s; }
+        .smart-action-btn:hover .btn-arrow { transform: translateX(5px); opacity: 1; }
+        
+        .smart-action-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            transform: scale(0);
+            transition: transform 0.6s ease-out;
+            pointer-events: none;
+        }
+        .smart-action-btn:hover::after { transform: scale(1); }
 
         /* Live Tracking Banner */
         .live-tracking-banner {
@@ -374,7 +418,8 @@ $activeOrders = $pdo->query("
                         'pending'          => ['⏳', 'Pending'],
                         'confirmed'        => ['👍', 'Confirmed'],
                         'preparing'        => ['🧑‍🍳', 'Preparing'],
-                        'out_for_delivery' => ['🛵', 'Out for Delivery'],
+                        'picked_up'        => ['📦', 'Picked Up'],
+                        'out_for_delivery' => ['🛵', 'On the Way'],
                     ];
                     [$sIcon, $sLabel] = $statusLabels[$order['status']] ?? ['📦', ucfirst($order['status'])];
                 ?>
@@ -389,39 +434,64 @@ $activeOrders = $pdo->query("
                         <div class="status-pill <?php echo $statusClass; ?>"><?php echo $sIcon . ' ' . $sLabel; ?></div>
                     </div>
 
-                    <!-- Rider + Status form inline fields -->
-                    <form action="../actions/update_order_status.php" method="POST">
-                        <?php echo csrfInput(); ?>
-                        <input type="hidden" name="order_id" value="<?php echo (int)$order['id']; ?>">
+                    <!-- Smart Status Progression -->
+                    <?php
+                    $nextStatus = '';
+                    $nextLabel = '';
+                    $nextIcon = '';
 
-                        <div class="form-inline">
-                            <div>
-                                <label class="inp-label">Your Name</label>
-                                <input class="inp" type="text" name="delivery_partner_name"
-                                    value="<?php echo htmlspecialchars($order['delivery_partner_name'] ?? $rider['name']); ?>"
-                                    placeholder="Rider name" required>
+                    if (in_array($order['status'], ['pending', 'confirmed', 'preparing'])) {
+                        $nextStatus = 'picked_up';
+                        $nextLabel = 'Mark as Picked Up';
+                        $nextIcon = '📦';
+                    } elseif ($order['status'] === 'picked_up') {
+                        $nextStatus = 'out_for_delivery';
+                        $nextLabel = 'Mark as On the Way';
+                        $nextIcon = '🛵';
+                    } elseif ($order['status'] === 'out_for_delivery') {
+                        $nextStatus = 'delivered';
+                        $nextLabel = 'Mark as Delivered';
+                        $nextIcon = '✅';
+                    }
+                    ?>
+
+                    <?php if ($nextStatus): ?>
+                    <div style="padding: 0 22px 20px;">
+                        <form action="../actions/update_order_status.php" method="POST">
+                            <?php echo csrfInput(); ?>
+                            <input type="hidden" name="order_id" value="<?php echo (int)$order['id']; ?>">
+                            <input type="hidden" name="status" value="<?php echo $nextStatus; ?>">
+                            <input type="hidden" name="delivery_partner_name" value="<?php echo htmlspecialchars($order['delivery_partner_name'] ?? $rider['name']); ?>">
+                            <input type="hidden" name="delivery_partner_phone" value="<?php echo htmlspecialchars($order['delivery_partner_phone'] ?? $rider['phone'] ?? ''); ?>">
+                            
+                            <button type="submit" class="smart-action-btn">
+                                <span class="btn-icon"><?php echo $nextIcon; ?></span>
+                                <span class="btn-text"><?php echo $nextLabel; ?></span>
+                                <span class="btn-arrow">→</span>
+                            </button>
+                        </form>
+                        
+                        <details style="margin-top: 12px; opacity: 0.6;">
+                            <summary style="font-size: 0.75rem; cursor: pointer; color: var(--muted); font-weight: 700;">Manual Status Update</summary>
+                            <div style="padding-top: 10px;">
+                                <form action="../actions/update_order_status.php" method="POST" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                    <?php echo csrfInput(); ?>
+                                    <input type="hidden" name="order_id" value="<?php echo (int)$order['id']; ?>">
+                                    <input class="inp" type="text" name="delivery_partner_name" value="<?php echo htmlspecialchars($order['delivery_partner_name'] ?? $rider['name']); ?>" placeholder="Name" style="padding: 6px 10px; font-size: 0.8rem;">
+                                    <input class="inp" type="text" name="delivery_partner_phone" value="<?php echo htmlspecialchars($order['delivery_partner_phone'] ?? $rider['phone'] ?? ''); ?>" placeholder="Phone" style="padding: 6px 10px; font-size: 0.8rem;">
+                                    <select class="sel" name="status" style="padding: 6px 10px; font-size: 0.8rem;">
+                                        <?php foreach (['pending','confirmed','preparing','picked_up','out_for_delivery','delivered','cancelled'] as $s): ?>
+                                            <option value="<?php echo $s; ?>" <?php echo $order['status'] === $s ? 'selected' : ''; ?>>
+                                                <?php echo ucwords(str_replace('_', ' ', $s)); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <button type="submit" class="btn-save" style="padding: 6px; font-size: 0.8rem;">Update</button>
+                                </form>
                             </div>
-                            <div>
-                                <label class="inp-label">Your Phone</label>
-                                <input class="inp" type="text" name="delivery_partner_phone"
-                                    value="<?php echo htmlspecialchars($order['delivery_partner_phone'] ?? $rider['phone'] ?? ''); ?>"
-                                    placeholder="98XXXXXXXX" required>
-                            </div>
-                            <div>
-                                <label class="inp-label">Update Status</label>
-                                <select class="sel" name="status" required>
-                                    <?php foreach (['pending','confirmed','preparing','out_for_delivery','delivered','cancelled'] as $s): ?>
-                                        <option value="<?php echo $s; ?>" <?php echo $order['status'] === $s ? 'selected' : ''; ?>>
-                                            <?php echo ucwords(str_replace('_', ' ', $s)); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div style="display:flex;align-items:flex-end;">
-                                <button type="submit" class="btn-save">💾 Save Status</button>
-                            </div>
-                        </div>
-                    </form>
+                        </details>
+                    </div>
+                    <?php endif; ?>
 
                     <!-- Customer & Order Info -->
                     <div class="card-body">
