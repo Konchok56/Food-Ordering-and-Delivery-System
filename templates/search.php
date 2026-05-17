@@ -13,7 +13,7 @@ $searchCats = $pdo->query("SELECT DISTINCT category FROM foods ORDER BY category
         <path d="m21 21-4.35-4.35"></path>
       </svg>
       <input type="text" name="keyword" id="homeSearchInput"
-             placeholder="Search for food, restaurants…"
+             placeholder="<?php echo __('search_placeholder', 'Search for food, restaurants…'); ?>"
              autocomplete="off"
              data-autocomplete
              aria-label="Search food or restaurants"
@@ -25,9 +25,9 @@ $searchCats = $pdo->query("SELECT DISTINCT category FROM foods ORDER BY category
 
     <div class="search-cat">
       <select name="category">
-        <option value="">All Categories</option>
+        <option value=""><?php echo __('all_categories', 'All Categories'); ?></option>
         <?php foreach ($searchCats as $sc): ?>
-          <option value="<?php echo htmlspecialchars($sc); ?>"><?php echo htmlspecialchars($sc); ?></option>
+          <option value="<?php echo htmlspecialchars($sc); ?>"><?php echo htmlspecialchars(__($sc, $sc)); ?></option>
         <?php endforeach; ?>
       </select>
     </div>
@@ -36,14 +36,14 @@ $searchCats = $pdo->query("SELECT DISTINCT category FROM foods ORDER BY category
 
     <div class="search-cat">
       <select name="city">
-        <option value=""><i class="fa-solid fa-location-dot"></i> All Cities</option>
-        <option value="Kathmandu"><i class="fa-solid fa-location-dot"></i> Kathmandu</option>
-        <option value="Lalitpur"><i class="fa-solid fa-location-dot"></i> Lalitpur</option>
-        <option value="Bhaktapur"><i class="fa-solid fa-location-dot"></i> Bhaktapur</option>
+        <option value=""><?php echo __('all_cities', 'All Cities'); ?></option>
+        <option value="Kathmandu"><?php echo __('Kathmandu', 'Kathmandu'); ?></option>
+        <option value="Lalitpur"><?php echo __('Lalitpur', 'Lalitpur'); ?></option>
+        <option value="Bhaktapur"><?php echo __('Bhaktapur', 'Bhaktapur'); ?></option>
       </select>
     </div>
 
-    <button class="search-btn" type="submit">Search</button>
+    <button class="search-btn" type="submit"><?php echo __('btn_search', 'Search'); ?></button>
   </form>
 </section>
 

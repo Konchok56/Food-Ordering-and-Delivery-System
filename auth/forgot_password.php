@@ -1,4 +1,4 @@
-﻿<?php 
+<?php 
 require_once '../core/bootstrap.php';
 
 $error = $_SESSION['fp_error'] ?? '';
@@ -8,7 +8,7 @@ unset($_SESSION['fp_error'], $_SESSION['fp_success']);
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Forgot Password — SwiftBite</title>
+    <title><?php echo __('forgot_password_title', 'Forgot Password'); ?> — SwiftBite</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -74,8 +74,8 @@ unset($_SESSION['fp_error'], $_SESSION['fp_success']);
         </div>
 
         <div class="auth-icon"><i class="fa-solid fa-key"></i></div>
-        <div class="auth-title">Forgot Password</div>
-        <div class="auth-subtitle">Enter your email address and we'll send you a verification code to reset your password.</div>
+        <div class="auth-title"><?php echo __('forgot_password_title', 'Forgot Password'); ?></div>
+        <div class="auth-subtitle"><?php echo __('forgot_password_subtitle', "Enter your email address and we'll send you a verification code to reset your password."); ?></div>
 
         <?php if ($error): ?>
             <div class="auth-alert error"><i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> <?php echo htmlspecialchars($error); ?></div>
@@ -88,13 +88,13 @@ unset($_SESSION['fp_error'], $_SESSION['fp_success']);
         <form action="../actions/forgot_password_action.php" method="POST">
             <?php echo csrfInput(); ?>
             <div class="auth-field">
-                <label for="email">Email Address</label>
-                <input type="email" name="email" id="email" placeholder="you@example.com" required>
+                <label for="email"><?php echo __('email_address', 'Email Address'); ?></label>
+                <input type="email" name="email" id="email" placeholder="<?php echo __('email_placeholder', 'you@example.com'); ?>" required>
             </div>
-            <button class="auth-btn" type="submit">Send OTP Code <i class="fa-solid fa-arrow-right"></i></button>
+            <button class="auth-btn" type="submit"><?php echo __('send_otp_code', 'Send OTP Code'); ?> <i class="fa-solid fa-arrow-right"></i></button>
         </form>
 
-        <a href="login.php" class="auth-back">← Back to Login</a>
+        <a href="login.php" class="auth-back">← <?php echo __('back_to_login', 'Back to Login'); ?></a>
     </div>
 </body>
 </html>

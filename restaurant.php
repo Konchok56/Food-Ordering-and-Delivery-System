@@ -1,25 +1,5 @@
-﻿<?php
-session_start();
-
-// Remember me auto-login
-if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
-    include('core/db.php');
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE remember_token=?");
-    $stmt->execute([$_COOKIE['remember_token']]);
-    $user = $stmt->fetch();
-    if ($user) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_name'] = $user['name'];
-        $_SESSION['role'] = $user['role'];
-    }
-}
-
-include('core/db.php');
-include('core/cart_helper.php');
-
-// Cart count from DB
-$cartCount = isset($_SESSION['user_id']) ? getCartCount($pdo, $_SESSION['user_id']) : 0;
-
+<?php
+require_once 'core/bootstrap.php';
 // Get restaurant ID
 $restId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 if ($restId <= 0) {
@@ -76,8 +56,8 @@ $cuisineEmojis = [
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><?php echo htmlspecialchars($rest['name']); ?> — SwiftBite</title>
-    <meta name="description" content="<?php echo htmlspecialchars(substr($rest['description'], 0, 155)); ?>" />
+    <title><?php echo htmlspecialchars(__($rest['name'], $rest['name'])); ?> — SwiftBite</title>
+    <meta name="description" content="<?php echo htmlspecialchars(substr(__($rest['description'], $rest['description']), 0, 155)); ?>" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -491,11 +471,11 @@ $cuisineEmojis = [
     <div class="restd-page">
         <!-- Breadcrumb -->
         <div class="breadcrumb">
-            <a href="index.php">Home</a>
+            <a href="index.php"><?php echo __('home', 'Home'); ?></a>
             <span class="sep">›</span>
-            <a href="restaurants.php">Restaurants</a>
+            <a href="restaurants.php"><?php echo __('restaurants_title', 'Restaurants'); ?></a>
             <span class="sep">›</span>
-            <span class="current"><?php echo htmlspecialchars($rest['name']); ?></span>
+            <span class="current"><?php echo htmlspecialchars(__($rest['name'], $rest['name'])); ?></span>
         </div>
 
         <!-- Hero Banner -->
@@ -506,15 +486,15 @@ $cuisineEmojis = [
             <div class="restd-hero-content">
                 <div class="restd-cuisine-pill">
                     <?php echo $cuisineEmojis[$rest['cuisine_type']] ?? '<i class="fa-solid fa-utensils"></i>'; ?>
-                    <?php echo htmlspecialchars($rest['cuisine_type']); ?>
+                    <?php echo htmlspecialchars(__($rest['cuisine_type'], $rest['cuisine_type'])); ?>
                 </div>
-                <div class="restd-name"><?php echo htmlspecialchars($rest['name']); ?></div>
+                <div class="restd-name"><?php echo htmlspecialchars(__($rest['name'], $rest['name'])); ?></div>
                 <div class="restd-hero-meta">
-                    <span class="restd-hero-pill"><i class="fa-solid fa-star" style="color:#f59e0b"></i> <?php echo htmlspecialchars($rest['rating']); ?></span>
-                    <span class="restd-hero-pill">🕐 <?php echo htmlspecialchars($rest['delivery_time']); ?></span>
-                    <span class="restd-hero-pill"><i class="fa-solid fa-location-dot"></i> <?php echo htmlspecialchars($rest['address']); ?></span>
+                    <span class="restd-hero-pill"><i class="fa-solid fa-star" style="color:#f59e0b"></i> <?php echo t_num($rest['rating']); ?></span>
+                    <span class="restd-hero-pill">🕐 <?php echo t_delivery_time($rest['delivery_time']); ?></span>
+                    <span class="restd-hero-pill"><i class="fa-solid fa-location-dot"></i> <?php echo htmlspecialchars(__($rest['address'], $rest['address'])); ?></span>
                     <span class="restd-status <?php echo $rest['is_open'] ? 'open' : 'closed'; ?>">
-                        <?php echo $rest['is_open'] ? '● Open Now' : '● Closed'; ?>
+                        <?php echo $rest['is_open'] ? '● ' . __('status_open_now', 'Open Now') : '● ' . __('status_closed', 'Closed'); ?>
                     </span>
                 </div>
             </div>
@@ -524,47 +504,47 @@ $cuisineEmojis = [
         <div class="restd-info">
             <div class="restd-info-card">
                 <div class="restd-info-icon">🕐</div>
-                <div class="restd-info-label">Delivery</div>
-                <div class="restd-info-value"><?php echo htmlspecialchars($rest['delivery_time']); ?></div>
+                <div class="restd-info-label"><?php echo __('delivery', 'Delivery'); ?></div>
+                <div class="restd-info-value"><?php echo t_delivery_time($rest['delivery_time']); ?></div>
             </div>
             <div class="restd-info-card">
                 <div class="restd-info-icon"><i class="fa-solid fa-truck"></i></div>
-                <div class="restd-info-label">Delivery Fee</div>
-                <div class="restd-info-value">Rs. <?php echo number_format((float)$rest['delivery_fee'], 0); ?></div>
+                <div class="restd-info-label"><?php echo __('delivery_fee', 'Delivery Fee'); ?></div>
+                <div class="restd-info-value"><?php echo __('currency_rs', 'Rs.'); ?> <?php echo t_num(number_format((float)$rest['delivery_fee'], 0)); ?></div>
             </div>
             <div class="restd-info-card">
                 <div class="restd-info-icon"><i class="fa-solid fa-box"></i></div>
-                <div class="restd-info-label">Min Order</div>
-                <div class="restd-info-value">Rs. <?php echo number_format((float)$rest['min_order'], 0); ?></div>
+                <div class="restd-info-label"><?php echo __('min_order', 'Min Order'); ?></div>
+                <div class="restd-info-value"><?php echo __('currency_rs', 'Rs.'); ?> <?php echo t_num(number_format((float)$rest['min_order'], 0)); ?></div>
             </div>
             <div class="restd-info-card">
                 <div class="restd-info-icon"><i class="fa-solid fa-phone"></i></div>
-                <div class="restd-info-label">Phone</div>
-                <div class="restd-info-value"><?php echo htmlspecialchars($rest['phone']); ?></div>
+                <div class="restd-info-label"><?php echo __('phone', 'Phone'); ?></div>
+                <div class="restd-info-value"><?php echo t_num($rest['phone']); ?></div>
             </div>
             <div class="restd-info-card">
                 <div class="restd-info-icon"><i class="fa-solid fa-location-dot"></i></div>
-                <div class="restd-info-label">City</div>
-                <div class="restd-info-value"><?php echo htmlspecialchars($rest['city']); ?></div>
+                <div class="restd-info-label"><?php echo __('city', 'City'); ?></div>
+                <div class="restd-info-value"><?php echo htmlspecialchars(__($rest['city'], $rest['city'])); ?></div>
             </div>
         </div>
 
         <!-- About -->
         <div style="padding: 0 60px 24px;">
             <div style="background:#fff; border-radius:24px; padding:28px; box-shadow:var(--shadow);">
-                <div style="font-weight:800; font-size:0.78rem; letter-spacing:2px; text-transform:uppercase; color:var(--orange); margin-bottom:10px;">About</div>
-                <p style="color:var(--muted); line-height:1.8; font-size:1.02rem;"><?php echo nl2br(htmlspecialchars($rest['description'])); ?></p>
+                <div style="font-weight:800; font-size:0.78rem; letter-spacing:2px; text-transform:uppercase; color:var(--orange); margin-bottom:10px;"><?php echo __('about', 'About'); ?></div>
+                <p style="color:var(--muted); line-height:1.8; font-size:1.02rem;"><?php echo nl2br(htmlspecialchars(__($rest['description'], $rest['description']))); ?></p>
             </div>
         </div>
 
         <!-- Menu heading -->
         <div style="padding: 0 60px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
             <div>
-                <div class="section-tag"><i class="fa-solid fa-utensils"></i> Full Menu</div>
-                <div class="section-title"><?php echo htmlspecialchars($rest['name']); ?>'s Menu</div>
+                <div class="section-tag"><i class="fa-solid fa-utensils"></i> <?php echo __('full_menu', 'Full Menu'); ?></div>
+                <div class="section-title"><?php echo htmlspecialchars(__($rest['name'], $rest['name'])); ?><?php echo __('menu_suffix', "'s Menu"); ?></div>
             </div>
             <span style="background:var(--cream2); padding:6px 18px; border-radius:999px; font-size:0.85rem; font-weight:700; color:var(--orange);">
-                <?php echo $totalFoods; ?> items
+                <?php echo t_num($totalFoods); ?> <?php echo __('items', 'items'); ?>
             </span>
         </div>
 
@@ -573,8 +553,8 @@ $cuisineEmojis = [
         <div class="menu-pills-mobile">
             <?php foreach ($foodsByCategory as $cat => $items): ?>
                 <a href="#cat-<?php echo urlencode($cat); ?>" class="menu-pill">
-                    <?php echo $catEmojis[$cat] ?? '<i class="fa-solid fa-utensils"></i>'; ?> <?php echo htmlspecialchars($cat); ?>
-                    <span style="font-size:0.68rem;opacity:0.7;">(<?php echo count($items); ?>)</span>
+                    <?php echo $catEmojis[$cat] ?? '<i class="fa-solid fa-utensils"></i>'; ?> <?php echo htmlspecialchars(__($cat, $cat)); ?>
+                    <span style="font-size:0.68rem;opacity:0.7;">(<?php echo t_num(count($items)); ?>)</span>
                 </a>
             <?php endforeach; ?>
         </div>
@@ -587,20 +567,20 @@ $cuisineEmojis = [
                 <!-- Empty state -->
                 <div class="restd-menu-empty">
                     <div class="empty-icon"><i class="fa-solid fa-utensils"></i></div>
-                    <h3>No menu items yet</h3>
-                    <p>This restaurant hasn't added any food items yet. Check back soon!</p>
-                    <a href="menu.php">Browse other foods <i class="fa-solid fa-arrow-right"></i></a>
+                    <h3><?php echo __('no_menu_items_yet', 'No menu items yet'); ?></h3>
+                    <p><?php echo __('no_menu_items_desc', "This restaurant hasn't added any food items yet. Check back soon!"); ?></p>
+                    <a href="menu.php"><?php echo __('browse_other_foods', 'Browse other foods'); ?> <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
             <?php else: ?>
 
                 <!-- Sticky sidebar -->
                 <aside class="menu-sidebar">
-                    <div class="menu-sidebar-title">Categories</div>
+                    <div class="menu-sidebar-title"><?php echo __('categories', 'Categories'); ?></div>
                     <?php foreach ($foodsByCategory as $cat => $items): ?>
                         <a href="#cat-<?php echo urlencode($cat); ?>" class="menu-sidebar-item">
                             <span class="item-emoji"><?php echo $catEmojis[$cat] ?? '<i class="fa-solid fa-utensils"></i>'; ?></span>
-                            <span class="item-label"><?php echo htmlspecialchars($cat); ?></span>
-                            <span class="item-count"><?php echo count($items); ?></span>
+                            <span class="item-label"><?php echo htmlspecialchars(__($cat, $cat)); ?></span>
+                            <span class="item-count"><?php echo t_num(count($items)); ?></span>
                         </a>
                     <?php endforeach; ?>
                 </aside>
@@ -611,8 +591,8 @@ $cuisineEmojis = [
                         <section class="menu-section" id="cat-<?php echo urlencode($cat); ?>">
                             <div class="menu-section-title">
                                 <div class="title-emoji"><?php echo $catEmojis[$cat] ?? '<i class="fa-solid fa-utensils"></i>'; ?></div>
-                                <?php echo htmlspecialchars($cat); ?>
-                                <span class="menu-section-count"><?php echo count($items); ?> items</span>
+                                <?php echo htmlspecialchars(__($cat, $cat)); ?>
+                                <span class="menu-section-count"><?php echo t_num(count($items)); ?> <?php echo __('items', 'items'); ?></span>
                             </div>
 
                             <?php foreach ($items as $food): ?>
@@ -620,7 +600,7 @@ $cuisineEmojis = [
                                     <!-- Image -->
                                     <a href="food_detail.php?id=<?php echo (int)$food['id']; ?>" class="menu-item-img" style="text-decoration:none;">
                                         <?php if (!empty($food['image_path'])): ?>
-                                            <img src="<?php echo htmlspecialchars($food['image_path']); ?>" alt="<?php echo htmlspecialchars($food['name']); ?>">
+                                            <img src="<?php echo htmlspecialchars($food['image_path']); ?>" alt="<?php echo htmlspecialchars(__($food['name'], $food['name'])); ?>">
                                         <?php else: ?>
                                             <?php echo htmlspecialchars($food['emoji']); ?>
                                         <?php endif; ?>
@@ -631,7 +611,7 @@ $cuisineEmojis = [
                                         <div class="menu-item-top">
                                             <div class="menu-item-name">
                                                 <?php if ($food['is_favorite']): ?><i class="fa-solid fa-heart" style="color:#ef4444"></i> <?php endif; ?>
-                                                <?php echo htmlspecialchars($food['name']); ?>
+                                                <?php echo htmlspecialchars(__($food['name'], $food['name'])); ?>
                                             </div>
                                             <?php if (!empty($food['badge'])): ?>
                                                 <?php
@@ -642,27 +622,27 @@ $cuisineEmojis = [
                                                         default => ''
                                                     };
                                                 ?>
-                                                <span class="menu-item-badge <?php echo $badgeClass; ?>"><?php echo htmlspecialchars($food['badge']); ?></span>
+                                                <span class="menu-item-badge <?php echo $badgeClass; ?>"><?php echo htmlspecialchars(__($food['badge'], $food['badge'])); ?></span>
                                             <?php endif; ?>
                                         </div>
-                                        <div class="menu-item-desc"><?php echo htmlspecialchars($food['description']); ?></div>
+                                        <div class="menu-item-desc"><?php echo htmlspecialchars(__($food['description'], $food['description'])); ?></div>
                                         <div class="menu-item-footer">
-                                            <span class="menu-item-rating"><i class="fa-solid fa-star" style="color:#f59e0b"></i> <?php echo htmlspecialchars($food['rating']); ?></span>
-                                            <span class="menu-item-time">🕐 <?php echo htmlspecialchars($food['delivery_time']); ?></span>
+                                            <span class="menu-item-rating"><i class="fa-solid fa-star" style="color:#f59e0b"></i> <?php echo t_num($food['rating']); ?></span>
+                                            <span class="menu-item-time">🕐 <?php echo t_delivery_time($food['delivery_time']); ?></span>
                                         </div>
                                     </div>
 
                                     <!-- Price + Add -->
                                     <div class="menu-item-right">
                                         <div class="menu-item-price">
-                                            <small>Rs.</small> <?php echo number_format((float)$food['price'], 0); ?>
+                                            <small><?php echo __('currency_rs', 'Rs.'); ?></small> <?php echo t_num(number_format((float)$food['price'], 0)); ?>
                                         </div>
                                     <form action="actions/add_to_cart.php" method="post" class="menu-cart-form">
                                             <input type="hidden" name="food_id" value="<?php echo (int)$food['id']; ?>">
-                                            <input type="hidden" name="food_name" value="<?php echo htmlspecialchars($food['name']); ?>">
+                                            <input type="hidden" name="food_name" value="<?php echo htmlspecialchars(__($food['name'], $food['name'])); ?>">
                                             <input type="hidden" name="price" value="<?php echo (float)$food['price']; ?>">
                                             <button class="menu-add-btn" type="submit" title="Add to cart"
-                                                    data-name="<?php echo htmlspecialchars($food['name']); ?>">+</button>
+                                                    data-name="<?php echo htmlspecialchars(__($food['name'], $food['name'])); ?>">+</button>
                                         </form>
                                     </div>
                                 </div>
