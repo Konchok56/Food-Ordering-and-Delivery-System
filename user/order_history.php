@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 include('../core/db.php');
 include('../core/cart_helper.php');
@@ -28,6 +28,7 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Orders — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../assets/css/style.css?v=8" />
     <style>
         .orders-page { padding: 100px 24px 60px; min-height: 100vh; background: var(--cream); }
@@ -158,7 +159,7 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
     <!-- Cancel Confirmation Modal -->
     <div class="cancel-modal-overlay" id="cancelModal">
         <div class="cancel-modal">
-            <div class="modal-icon">🗑️</div>
+            <div class="modal-icon"><i class="fa-solid fa-trash"></i></div>
             <h3>Cancel Order?</h3>
             <p>Are you sure you want to cancel <strong id="modalOrderLabel">this order</strong>? This action <strong>cannot be undone</strong> and the order will be permanently removed.</p>
             <div class="modal-btns">
@@ -175,12 +176,12 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
         <div class="orders-inner">
 
             <div class="page-header">
-                <h1>📦 My Orders</h1>
+                <h1><i class="fa-solid fa-box"></i> My Orders</h1>
             </div>
 
             <?php if (empty($orders)): ?>
                 <div class="empty-state">
-                    <div class="empty-icon">🍽️</div>
+                    <div class="empty-icon"><i class="fa-solid fa-utensils"></i></div>
                     <h3>No orders yet</h3>
                     <p>You haven't placed any orders. Start exploring our delicious menu to satisfy your cravings!</p>
                     <a href="../menu.php" class="empty-btn">Explore Menu</a>
@@ -189,15 +190,15 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
                 <?php foreach ($orders as $order): ?>
                     <?php
                         $statusMap = [
-                            'pending'          => ['icon' => '⏳', 'text' => 'Waiting for confirmation'],
+                            'pending'          => ['icon' => '<i class="fa-solid fa-hourglass-half" style="color:#f59e0b"></i>', 'text' => 'Waiting for confirmation'],
                             'confirmed'        => ['icon' => '👍', 'text' => 'Confirmed'],
                             'preparing'        => ['icon' => '🧑‍🍳', 'text' => 'Preparing Food'],
-                            'ready'            => ['icon' => '✅', 'text' => 'Ready for Pickup'],
-                            'out_for_delivery' => ['icon' => '🛵', 'text' => 'Out for Delivery'],
-                            'delivered'        => ['icon' => '🎉', 'text' => 'Delivered'],
-                            'cancelled'        => ['icon' => '❌', 'text' => 'Cancelled'],
+                            'ready'            => ['icon' => '<i class="fa-solid fa-circle-check" style="color:#22c55e"></i>', 'text' => 'Ready for Pickup'],
+                            'out_for_delivery' => ['icon' => '<i class="fa-solid fa-motorcycle"></i>', 'text' => 'Out for Delivery'],
+                            'delivered'        => ['icon' => '<i class="fa-solid fa-champagne-glasses" style="color:#22c55e"></i>', 'text' => 'Delivered'],
+                            'cancelled'        => ['icon' => '<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i>', 'text' => 'Cancelled'],
                         ];
-                        $s = $statusMap[$order['status']] ?? ['icon' => '📦', 'text' => ucfirst($order['status'])];
+                        $s = $statusMap[$order['status']] ?? ['icon' => '<i class="fa-solid fa-box"></i>', 'text' => ucfirst($order['status'])];
 
                         $deadline       = strtotime($order['created_at']) + CANCEL_WINDOW_SECONDS;
                         $canCancel      = ($order['status'] === 'pending') && (time() < $deadline);
@@ -231,7 +232,7 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
                             </div>
 
                             <div class="order-actions">
-                                <a href="order_details.php?id=<?php echo $order['id']; ?>" class="view-btn">View Details →</a>
+                                <a href="order_details.php?id=<?php echo $order['id']; ?>" class="view-btn">View Details <i class="fa-solid fa-arrow-right"></i></a>
 
                                 <?php if ($canCancel): ?>
                                     <button
@@ -241,7 +242,7 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
                                         data-order-label="Order #<?php echo str_pad($order['id'], 5, '0', STR_PAD_LEFT); ?>"
                                         data-deadline="<?php echo $deadlineMs; ?>"
                                     >
-                                        🗑️ Cancel Order
+                                        <i class="fa-solid fa-trash"></i> Cancel Order
                                     </button>
                                     <div class="cancel-countdown" id="countdown-<?php echo $order['id']; ?>">
                                         <span>Cancel within:</span>
@@ -352,14 +353,14 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
                                 setTimeout(() => card.remove(), 300);
                             }, 350);
                         }
-                        showToast('✅ ' + data.message, 'success');
+                        showToast('<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> ' + data.message, 'success');
                     } else {
-                        showToast('❌ ' + data.message, 'error');
+                        showToast('<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> ' + data.message, 'error');
                     }
                 })
                 .catch(() => {
                     closeModal();
-                    showToast('❌ Network error. Please try again.', 'error');
+                    showToast('<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> Network error. Please try again.', 'error');
                 });
         });
 

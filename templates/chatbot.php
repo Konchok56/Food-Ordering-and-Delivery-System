@@ -270,13 +270,13 @@ $base_url = !file_exists('core/db.php') ? '../' : '';
 </style>
 
 <button class="chat-fab" id="chatFab" aria-label="Open support chat">
-  💬
+  <i class="fa-solid fa-comment"></i>
 </button>
 
 <div class="chat-window" id="chatWindow">
   <div class="chat-header">
     <div class="chat-header-info">
-      <div class="chat-avatar">🤖</div>
+      <div class="chat-avatar"><i class="fa-solid fa-robot"></i></div>
       <div>
         <div class="chat-title">SwiftBite AI</div>
         <div class="chat-status">Online and ready to help</div>
@@ -287,16 +287,16 @@ $base_url = !file_exists('core/db.php') ? '../' : '';
   
   <div class="chat-body" id="chatBody">
     <div class="chat-msg bot">
-      <div class="chat-bubble">Hi there! 👋 I'm the SwiftBite AI assistant. How can I help you today?</div>
+      <div class="chat-bubble">Hi there! <i class="fa-solid fa-hand-wave"></i> I'm the SwiftBite AI assistant. How can I help you today?</div>
       <div class="chat-time">Just now</div>
     </div>
     
     <div class="chat-chips-wrap" id="chatChips">
       <div class="chat-chips-label">Quick questions</div>
       <div class="chat-chips">
-        <button class="chat-chip">📦 Where is my order?</button>
-        <button class="chat-chip">🍕 Recommend me food</button>
-        <button class="chat-chip">🛒 Add burger to cart</button>
+        <button class="chat-chip"><i class="fa-solid fa-box"></i> Where is my order?</button>
+        <button class="chat-chip"><i class="fa-solid fa-pizza-slice"></i> Recommend me food</button>
+        <button class="chat-chip"><i class="fa-solid fa-cart-shopping"></i> Add burger to cart</button>
       </div>
     </div>
 

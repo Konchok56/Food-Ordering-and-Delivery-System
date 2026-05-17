@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 include('../core/db.php');
 include('../core/csrf.php');
@@ -49,6 +49,7 @@ $approved = $pdo->query("SELECT * FROM users WHERE role = 'delivery_partner' AND
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Riders — SwiftBite Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../assets/css/style.css?v=8">
     <style>
         .page { padding: 100px 24px 60px; min-height: 100vh; background: var(--cream); }
@@ -111,7 +112,7 @@ $approved = $pdo->query("SELECT * FROM users WHERE role = 'delivery_partner' AND
         <div class="inner">
             <div class="topbar">
                 <div>
-                    <h1>🛵 Manage Riders</h1>
+                    <h1><i class="fa-solid fa-motorcycle"></i> Manage Riders</h1>
                     <p>Review delivery partner applications and manage approved riders</p>
                 </div>
                 <a class="back-link" href="dashboard.php">← Admin Dashboard</a>
@@ -119,20 +120,20 @@ $approved = $pdo->query("SELECT * FROM users WHERE role = 'delivery_partner' AND
 
             <?php if ($flash): ?>
                 <div class="flash flash-<?php echo $flash['type']; ?>">
-                    <?php echo $flash['type'] === 'success' ? '✅' : '❌'; ?>
+                    <?php echo $flash['type'] === 'success' ? '<i class="fa-solid fa-circle-check" style="color:#22c55e"></i>' : '<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i>'; ?>
                     <?php echo htmlspecialchars($flash['msg']); ?>
                 </div>
             <?php endif; ?>
 
             <!-- Pending Applications -->
             <div class="section-title">
-                ⏳ Pending Applications
+                <i class="fa-solid fa-hourglass-half" style="color:#f59e0b"></i> Pending Applications
                 <span class="badge-count"><?php echo count($pending); ?></span>
             </div>
 
             <?php if (empty($pending)): ?>
                 <div class="empty-box" style="margin-bottom:36px;">
-                    <div class="big">✅</div>
+                    <div class="big"><i class="fa-solid fa-circle-check" style="color:#22c55e"></i></div>
                     <p>No pending rider applications right now.</p>
                 </div>
             <?php else: ?>
@@ -148,7 +149,7 @@ $approved = $pdo->query("SELECT * FROM users WHERE role = 'delivery_partner' AND
                             <div>
                                 <div class="rider-name"><?php echo htmlspecialchars($rider['name']); ?></div>
                                 <div class="rider-email"><?php echo htmlspecialchars($rider['email']); ?></div>
-                                <span class="status-badge status-pending" style="margin-top:4px;">⏳ Pending</span>
+                                <span class="status-badge status-pending" style="margin-top:4px;"><i class="fa-solid fa-hourglass-half" style="color:#f59e0b"></i> Pending</span>
                             </div>
                         </div>
 
@@ -181,13 +182,13 @@ $approved = $pdo->query("SELECT * FROM users WHERE role = 'delivery_partner' AND
                                 <?php echo csrfInput(); ?>
                                 <input type="hidden" name="user_id" value="<?php echo (int)$rider['id']; ?>">
                                 <input type="hidden" name="action"  value="approve">
-                                <button class="btn-approve" type="submit">✅ Approve</button>
+                                <button class="btn-approve" type="submit"><i class="fa-solid fa-circle-check" style="color:#22c55e"></i> Approve</button>
                             </form>
                             <form method="POST" onsubmit="return confirm('Reject and delete this application?')">
                                 <?php echo csrfInput(); ?>
                                 <input type="hidden" name="user_id" value="<?php echo (int)$rider['id']; ?>">
                                 <input type="hidden" name="action"  value="reject">
-                                <button class="btn-reject" type="submit">❌ Reject</button>
+                                <button class="btn-reject" type="submit"><i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> Reject</button>
                             </form>
                         </div>
                     </div>
@@ -197,13 +198,13 @@ $approved = $pdo->query("SELECT * FROM users WHERE role = 'delivery_partner' AND
 
             <!-- Approved Riders -->
             <div class="section-title">
-                ✅ Approved Riders
+                <i class="fa-solid fa-circle-check" style="color:#22c55e"></i> Approved Riders
                 <span class="badge-count" style="background:#2ecc71;"><?php echo count($approved); ?></span>
             </div>
 
             <?php if (empty($approved)): ?>
                 <div class="empty-box">
-                    <div class="big">🛵</div>
+                    <div class="big"><i class="fa-solid fa-motorcycle"></i></div>
                     <p>No approved riders yet.</p>
                 </div>
             <?php else: ?>
@@ -219,7 +220,7 @@ $approved = $pdo->query("SELECT * FROM users WHERE role = 'delivery_partner' AND
                             <div>
                                 <div class="rider-name"><?php echo htmlspecialchars($rider['name']); ?></div>
                                 <div class="rider-email"><?php echo htmlspecialchars($rider['email']); ?></div>
-                                <span class="status-badge status-approved" style="margin-top:4px;">✅ Active Rider</span>
+                                <span class="status-badge status-approved" style="margin-top:4px;"><i class="fa-solid fa-circle-check" style="color:#22c55e"></i> Active Rider</span>
                             </div>
                         </div>
                         <div class="rider-info">

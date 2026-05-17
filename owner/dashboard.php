@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../core/bootstrap.php';
 
 // Require restaurant or admin role
@@ -77,6 +77,7 @@ $statusConfig = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($restaurant['name']); ?> Dashboard — SwiftBite</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --brand: #ff4f00; --dark: #0f0a05; --surface: #1a1208; --card: #211a0e; --border: #2e2416; --text: #f5ede0; --muted: #a08060; }
@@ -128,13 +129,13 @@ $statusConfig = [
 <aside class="sidebar">
     <div class="logo">Swift<span>Bite</span></div>
     <nav class="nav-links">
-        <a href="dashboard.php" class="<?php echo $filter === 'all' ? 'active' : ''; ?>">📊 Dashboard</a>
-        <a href="dashboard.php?filter=pending" class="<?php echo $filter === 'pending' ? 'active' : ''; ?>">🔔 Pending</a>
+        <a href="dashboard.php" class="<?php echo $filter === 'all' ? 'active' : ''; ?>"><i class="fa-solid fa-chart-bar"></i> Dashboard</a>
+        <a href="dashboard.php?filter=pending" class="<?php echo $filter === 'pending' ? 'active' : ''; ?>"><i class="fa-solid fa-bell"></i> Pending</a>
         <a href="dashboard.php?filter=preparing" class="<?php echo $filter === 'preparing' ? 'active' : ''; ?>">👩‍🍳 Preparing</a>
-        <a href="../index.php">🌐 View Main Site</a>
+        <a href="analytics.php">📈 Analytics</a>
     </nav>
     <div class="sidebar-footer">
-        <a href="../auth/logout.php" style="color:var(--muted);text-decoration:none;font-size:0.9rem;font-weight:600;">🚪 Logout</a>
+        <a href="../auth/logout.php" style="color:var(--muted);text-decoration:none;font-size:0.9rem;font-weight:600;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
     </div>
 </aside>
 

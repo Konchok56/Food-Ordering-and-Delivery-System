@@ -1,4 +1,4 @@
-<?php 
+﻿<?php 
 require_once '../core/bootstrap.php';
 
 // Make sure user came from step 1
@@ -24,6 +24,7 @@ if ($at_pos > 2) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
@@ -111,16 +112,16 @@ if ($at_pos > 2) {
             <div class="step-dot"></div>
         </div>
 
-        <div class="auth-icon">📧</div>
+        <div class="auth-icon"><i class="fa-solid fa-envelope"></i></div>
         <div class="auth-title">Verify OTP</div>
         <div class="auth-subtitle">We've sent a 6-digit verification code to your email</div>
 
         <div class="email-badge-wrap">
-            <span class="email-badge">📧 <?php echo htmlspecialchars($masked_email); ?></span>
+            <span class="email-badge"><i class="fa-solid fa-envelope"></i> <?php echo htmlspecialchars($masked_email); ?></span>
         </div>
 
         <?php if ($error): ?>
-            <div class="auth-alert error">❌ <?php echo htmlspecialchars($error); ?></div>
+            <div class="auth-alert error"><i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> <?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
 
@@ -138,7 +139,7 @@ if ($at_pos > 2) {
                 <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" data-index="5">
             </div>
 
-            <button class="auth-btn" type="submit">Verify Code →</button>
+            <button class="auth-btn" type="submit">Verify Code <i class="fa-solid fa-arrow-right"></i></button>
         </form>
 
         <div class="resend-section">

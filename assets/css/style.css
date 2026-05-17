@@ -1015,6 +1015,20 @@ nav {
 .step-icon {
   font-size: 2rem;
   margin-bottom: 16px;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: rgba(255, 79, 0, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ff4f00 !important;
+}
+
+.step-icon i,
+.step-icon svg {
+  color: #ff4f00 !important;
+  font-size: 1.5rem !important;
 }
 
 .step-title {

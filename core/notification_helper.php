@@ -16,7 +16,7 @@
  * @param string|null $imagePath  Optional food/order image path
  * @param string|null $link       Optional link to navigate to
  */
-function addNotification(PDO $pdo, int $userId, string $type, string $title, string $message, string $icon = '🔔', ?string $imagePath = null, ?string $link = null): void {
+function addNotification(PDO $pdo, int $userId, string $type, string $title, string $message, string $icon = '<i class="fa-solid fa-bell"></i>', ?string $imagePath = null, ?string $link = null): void {
     $stmt = $pdo->prepare("
         INSERT INTO notifications (user_id, type, title, message, icon, image_path, link, is_read, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, 0, NOW())

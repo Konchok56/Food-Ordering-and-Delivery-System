@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 include('../core/db.php');
 
@@ -43,6 +43,7 @@ $history = $history->fetchAll(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delivery History — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../assets/css/style.css?v=8">
     <script>(function(){var t=localStorage.getItem('sb-theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
     <script src="../assets/js/theme.js"></script>
@@ -145,10 +146,10 @@ $history = $history->fetchAll(PDO::FETCH_ASSOC);
 <div class="layout">
     <aside class="sidebar">
         <div class="sidebar-logo">
-            🛵 SwiftBite
+            <i class="fa-solid fa-motorcycle"></i> SwiftBite
             <button id="theme-toggle" class="theme-toggle-btn" style="margin-left:auto;width:36px;height:36px;font-size:0.95rem;border:1.5px solid rgba(255,79,0,0.35);background:rgba(255,79,0,0.12);" title="Toggle theme">
                 <span class="theme-icon theme-icon-sun">&#9728;</span>
-                <span class="theme-icon theme-icon-moon">&#127769;</span>
+                <span class="theme-icon theme-icon-moon"><i class="fa-solid fa-moon"></i></span>
             </button>
         </div>
         <div class="rider-card">
@@ -156,10 +157,10 @@ $history = $history->fetchAll(PDO::FETCH_ASSOC);
             <div class="rider-name"><?php echo htmlspecialchars($rider['name']); ?></div>
             <div class="rider-role">🟢 Delivery Partner</div>
         </div>
-        <a class="nav-item" href="dashboard.php"><span class="nav-icon">📦</span> Active Orders</a>
+        <a class="nav-item" href="dashboard.php"><span class="nav-icon"><i class="fa-solid fa-box"></i></span> Active Orders</a>
         <a class="nav-item active" href="history.php"><span class="nav-icon">📋</span> Delivery History</a>
         <div class="sidebar-footer">
-            <a class="nav-item" href="../auth/logout.php"><span class="nav-icon">🚪</span> Logout</a>
+            <a class="nav-item" href="../auth/logout.php"><span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span> Logout</a>
         </div>
     </aside>
 
@@ -177,7 +178,7 @@ $history = $history->fetchAll(PDO::FETCH_ASSOC);
                 <div class="stat-label">Active Now</div>
             </div>
             <div class="stat-card">
-                <div class="stat-emoji">✅</div>
+                <div class="stat-emoji"><i class="fa-solid fa-circle-check" style="color:#22c55e"></i></div>
                 <div class="stat-num"><?php echo (int)($stats['total_delivered'] ?? 0); ?></div>
                 <div class="stat-label">Total Delivered</div>
             </div>
@@ -187,12 +188,12 @@ $history = $history->fetchAll(PDO::FETCH_ASSOC);
                 <div class="stat-label">Today</div>
             </div>
             <div class="stat-card">
-                <div class="stat-emoji">💰</div>
+                <div class="stat-emoji"><i class="fa-solid fa-coins"></i></div>
                 <div class="stat-num" style="font-size:1.4rem;">Rs.<?php echo number_format((float)($stats['revenue'] ?? 0), 0); ?></div>
                 <div class="stat-label">Earnings</div>
             </div>
             <div class="stat-card">
-                <div class="stat-emoji">❌</div>
+                <div class="stat-emoji"><i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i></div>
                 <div class="stat-num"><?php echo (int)($stats['total_cancelled'] ?? 0); ?></div>
                 <div class="stat-label">Cancelled</div>
             </div>
@@ -202,8 +203,8 @@ $history = $history->fetchAll(PDO::FETCH_ASSOC);
         <div class="filter-bar">
             <input type="text" id="search-input" placeholder="🔍  Search by order ID, customer or address…">
             <button class="filter-tab active" data-filter="all">All</button>
-            <button class="filter-tab" data-filter="delivered">✅ Delivered</button>
-            <button class="filter-tab" data-filter="cancelled">❌ Cancelled</button>
+            <button class="filter-tab" data-filter="delivered"><i class="fa-solid fa-circle-check" style="color:#22c55e"></i> Delivered</button>
+            <button class="filter-tab" data-filter="cancelled"><i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> Cancelled</button>
         </div>
 
         <!-- Table -->
@@ -241,7 +242,7 @@ $history = $history->fetchAll(PDO::FETCH_ASSOC);
                         <td style="color:var(--orange);font-weight:700;">Rs. <?php echo number_format((float)$o['total'], 2); ?></td>
                         <td>
                             <span class="badge <?php echo $o['status'] === 'delivered' ? 'b-delivered' : 'b-cancelled'; ?>">
-                                <?php echo $o['status'] === 'delivered' ? '✅ Delivered' : '❌ Cancelled'; ?>
+                                <?php echo $o['status'] === 'delivered' ? '<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> Delivered' : '<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> Cancelled'; ?>
                             </span>
                         </td>
                         <td style="color:#8b6a44;font-size:0.82rem;white-space:nowrap;">
@@ -266,7 +267,7 @@ document.querySelectorAll('.filter-tab').forEach(btn => {
     });
 });
 
-// ── Search ──
+// ── Search bar in history ──
 document.getElementById('search-input')?.addEventListener('input', filterTable);
 
 function filterTable() {

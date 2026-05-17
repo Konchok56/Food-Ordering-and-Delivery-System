@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 
 // Remember me auto-login
@@ -97,6 +97,7 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
     <title><?php echo htmlspecialchars($food['name']); ?> — SwiftBite</title>
     <meta name="description" content="<?php echo htmlspecialchars(substr($food['description'], 0, 155)); ?>" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="assets/css/style.css?v=8" />
@@ -536,12 +537,12 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
         <!-- Cart & Review success toasts -->
         <?php if ($cartSuccess): ?>
             <div class="cart-toast" id="cartToast">
-                ✅ Added to cart successfully!
+                <i class="fa-solid fa-circle-check" style="color:#22c55e"></i> Added to cart successfully!
             </div>
         <?php endif; ?>
         <?php if ($reviewSuccess): ?>
             <div class="cart-toast review-toast" id="reviewToast">
-                ⭐ Review submitted successfully!
+                <i class="fa-solid fa-star" style="color:#f59e0b"></i> Review submitted successfully!
             </div>
         <?php endif; ?>
         <?php if ($alreadyReviewed): ?>
@@ -579,13 +580,13 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
                 <?php if (!empty($food['badge'])): ?>
                     <div class="detail-badge <?php echo strtolower($food['badge']); ?>">
                         <?php
-                        $badgeIcons = ['Hot' => '🔥', 'New' => '🆕', 'Popular' => '⭐', 'Sale' => '💰'];
+                        $badgeIcons = ['Hot' => '<i class="fa-solid fa-fire" style="color:#ef4444"></i>', 'New' => '🆕', 'Popular' => '<i class="fa-solid fa-star" style="color:#f59e0b"></i>', 'Sale' => '<i class="fa-solid fa-coins"></i>'];
                         echo ($badgeIcons[$food['badge']] ?? '') . ' ' . htmlspecialchars($food['badge']);
                         ?>
                     </div>
                 <?php endif; ?>
 
-                <div class="detail-fav"><?php echo $food['is_favorite'] ? '❤️' : '🤍'; ?></div>
+                <div class="detail-fav"><?php echo $food['is_favorite'] ? '<i class="fa-solid fa-heart" style="color:#ef4444"></i>' : '<i class="fa-regular fa-heart"></i>'; ?></div>
             </div>
 
             <!-- Right: Info -->
@@ -593,7 +594,7 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
                 <!-- Category & Rating -->
                 <div class="detail-category-row">
                     <div class="detail-cat-pill">
-                        <?php echo htmlspecialchars($food['emoji'] ?: '🍴'); ?>
+                        <?php echo htmlspecialchars($food['emoji'] ?: '<i class="fa-solid fa-utensils"></i>'); ?>
                         <?php echo htmlspecialchars($food['category']); ?>
                     </div>
                     <div class="detail-rating">
@@ -616,10 +617,10 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
                 <div class="detail-delivery-row">
                     <div class="detail-pill">🕐 <?php echo htmlspecialchars($food['delivery_time']); ?></div>
                     <?php if ($food['is_featured']): ?>
-                        <div class="detail-pill">⚡ Featured</div>
+                        <div class="detail-pill"><i class="fa-solid fa-bolt"></i> Featured</div>
                     <?php endif; ?>
                     <?php if ($food['is_favorite']): ?>
-                        <div class="detail-pill">❤️ Favorite</div>
+                        <div class="detail-pill"><i class="fa-solid fa-heart" style="color:#ef4444"></i> Favorite</div>
                     <?php endif; ?>
                 </div>
 
@@ -650,7 +651,7 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
                         <input type="hidden" name="price" value="<?php echo (float) $food['price']; ?>">
                         <input type="hidden" name="quantity" id="qtyInput" value="1">
                         <button type="submit" class="detail-add-btn" id="addToCartBtn" data-name="<?php echo htmlspecialchars($food['name']); ?>">
-                            🛒 Add to Cart — <span class="detail-total" id="totalPrice">Rs. <?php echo number_format((float) $food['price'], 2); ?></span>
+                            <i class="fa-solid fa-cart-shopping"></i> Add to Cart — <span class="detail-total" id="totalPrice">Rs. <?php echo number_format((float) $food['price'], 2); ?></span>
                         </button>
                     </form>
                 </div>
@@ -663,7 +664,7 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
                         <div class="highlight-value"><?php echo htmlspecialchars($food['delivery_time']); ?></div>
                     </div>
                     <div class="highlight-card">
-                        <div class="highlight-icon">⭐</div>
+                        <div class="highlight-icon"><i class="fa-solid fa-star" style="color:#f59e0b"></i></div>
                         <div class="highlight-label">Rating</div>
                         <div class="highlight-value"><?php echo htmlspecialchars($food['rating']); ?> / 5.0</div>
                     </div>
@@ -673,7 +674,7 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
                         <div class="highlight-value"><?php echo htmlspecialchars($food['category']); ?></div>
                     </div>
                     <div class="highlight-card">
-                        <div class="highlight-icon"><?php echo $food['is_featured'] ? '⚡' : '📋'; ?></div>
+                        <div class="highlight-icon"><?php echo $food['is_featured'] ? '<i class="fa-solid fa-bolt"></i>' : '📋'; ?></div>
                         <div class="highlight-label">Status</div>
                         <div class="highlight-value"><?php echo $food['is_featured'] ? 'Featured' : 'Regular'; ?></div>
                     </div>
@@ -707,11 +708,11 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
                                 <div style="margin-bottom: 20px;">
                                     <label style="font-weight: 600; display: block; margin-bottom: 8px;">Rating</label>
                                     <select name="rating" required style="width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--cream2); outline: none; background: #fff; font-family: 'DM Sans', sans-serif;">
-                                        <option value="5">5 - Excellent! ⭐⭐⭐⭐⭐</option>
-                                        <option value="4">4 - Very Good ⭐⭐⭐⭐</option>
-                                        <option value="3">3 - Average ⭐⭐⭐</option>
-                                        <option value="2">2 - Poor ⭐⭐</option>
-                                        <option value="1">1 - Terrible ⭐</option>
+                                        <option value="5">5 - Excellent! <i class="fa-solid fa-star" style="color:#f59e0b"></i><i class="fa-solid fa-star" style="color:#f59e0b"></i><i class="fa-solid fa-star" style="color:#f59e0b"></i><i class="fa-solid fa-star" style="color:#f59e0b"></i><i class="fa-solid fa-star" style="color:#f59e0b"></i></option>
+                                        <option value="4">4 - Very Good <i class="fa-solid fa-star" style="color:#f59e0b"></i><i class="fa-solid fa-star" style="color:#f59e0b"></i><i class="fa-solid fa-star" style="color:#f59e0b"></i><i class="fa-solid fa-star" style="color:#f59e0b"></i></option>
+                                        <option value="3">3 - Average <i class="fa-solid fa-star" style="color:#f59e0b"></i><i class="fa-solid fa-star" style="color:#f59e0b"></i><i class="fa-solid fa-star" style="color:#f59e0b"></i></option>
+                                        <option value="2">2 - Poor <i class="fa-solid fa-star" style="color:#f59e0b"></i><i class="fa-solid fa-star" style="color:#f59e0b"></i></option>
+                                        <option value="1">1 - Terrible <i class="fa-solid fa-star" style="color:#f59e0b"></i></option>
                                     </select>
                                 </div>
                                 <div style="margin-bottom: 20px;">
@@ -760,7 +761,7 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
                     <div class="section-tag">You May Also Like</div>
                     <div class="section-title">Similar Dishes</div>
                 </div>
-                <a href="menu.php?category=<?php echo urlencode($food['category']); ?>" class="view-all">View All →</a>
+                <a href="menu.php?category=<?php echo urlencode($food['category']); ?>" class="view-all">View All <i class="fa-solid fa-arrow-right"></i></a>
             </div>
 
             <div class="foods-grid" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
@@ -778,12 +779,12 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
                                         <?php echo htmlspecialchars($rel['badge']); ?>
                                     </span>
                                 <?php endif; ?>
-                                <div class="food-fav"><?php echo $rel['is_favorite'] ? '❤️' : '🤍'; ?></div>
+                                <div class="food-fav"><?php echo $rel['is_favorite'] ? '<i class="fa-solid fa-heart" style="color:#ef4444"></i>' : '<i class="fa-regular fa-heart"></i>'; ?></div>
                             </div>
                             <div class="food-info">
                                 <div class="food-meta">
                                     <span class="food-category"><?php echo htmlspecialchars($rel['category']); ?></span>
-                                    <span class="food-rating">⭐ <?php echo htmlspecialchars($rel['rating']); ?></span>
+                                    <span class="food-rating"><i class="fa-solid fa-star" style="color:#f59e0b"></i> <?php echo htmlspecialchars($rel['rating']); ?></span>
                                 </div>
                                 <div class="food-name"><?php echo htmlspecialchars($rel['name']); ?></div>
                                 <div class="food-desc"><?php echo htmlspecialchars($rel['description']); ?></div>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 include('../core/db.php');
 include('../core/config.php');
@@ -39,6 +39,7 @@ if (!empty($order['restaurant_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Track Order #<?php echo str_pad($order['id'], 5, '0', STR_PAD_LEFT); ?> — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root { --orange: #ff4f00; --dark: #1a0a00; --cream: #fff8f0; --white: #fff; --shadow: 0 10px 40px rgba(26,10,0,0.12); }
@@ -142,7 +143,7 @@ if (!empty($order['restaurant_id'])) {
         <!-- Steps -->
         <div class="steps" id="steps-row">
             <div class="step">
-                <div class="step-icon done" id="step-confirmed">✅</div>
+                <div class="step-icon done" id="step-confirmed"><i class="fa-solid fa-circle-check" style="color:#22c55e"></i></div>
                 <div class="step-label">Confirmed</div>
             </div>
             <div class="step-line" id="line-1"></div>
@@ -152,12 +153,12 @@ if (!empty($order['restaurant_id'])) {
             </div>
             <div class="step-line" id="line-2"></div>
             <div class="step">
-                <div class="step-icon" id="step-transit">🛵</div>
+                <div class="step-icon" id="step-transit"><i class="fa-solid fa-motorcycle"></i></div>
                 <div class="step-label">On the Way</div>
             </div>
             <div class="step-line" id="line-3"></div>
             <div class="step">
-                <div class="step-icon" id="step-delivered">🎉</div>
+                <div class="step-icon" id="step-delivered"><i class="fa-solid fa-champagne-glasses" style="color:#22c55e"></i></div>
                 <div class="step-label">Delivered</div>
             </div>
         </div>
@@ -193,7 +194,7 @@ if (!empty($order['restaurant_id'])) {
         // ── Icons ──
         const riderIcon = L.divIcon({
             className: '',
-            html: '<div style="width:44px;height:44px;background:#ff4f00;border:3px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 4px 14px rgba(255,79,0,0.5);">🛵</div>',
+            html: '<div style="width:44px;height:44px;background:#ff4f00;border:3px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 4px 14px rgba(255,79,0,0.5);"><i class="fa-solid fa-motorcycle"></i></div>',
             iconSize: [44, 44], iconAnchor: [22, 22]
         });
         const restIcon = L.divIcon({
@@ -203,7 +204,7 @@ if (!empty($order['restaurant_id'])) {
         });
         const destIcon = L.divIcon({
             className: '',
-            html: '<div style="width:38px;height:38px;background:#007aff;border:3px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;box-shadow:0 4px 10px rgba(0,122,255,0.5);">📍</div>',
+            html: '<div style="width:38px;height:38px;background:#007aff;border:3px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;box-shadow:0 4px 10px rgba(0,122,255,0.5);"><i class="fa-solid fa-location-dot"></i></div>',
             iconSize: [38, 38], iconAnchor: [19, 38]
         });
 
@@ -249,9 +250,9 @@ if (!empty($order['restaurant_id'])) {
 
             // Place markers
             riderMarker = L.marker([riderLat, riderLng], { icon: riderIcon }).addTo(map);
-            riderMarker.bindPopup('<b>🛵 Rider is here</b>').openPopup();
+            riderMarker.bindPopup('<b><i class="fa-solid fa-motorcycle"></i> Rider is here</b>').openPopup();
             L.marker([restLat, restLng], { icon: restIcon }).addTo(map).bindPopup('<b>🏪 Restaurant</b>');
-            L.marker([destLat, destLng], { icon: destIcon }).addTo(map).bindPopup('<b>📍 Delivery Address</b>');
+            L.marker([destLat, destLng], { icon: destIcon }).addTo(map).bindPopup('<b><i class="fa-solid fa-location-dot"></i> Delivery Address</b>');
 
             // Draw real road route
             drawRoadRoute([restLat, restLng], [riderLat, riderLng], [destLat, destLng]);
@@ -302,9 +303,9 @@ if (!empty($order['restaurant_id'])) {
                 updateSteps(data.status);
 
                 if (data.status === 'out_for_delivery') {
-                    document.getElementById('eta-val').textContent = '🚀 Arriving Soon';
+                    document.getElementById('eta-val').textContent = '<i class="fa-solid fa-rocket"></i> Arriving Soon';
                 } else if (data.status === 'delivered') {
-                    document.getElementById('eta-val').textContent = '✅ Delivered!';
+                    document.getElementById('eta-val').textContent = '<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> Delivered!';
                     clearInterval(trackingInterval);
                 } else {
                     document.getElementById('eta-val').textContent = 'Preparing...';

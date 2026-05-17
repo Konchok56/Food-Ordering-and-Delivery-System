@@ -21,7 +21,7 @@ try {
       <div class="section-tag">Browse Categories</div>
       <div class="section-title">What Are You<br />Craving Today?</div>
     </div>
-    <a href="menu.php" class="view-all">View All →</a>
+    <a href="menu.php" class="view-all">View All <i class="fa-solid fa-arrow-right"></i></a>
   </div>
 
   <div class="categories-grid">
@@ -34,7 +34,7 @@ try {
             <?php if (!empty($cat['category_image'])): ?>
               <img src="<?php echo htmlspecialchars($cat['category_image']); ?>" alt="<?php echo htmlspecialchars($cat['category']); ?>" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
             <?php else: ?>
-              <?php echo htmlspecialchars($cat['emoji'] ?: '🍛'); ?>
+              <?php echo htmlspecialchars($cat['emoji'] ?: '<i class="fa-solid fa-bowl-food"></i>'); ?>
             <?php endif; ?>
           </div>
           <div class="cat-name"><?php echo htmlspecialchars($cat['category']); ?></div>

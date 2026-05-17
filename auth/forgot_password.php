@@ -1,4 +1,4 @@
-<?php 
+﻿<?php 
 require_once '../core/bootstrap.php';
 
 $error = $_SESSION['fp_error'] ?? '';
@@ -12,6 +12,7 @@ unset($_SESSION['fp_error'], $_SESSION['fp_success']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
@@ -72,15 +73,15 @@ unset($_SESSION['fp_error'], $_SESSION['fp_success']);
             <div class="step-dot"></div>
         </div>
 
-        <div class="auth-icon">🔑</div>
+        <div class="auth-icon"><i class="fa-solid fa-key"></i></div>
         <div class="auth-title">Forgot Password</div>
         <div class="auth-subtitle">Enter your email address and we'll send you a verification code to reset your password.</div>
 
         <?php if ($error): ?>
-            <div class="auth-alert error">❌ <?php echo htmlspecialchars($error); ?></div>
+            <div class="auth-alert error"><i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> <?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
         <?php if ($success): ?>
-            <div class="auth-alert success">✅ <?php echo htmlspecialchars($success); ?></div>
+            <div class="auth-alert success"><i class="fa-solid fa-circle-check" style="color:#22c55e"></i> <?php echo htmlspecialchars($success); ?></div>
         <?php endif; ?>
 
 
@@ -90,7 +91,7 @@ unset($_SESSION['fp_error'], $_SESSION['fp_success']);
                 <label for="email">Email Address</label>
                 <input type="email" name="email" id="email" placeholder="you@example.com" required>
             </div>
-            <button class="auth-btn" type="submit">Send OTP Code →</button>
+            <button class="auth-btn" type="submit">Send OTP Code <i class="fa-solid fa-arrow-right"></i></button>
         </form>
 
         <a href="login.php" class="auth-back">← Back to Login</a>

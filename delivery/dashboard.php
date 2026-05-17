@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../core/bootstrap.php';
 
 if (!isset($_SESSION['user_id'])) {
@@ -52,6 +52,7 @@ $activeOrders = $pdo->query("
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rider Dashboard — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../assets/css/style.css?v=8">
     <!-- Apply saved theme before first paint -->
     <script>(function(){var t=localStorage.getItem('sb-theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
@@ -264,11 +265,11 @@ $activeOrders = $pdo->query("
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-logo">
-            🛵 SwiftBite
+            <i class="fa-solid fa-motorcycle"></i> SwiftBite
             <!-- Theme Toggle Button -->
             <button id="theme-toggle" class="theme-toggle-btn" style="margin-left:auto;width:36px;height:36px;font-size:0.95rem;border:1.5px solid rgba(255,79,0,0.35);background:rgba(255,79,0,0.12);" title="Toggle theme" aria-label="Toggle dark/light mode">
               <span class="theme-icon theme-icon-sun">&#9728;</span>
-              <span class="theme-icon theme-icon-moon">&#127769;</span>
+              <span class="theme-icon theme-icon-moon"><i class="fa-solid fa-moon"></i></span>
             </button>
         </div>
 
@@ -301,7 +302,7 @@ $activeOrders = $pdo->query("
         </style>
 
         <a class="nav-item active" href="dashboard.php">
-            <span class="nav-icon">📦</span> Active Orders
+            <span class="nav-icon"><i class="fa-solid fa-box"></i></span> Active Orders
             <?php if ($stats['active'] > 0): ?>
                 <span class="nav-badge"><?php echo $stats['active']; ?></span>
             <?php endif; ?>
@@ -312,7 +313,7 @@ $activeOrders = $pdo->query("
 
         <div class="sidebar-footer">
             <a class="nav-item" href="../auth/logout.php">
-                <span class="nav-icon">🚪</span> Logout
+                <span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span> Logout
             </a>
         </div>
     </aside>
@@ -328,10 +329,10 @@ $activeOrders = $pdo->query("
         </div>
 
         <?php if ($flash_success): ?>
-            <div class="flash flash-success">✅ <?php echo htmlspecialchars($flash_success); ?></div>
+            <div class="flash flash-success"><i class="fa-solid fa-circle-check" style="color:#22c55e"></i> <?php echo htmlspecialchars($flash_success); ?></div>
         <?php endif; ?>
         <?php if ($flash_error): ?>
-            <div class="flash flash-error">❌ <?php echo htmlspecialchars($flash_error); ?></div>
+            <div class="flash flash-error"><i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> <?php echo htmlspecialchars($flash_error); ?></div>
         <?php endif; ?>
 
         <!-- Stats -->
@@ -342,12 +343,12 @@ $activeOrders = $pdo->query("
                 <div class="stat-label">Active Orders Today</div>
             </div>
             <div class="stat-box">
-                <div class="stat-emoji">🛵</div>
+                <div class="stat-emoji"><i class="fa-solid fa-motorcycle"></i></div>
                 <div class="stat-num"><?php echo $stats['transit']; ?></div>
                 <div class="stat-label">Currently in Transit</div>
             </div>
             <div class="stat-box">
-                <div class="stat-emoji">✅</div>
+                <div class="stat-emoji"><i class="fa-solid fa-circle-check" style="color:#22c55e"></i></div>
                 <div class="stat-num"><?php echo $stats['delivered']; ?></div>
                 <div class="stat-label">Delivered Today</div>
             </div>
@@ -355,14 +356,14 @@ $activeOrders = $pdo->query("
 
         <!-- Orders -->
         <div class="section-head">
-            <h2 class="section-title">📦 Orders Queue</h2>
+            <h2 class="section-title"><i class="fa-solid fa-box"></i> Orders Queue</h2>
             <a class="refresh-btn" href="dashboard.php">🔄 Refresh</a>
         </div>
 
         <div class="orders-grid">
             <?php if (empty($activeOrders)): ?>
                 <div class="empty-state">
-                    <div class="big-icon">🎉</div>
+                    <div class="big-icon"><i class="fa-solid fa-champagne-glasses" style="color:#22c55e"></i></div>
                     <h3>All Clear!</h3>
                     <p>No active orders right now. Check back soon.</p>
                 </div>
@@ -371,12 +372,12 @@ $activeOrders = $pdo->query("
                     $isPriority = $order['status'] === 'out_for_delivery';
                     $statusClass = 's-' . $order['status'];
                     $statusLabels = [
-                        'pending'          => ['⏳', 'Pending'],
+                        'pending'          => ['<i class="fa-solid fa-hourglass-half" style="color:#f59e0b"></i>', 'Pending'],
                         'confirmed'        => ['👍', 'Confirmed'],
                         'preparing'        => ['🧑‍🍳', 'Preparing'],
-                        'out_for_delivery' => ['🛵', 'Out for Delivery'],
+                        'out_for_delivery' => ['<i class="fa-solid fa-motorcycle"></i>', 'Out for Delivery'],
                     ];
-                    [$sIcon, $sLabel] = $statusLabels[$order['status']] ?? ['📦', ucfirst($order['status'])];
+                    [$sIcon, $sLabel] = $statusLabels[$order['status']] ?? ['<i class="fa-solid fa-box"></i>', ucfirst($order['status'])];
                 ?>
                 <div class="order-card <?php echo $isPriority ? 'priority' : ''; ?>">
 
@@ -433,7 +434,7 @@ $activeOrders = $pdo->query("
                             <div class="field-value">
                                 <a href="tel:<?php echo htmlspecialchars($order['customer_phone']); ?>"
                                    style="color:var(--orange); text-decoration:none;">
-                                    📞 <?php echo htmlspecialchars($order['customer_phone']); ?>
+                                    <i class="fa-solid fa-phone"></i> <?php echo htmlspecialchars($order['customer_phone']); ?>
                                 </a>
                             </div>
 
@@ -490,7 +491,7 @@ $activeOrders = $pdo->query("
                                     placeholder="85.3240">
                             </div>
                             <div>
-                                <button type="button" class="btn-locate">📍 Use My GPS</button>
+                                <button type="button" class="btn-locate"><i class="fa-solid fa-location-dot"></i> Use My GPS</button>
                             </div>
                             <div>
                                 <button type="submit" class="btn-save" style="background:rgba(255,79,0,0.7);">📡 Update Location</button>
@@ -517,7 +518,7 @@ $activeOrders = $pdo->query("
                     <!-- Mini Map (Leaflet) -->
                     <div class="map-wrap" id="minimap-wrap-<?php echo (int)$order['id']; ?>">
                         <div style="color:#8b6a44;font-size:0.8rem;margin-bottom:8px;">
-                            📍 Last updated: <?php echo !empty($order['location_updated_at']) ? date('h:i A', strtotime($order['location_updated_at'])) : 'N/A'; ?>
+                            <i class="fa-solid fa-location-dot"></i> Last updated: <?php echo !empty($order['location_updated_at']) ? date('h:i A', strtotime($order['location_updated_at'])) : 'N/A'; ?>
                         </div>
                         <div id="minimap-<?php echo (int)$order['id']; ?>" style="width:100%;height:200px;border-radius:14px;overflow:hidden;"></div>
                     </div>
@@ -551,9 +552,9 @@ document.querySelectorAll('.location-form').forEach(function(form) {
         navigator.geolocation.getCurrentPosition(function(pos) {
             form.querySelector('[name="delivery_lat"]').value = pos.coords.latitude.toFixed(7);
             form.querySelector('[name="delivery_lng"]').value = pos.coords.longitude.toFixed(7);
-            btn.textContent = '✅ GPS Captured'; btn.disabled = false;
+            btn.textContent = '<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> GPS Captured'; btn.disabled = false;
         }, function() {
-            alert('Unable to get location.'); btn.textContent = '📍 Use My GPS'; btn.disabled = false;
+            alert('Unable to get location.'); btn.textContent = '<i class="fa-solid fa-location-dot"></i> Use My GPS'; btn.disabled = false;
         }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
     });
 });
@@ -564,7 +565,7 @@ let refreshTimeout = setTimeout(() => location.reload(), 60000);
 // ═══════════════════════════════════════════════════
 // 🎬 SIMULATION ENGINE
 // ═══════════════════════════════════════════════════
-const activeSimulations = {}; // orderId → interval handle
+const activeSimulations = {}; // orderId <i class="fa-solid fa-arrow-right"></i> interval handle
 
 // Initialize Leaflet mini-maps for each order card
 const miniMaps = {};
@@ -589,12 +590,12 @@ const miniMaps = {};
 
     const riderIcon = L.divIcon({
         className: '',
-        html: '<div style="width:34px;height:34px;background:#ff4f00;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;box-shadow:0 2px 8px rgba(255,79,0,0.5);">🛵</div>',
+        html: '<div style="width:34px;height:34px;background:#ff4f00;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;box-shadow:0 2px 8px rgba(255,79,0,0.5);"><i class="fa-solid fa-motorcycle"></i></div>',
         iconSize: [34, 34], iconAnchor: [17, 17]
     });
     const destIcon = L.divIcon({
         className: '',
-        html: '<div style="width:30px;height:30px;background:#007aff;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.9rem;box-shadow:0 2px 8px rgba(0,122,255,0.5);">📍</div>',
+        html: '<div style="width:30px;height:30px;background:#007aff;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.9rem;box-shadow:0 2px 8px rgba(0,122,255,0.5);"><i class="fa-solid fa-location-dot"></i></div>',
         iconSize: [30, 30], iconAnchor: [15, 30]
     });
 
@@ -619,7 +620,7 @@ const miniMaps = {};
         }
 
         simBtn.disabled = true;
-        simBtn.textContent = '⏳ Loading route...';
+        simBtn.textContent = '<i class="fa-solid fa-hourglass-half" style="color:#f59e0b"></i> Loading route...';
 
         // Stop page auto-refresh during simulation
         clearTimeout(refreshTimeout);
@@ -667,10 +668,10 @@ const miniMaps = {};
             if (step >= total) {
                 clearInterval(activeSimulations[orderId]);
                 delete activeSimulations[orderId];
-                simBtn.textContent  = '✅ Delivered!';
+                simBtn.textContent  = '<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> Delivered!';
                 simBtn.disabled     = true;
                 simBar.style.width  = '100%';
-                simText.textContent = '✅ Simulation complete — rider arrived!';
+                simText.textContent = '<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> Simulation complete — rider arrived!';
                 return;
             }
 
@@ -700,7 +701,7 @@ const miniMaps = {};
             // Update progress bar
             const pct = Math.round((step / (total - 1)) * 100);
             simBar.style.width  = pct + '%';
-            simText.textContent = `🛵 Simulating... ${pct}% (${step + 1}/${total} points)`;
+            simText.textContent = `<i class="fa-solid fa-motorcycle"></i> Simulating... ${pct}% (${step + 1}/${total} points)`;
             step++;
         }
 
@@ -713,7 +714,7 @@ const miniMaps = {};
 // ══════════════════════════════════════════════
 // 📡 REAL GPS LIVE TRACKING ENGINE
 // ══════════════════════════════════════════════
-const gpsWatchIds = {}; // orderId → watchPosition ID
+const gpsWatchIds = {}; // orderId <i class="fa-solid fa-arrow-right"></i> watchPosition ID
 
 document.querySelectorAll('.btn-toggle-tracking').forEach(btn => {
     btn.addEventListener('click', function() {
@@ -731,18 +732,18 @@ document.querySelectorAll('.btn-toggle-tracking').forEach(btn => {
 
         // ── Check GPS support ──
         if (!navigator.geolocation) {
-            setTrackingState(orderId, 'error', '❌ GPS Not Supported',
+            setTrackingState(orderId, 'error', '<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> GPS Not Supported',
                 'Your browser does not support geolocation. Use Chrome or Firefox on a real device.');
             return;
         }
 
         // ── START tracking ──
-        setTrackingState(orderId, 'idle', '⏳ Requesting GPS permission...', 'Please allow location access in your browser.');
+        setTrackingState(orderId, 'idle', '<i class="fa-solid fa-hourglass-half" style="color:#f59e0b"></i> Requesting GPS permission...', 'Please allow location access in your browser.');
         btn.textContent = '...';
         btn.disabled = true;
 
         const watchId = navigator.geolocation.watchPosition(
-            // ✅ SUCCESS — position received
+            // <i class="fa-solid fa-circle-check" style="color:#22c55e"></i> SUCCESS — position received
             async function(pos) {
                 const lat = pos.coords.latitude.toFixed(7);
                 const lng = pos.coords.longitude.toFixed(7);
@@ -758,7 +759,7 @@ document.querySelectorAll('.btn-toggle-tracking').forEach(btn => {
                 // Update banner to active
                 setTrackingState(orderId, 'active',
                     '🟢 Live Tracking Active',
-                    `📍 ${lat}, ${lng} · Accuracy: ±${acc}m · Sending to server...`
+                    `<i class="fa-solid fa-location-dot"></i> ${lat}, ${lng} · Accuracy: ±${acc}m · Sending to server...`
                 );
 
                 // Enable stop button
@@ -778,18 +779,18 @@ document.querySelectorAll('.btn-toggle-tracking').forEach(btn => {
                     const now = new Date().toLocaleTimeString();
                     if (data.success) {
                         document.getElementById('track-sub-' + orderId).textContent =
-                            `✅ Sent at ${now} · ${lat}, ${lng} · ±${acc}m`;
+                            `<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> Sent at ${now} · ${lat}, ${lng} · ±${acc}m`;
                     } else {
                         document.getElementById('track-sub-' + orderId).textContent =
-                            `⚠️ Server error at ${now}: ${data.message}`;
+                            `<i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b"></i> Server error at ${now}: ${data.message}`;
                     }
                 } catch(e) {
                     document.getElementById('track-sub-' + orderId).textContent =
-                        `⚠️ Network error — will retry on next movement`;
+                        `<i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b"></i> Network error — will retry on next movement`;
                 }
             },
 
-            // ❌ ERROR — GPS failed
+            // <i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> ERROR — GPS failed
             function(err) {
                 btn.textContent = '▶ Start';
                 btn.className = 'btn-toggle-tracking start';
@@ -797,11 +798,11 @@ document.querySelectorAll('.btn-toggle-tracking').forEach(btn => {
                 delete gpsWatchIds[orderId];
 
                 const msgs = {
-                    1: '❌ Permission Denied — Please allow location access in your browser settings.',
-                    2: '❌ GPS Unavailable — Make sure you are outdoors or GPS is enabled on your device.',
-                    3: '❌ GPS Timeout — Your device took too long to get a location. Try again.',
+                    1: '<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> Permission Denied — Please allow location access in your browser settings.',
+                    2: '<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> GPS Unavailable — Make sure you are outdoors or GPS is enabled on your device.',
+                    3: '<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> GPS Timeout — Your device took too long to get a location. Try again.',
                 };
-                setTrackingState(orderId, 'error', '❌ GPS Error', msgs[err.code] || '❌ Unknown GPS error.');
+                setTrackingState(orderId, 'error', '<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> GPS Error', msgs[err.code] || '<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> Unknown GPS error.');
             },
 
             // Options

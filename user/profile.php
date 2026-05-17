@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 include('../core/db.php');
 include('../core/csrf.php');
@@ -27,6 +27,7 @@ unset($_SESSION['profile_success'], $_SESSION['profile_error']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Profile — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../assets/css/style.css?v=8" />
     <style>
         .page { padding: 100px 24px 60px; min-height: 100vh; background: var(--cream); }
@@ -68,10 +69,10 @@ unset($_SESSION['profile_success'], $_SESSION['profile_error']);
                 </div>
                 
                 <?php if ($success): ?>
-                    <div class="alert alert-success">✅ <?php echo htmlspecialchars($success); ?></div>
+                    <div class="alert alert-success"><i class="fa-solid fa-circle-check" style="color:#22c55e"></i> <?php echo htmlspecialchars($success); ?></div>
                 <?php endif; ?>
                 <?php if ($error): ?>
-                    <div class="alert alert-error">❌ <?php echo htmlspecialchars($error); ?></div>
+                    <div class="alert alert-error"><i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> <?php echo htmlspecialchars($error); ?></div>
                 <?php endif; ?>
 
                 <form action="../actions/update_profile.php" method="POST">
@@ -116,7 +117,7 @@ unset($_SESSION['profile_success'], $_SESSION['profile_error']);
                     </div>
 
                     <button type="submit" class="update-btn">💾 Save Changes</button>
-                    <a href="../auth/logout.php" class="logout-link">🚪 Sign Out</a>
+                    <a href="../auth/logout.php" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</a>
                 </form>
             </div>
             

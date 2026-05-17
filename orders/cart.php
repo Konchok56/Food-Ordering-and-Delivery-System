@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../core/bootstrap.php';
 
 $user_id = $_SESSION['user_id'];
@@ -10,7 +10,7 @@ if (isset($_POST['clear_cart']) && $_POST['clear_cart'] === '1') {
     exit;
 }
 
-// 🛒 Fetch cart items — JOIN with foods table for images
+// <i class="fa-solid fa-cart-shopping"></i> Fetch cart items — JOIN with foods table for images
 $stmt = $pdo->prepare("
     SELECT c.*, 
            f.image_path AS food_image, 
@@ -46,6 +46,7 @@ $cartCount = getCartCount($pdo, $user_id);
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
@@ -62,7 +63,7 @@ $cartCount = getCartCount($pdo, $user_id);
             <!-- Header -->
             <div class="cart-header">
                 <div class="cart-header-left">
-                    <div class="section-tag">🛒 Your Order</div>
+                    <div class="section-tag"><i class="fa-solid fa-cart-shopping"></i> Your Order</div>
                     <div class="section-title">Shopping Cart</div>
                 </div>
                 <div class="cart-header-actions">
@@ -70,7 +71,7 @@ $cartCount = getCartCount($pdo, $user_id);
                     <?php if (!empty($cart)): ?>
                         <form method="POST" style="display:inline;" onsubmit="return confirm('Clear all items from cart?');">
                             <input type="hidden" name="clear_cart" value="1">
-                            <button type="submit" class="cart-clear-btn">🗑️ Clear Cart</button>
+                            <button type="submit" class="cart-clear-btn"><i class="fa-solid fa-trash"></i> Clear Cart</button>
                         </form>
                     <?php endif; ?>
                 </div>
@@ -79,10 +80,10 @@ $cartCount = getCartCount($pdo, $user_id);
             <?php if (empty($cart)): ?>
                 <!-- Empty Cart -->
                 <div class="cart-empty-state">
-                    <div class="cart-empty-icon">🛒</div>
+                    <div class="cart-empty-icon"><i class="fa-solid fa-cart-shopping"></i></div>
                     <h3>Your cart is empty</h3>
                     <p>Looks like you haven't added anything yet.<br>Start exploring our delicious menu!</p>
-                    <a href="../menu.php" class="cart-empty-browse">🍽️ Browse Menu</a>
+                    <a href="../menu.php" class="cart-empty-browse"><i class="fa-solid fa-utensils"></i> Browse Menu</a>
                 </div>
 
             <?php else: ?>
@@ -96,7 +97,7 @@ $cartCount = getCartCount($pdo, $user_id);
                                 $itemSubtotal = $item['price'] * $item['quantity'];
                                 // Determine image: prefer foods table, fallback to cart stored, fallback to emoji
                                 $imgPath = !empty($item['food_image']) ? $item['food_image'] : (!empty($item['image_path']) ? $item['image_path'] : '');
-                                $emojiIcon = !empty($item['food_emoji']) ? $item['food_emoji'] : (!empty($item['emoji']) ? $item['emoji'] : '🍔');
+                                $emojiIcon = !empty($item['food_emoji']) ? $item['food_emoji'] : (!empty($item['emoji']) ? $item['emoji'] : '<i class="fa-solid fa-burger"></i>');
                                 $foodLink = $item['fid'] ? "../food_detail.php?id=" . (int)$item['fid'] : '#';
                             ?>
 
@@ -161,7 +162,7 @@ $cartCount = getCartCount($pdo, $user_id);
                         </div>
 
                         <button class="cart-checkout-btn" type="button" id="checkoutBtn">
-                            🛒 Proceed to Checkout
+                            <i class="fa-solid fa-cart-shopping"></i> Proceed to Checkout
                         </button>
                     </div>
                 </div>

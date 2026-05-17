@@ -7,7 +7,7 @@
         <div class="social-btn">📘</div>
         <div class="social-btn">📸</div>
         <div class="social-btn">🐦</div>
-        <div class="social-btn">▶️</div>
+        <div class="social-btn"><i class="fa-brands fa-youtube"></i></div>
       </div>
     </div>
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 include('../core/db.php');
 
@@ -51,6 +51,7 @@ $foods = $foodStmt->fetchAll(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Menu — SwiftBite Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
@@ -571,17 +572,17 @@ $foods = $foodStmt->fetchAll(PDO::FETCH_ASSOC);
             <span class="admin-tag">Admin Panel</span>
         </div>
         <div class="topbar-links">
-            <a href="dashboard.php">📊 Dashboard</a>
-            <a href="manage_foods.php" style="color:#fff; background:rgba(255,255,255,0.08);">🍔 Menu</a>
+            <a href="dashboard.php"><i class="fa-solid fa-chart-bar"></i> Dashboard</a>
+            <a href="manage_foods.php" style="color:#fff; background:rgba(255,255,255,0.08);"><i class="fa-solid fa-burger"></i> Menu</a>
             <a href="manage_restaurants.php">🏪 Restaurants</a>
-            <a href="../index.php">🏠 View Site</a>
+            <a href="../index.php"><i class="fa-solid fa-house"></i> View Site</a>
         </div>
     </div>
 
     <div class="admin-wrapper">
         <!-- Page Header -->
         <div class="page-header">
-            <h1>🍽️ Manage <em>Menu</em></h1>
+            <h1><i class="fa-solid fa-utensils"></i> Manage <em>Menu</em></h1>
             <?php if (!$editFood): ?>
                 <a href="#foodForm" class="btn btn-orange" onclick="document.getElementById('foodForm').scrollIntoView({behavior:'smooth'})">
                     ➕ Add New Food
@@ -591,10 +592,10 @@ $foods = $foodStmt->fetchAll(PDO::FETCH_ASSOC);
 
         <!-- Flash Messages -->
         <?php if ($success): ?>
-            <div class="alert alert-success">✅ <?php echo htmlspecialchars($success); ?></div>
+            <div class="alert alert-success"><i class="fa-solid fa-circle-check" style="color:#22c55e"></i> <?php echo htmlspecialchars($success); ?></div>
         <?php endif; ?>
         <?php if ($error): ?>
-            <div class="alert alert-error">❌ <?php echo htmlspecialchars($error); ?></div>
+            <div class="alert alert-error"><i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> <?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
         <!-- Add / Edit Form -->
@@ -648,16 +649,16 @@ $foods = $foodStmt->fetchAll(PDO::FETCH_ASSOC);
                         <label for="badge">Badge (optional)</label>
                         <select id="badge" name="badge">
                             <option value="">No Badge</option>
-                            <option value="Hot" <?php echo ($editFood && $editFood['badge'] === 'Hot') ? 'selected' : ''; ?>>🔥 Hot</option>
+                            <option value="Hot" <?php echo ($editFood && $editFood['badge'] === 'Hot') ? 'selected' : ''; ?>><i class="fa-solid fa-fire" style="color:#ef4444"></i> Hot</option>
                             <option value="New" <?php echo ($editFood && $editFood['badge'] === 'New') ? 'selected' : ''; ?>>🆕 New</option>
-                            <option value="Popular" <?php echo ($editFood && $editFood['badge'] === 'Popular') ? 'selected' : ''; ?>>⭐ Popular</option>
-                            <option value="Sale" <?php echo ($editFood && $editFood['badge'] === 'Sale') ? 'selected' : ''; ?>>💰 Sale</option>
+                            <option value="Popular" <?php echo ($editFood && $editFood['badge'] === 'Popular') ? 'selected' : ''; ?>><i class="fa-solid fa-star" style="color:#f59e0b"></i> Popular</option>
+                            <option value="Sale" <?php echo ($editFood && $editFood['badge'] === 'Sale') ? 'selected' : ''; ?>><i class="fa-solid fa-coins"></i> Sale</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label for="emoji">Emoji (fallback) *</label>
-                        <input type="text" id="emoji" name="emoji" required placeholder="🍔"
+                        <input type="text" id="emoji" name="emoji" required placeholder="<i class="fa-solid fa-burger"></i>"
                                value="<?php echo $editFood ? htmlspecialchars($editFood['emoji']) : ''; ?>">
                     </div>
 
@@ -753,7 +754,7 @@ $foods = $foodStmt->fetchAll(PDO::FETCH_ASSOC);
 
             <?php if (empty($foods)): ?>
                 <div class="empty-state">
-                    <div class="empty-icon">🍽️</div>
+                    <div class="empty-icon"><i class="fa-solid fa-utensils"></i></div>
                     <h3>No food items yet</h3>
                     <p>Start by adding your first delicious dish!</p>
                 </div>
@@ -798,7 +799,7 @@ $foods = $foodStmt->fetchAll(PDO::FETCH_ASSOC);
                                     <?php endif; ?>
                                 </td>
                                 <td data-label="Price" class="price-cell">Rs. <?php echo number_format((float)$food['price'], 2); ?></td>
-                                <td data-label="Rating" class="rating-cell">⭐ <?php echo htmlspecialchars($food['rating']); ?></td>
+                                <td data-label="Rating" class="rating-cell"><i class="fa-solid fa-star" style="color:#f59e0b"></i> <?php echo htmlspecialchars($food['rating']); ?></td>
                                 <td data-label="Badge">
                                     <?php if (!empty($food['badge'])): ?>
                                         <span class="badge-cell <?php echo $food['badge'] === 'New' ? 'badge-new' : 'badge-hot'; ?>">
@@ -814,7 +815,7 @@ $foods = $foodStmt->fetchAll(PDO::FETCH_ASSOC);
                                         <a href="manage_foods.php?edit=<?php echo (int)$food['id']; ?>#foodForm" class="action-btn action-edit" title="Edit">✏️</a>
                                         <button type="button" class="action-btn action-delete" title="Delete"
                                                 onclick="confirmDelete(<?php echo (int)$food['id']; ?>, '<?php echo htmlspecialchars(addslashes($food['name'])); ?>')">
-                                            🗑️
+                                            <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -829,12 +830,12 @@ $foods = $foodStmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- Delete Confirmation Modal -->
     <div class="modal-overlay" id="deleteModal">
         <div class="modal-box">
-            <div class="modal-icon">⚠️</div>
+            <div class="modal-icon"><i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b"></i></div>
             <h3>Delete Food Item?</h3>
             <p>Are you sure you want to delete <strong id="deleteFoodName"></strong>? This action cannot be undone.</p>
             <div class="modal-actions">
                 <button class="btn btn-outline btn-sm" onclick="closeModal()">Cancel</button>
-                <a id="deleteLink" href="#" class="btn btn-danger btn-sm">🗑️ Delete</a>
+                <a id="deleteLink" href="#" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i> Delete</a>
             </div>
         </div>
     </div>
