@@ -818,11 +818,14 @@ document.querySelectorAll('.btn-toggle-tracking').forEach(btn => {
 
 function setTrackingState(orderId, state, title, sub) {
     const banner = document.getElementById('track-banner-' + orderId);
+    const dot    = document.getElementById('track-dot-'    + orderId);
+    const titleEl = document.getElementById('track-title-' + orderId);
+    const subEl   = document.getElementById('track-sub-'   + orderId);
     if (!banner) return;
     banner.className = 'live-tracking-banner ' + state;
-    document.getElementById('track-dot-' + orderId).className = 'tracking-dot ' + (state === 'active' ? 'green' : (state === 'error' ? 'red' : ''));
-    document.getElementById('track-title-' + orderId).textContent = title;
-    document.getElementById('track-sub-' + orderId).textContent = sub;
+    if (dot) dot.className = 'tracking-dot ' + (state === 'active' ? 'green' : state === 'error' ? 'red' : '');
+    if (titleEl) titleEl.textContent = title;
+    if (subEl)   subEl.textContent   = sub;
 }
 
 // ── Availability Toggle Logic ──
