@@ -85,8 +85,7 @@ try {
                 SITE_BASE_URL . '/user/order_details.php?id=' . $order_id
             );
 
-            /* 
-            // --- <i class="fa-solid fa-envelope"></i> Send Order Status Email ---
+            // --- 📧 Send Order Status Email ---
             $custEmailStmt = $pdo->prepare("SELECT email, name FROM users WHERE id = ? LIMIT 1");
             $custEmailStmt->execute([(int)$ownerRow['user_id']]);
             $custEmailRow = $custEmailStmt->fetch(PDO::FETCH_ASSOC);
@@ -99,7 +98,6 @@ try {
                     $deliveryPartnerName
                 );
             }
-            */
         }
     }
 

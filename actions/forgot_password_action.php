@@ -61,22 +61,9 @@ $stmt->execute([$otp_hash, $email]);
 $_SESSION['otp_email'] = $email;
 unset($_SESSION['otp_attempts']); // clean up legacy session key
 
-// --- <i class="fa-solid fa-envelope"></i> SEND REAL EMAIL ---
+// --- 📧 SEND REAL EMAIL ---
 include_once('../core/mailer_helper.php');
-$subject = "Your SwiftBite Verification Code: $otp";
-$body = "
-    <div style='background: #fff8f0; padding: 30px; font-family: sans-serif; border-radius: 12px;'>
-        <h2 style='color: #ff4f00; font-family: Syne, sans-serif;'>Hi, " . htmlspecialchars(explode(' ', $user['name'])[0]) . "!</h2>
-        <p style='color: #3d2600; font-size: 1.1rem;'>Use the code below to reset your SwiftBite password. This code will expire in 10 minutes.</p>
-        <div style='background: #1a1004; color: #ff4f00; padding: 20px; text-align: center; font-size: 2.5rem; font-weight: bold; border-radius: 12px; letter-spacing: 5px; margin: 20px 0;'>
-            $otp
-        </div>
-        <p style='color: #8b6a44; font-size: 0.85rem;'>If you didn't request a password reset, please ignore this email.</p>
-    </div>
-";
-
-// We try to send it, but we won't stop the flow if it fails (since user hasn't put credentials yet)
-sendSwiftBiteEmail($email, $subject, $body);
+sendForgotPasswordOTPEmail($email, $user['name'], $otp);
 
 // For localhost development/fallback (Optional: removed display)
 

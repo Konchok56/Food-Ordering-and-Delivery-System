@@ -1,4 +1,4 @@
-﻿<?php 
+<?php 
 require_once '../core/bootstrap.php';
 
 if (isLoggedIn()) { redirect('index.php'); }
@@ -57,9 +57,14 @@ if (isLoggedIn()) { redirect('index.php'); }
         .perk{ display:flex; align-items:flex-start; gap:12px; }
         .perk-icon{
             width:36px; height:36px; border-radius:10px;
-            background:rgba(255,79,0,0.15); border:1px solid rgba(255,79,0,0.25);
+            background:rgba(255, 79, 0, 0.18); border:1px solid rgba(255, 79, 0, 0.3);
             display:flex; align-items:center; justify-content:center;
             font-size:1.1rem; flex-shrink:0;
+            color: #ff4f00 !important;
+        }
+        .perk-icon i, .perk-icon svg {
+            color: #ff4f00 !important;
+            font-size: 1rem !important;
         }
         .perk-text strong{ display:block; color:#fff; font-size:0.88rem; font-weight:700; }
         .perk-text span{ color:#c9a07d; font-size:0.78rem; }
@@ -148,6 +153,18 @@ if (isLoggedIn()) { redirect('index.php'); }
             .brand{ margin-bottom:0; }
             .auth-right{ padding:24px 20px; }
         }
+
+        /* ── Dark Theme Overrides ── */
+        [data-theme="dark"] .auth-wrap { background: #120800; border: 1px solid rgba(255,255,255,0.05); }
+        [data-theme="dark"] .auth-title { color: #fff; }
+        [data-theme="dark"] .auth-subtitle { color: #c9a07d; }
+        [data-theme="dark"] .auth-field label { color: #fff; }
+        [data-theme="dark"] .auth-field input { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1); color: #fff; }
+        [data-theme="dark"] .auth-field input:focus { border-color: var(--orange); background: rgba(255,255,255,0.07); }
+        [data-theme="dark"] .auth-options label { color: #c9a07d; }
+        [data-theme="dark"] .divider span { color: #5c3a1e; }
+        [data-theme="dark"] .divider::before, [data-theme="dark"] .divider::after { background: rgba(255,255,255,0.05); }
+        [data-theme="dark"] .auth-footer { color: #8b6a44; }
     </style>
 </head>
 <body>
@@ -183,7 +200,7 @@ if (isLoggedIn()) { redirect('index.php'); }
                 </div>
             </div>
             <div class="perk">
-                <div class="perk-icon">💸</div>
+                <div class="perk-icon"><i class="fa-solid fa-tag"></i></div>
                 <div class="perk-text">
                     <strong>Exclusive Deals</strong>
                     <span>Members get special promo codes</span>
@@ -203,7 +220,7 @@ if (isLoggedIn()) { redirect('index.php'); }
 
     <!-- Right -->
     <div class="auth-right">
-        <div class="auth-title">Welcome Back <i class="fa-solid fa-hand-wave"></i></div>
+        <div class="auth-title">Welcome Back <i class="fa-solid fa-hand-wave" style="color:var(--orange)"></i></div>
         <div class="auth-subtitle">Sign in to your SwiftBite account</div>
 
         <?php echo renderFlash(); ?>

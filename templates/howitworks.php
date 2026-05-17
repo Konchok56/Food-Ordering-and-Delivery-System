@@ -22,7 +22,7 @@
       </div>
       <div class="step reveal-on-scroll">
         <div class="step-num">03</div>
-        <div class="step-icon">💳</div>
+        <div class="step-icon"><i class="fa-solid fa-credit-card"></i></div>
         <div class="step-title">Pay Securely</div>
         <div class="step-desc">Multiple payment options — card, wallet, cash on delivery, all secured.</div>
       </div>

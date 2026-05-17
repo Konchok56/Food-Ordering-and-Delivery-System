@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once 'core/bootstrap.php';
 require_once 'core/recommendation_helper.php';
 
@@ -29,7 +29,7 @@ if (isLoggedIn()) {
   <link
     href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/style.css?v=" />
+  <link rel="stylesheet" href="assets/css/style.css?v=2" />
 </head>
 
 <body>
