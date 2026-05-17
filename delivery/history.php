@@ -267,7 +267,7 @@ document.querySelectorAll('.filter-tab').forEach(btn => {
     });
 });
 
-// ── Search ──
+// ── Search bar in history ──
 document.getElementById('search-input')?.addEventListener('input', filterTable);
 
 function filterTable() {
