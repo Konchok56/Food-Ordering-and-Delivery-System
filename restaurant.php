@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+//New commit check
+
 // Remember me auto-login
 if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
     include('core/db.php');
