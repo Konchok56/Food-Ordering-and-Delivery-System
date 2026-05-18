@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once '../core/bootstrap.php';
 
 $user_id = $_SESSION['user_id'];
@@ -41,8 +41,8 @@ $cartCount = getCartCount($pdo, $user_id);
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Your Cart — SwiftBite</title>
-    <meta name="description" content="Review your SwiftBite cart. Manage quantities, view your order summary, and proceed to checkout." />
+    <title><?php echo __('your_cart', 'Your Cart'); ?> — SwiftBite</title>
+    <meta name="description" content="<?php echo __('cart_meta_desc', 'Review your SwiftBite cart. Manage quantities, view your order summary, and proceed to checkout.'); ?>" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -63,15 +63,15 @@ $cartCount = getCartCount($pdo, $user_id);
             <!-- Header -->
             <div class="cart-header">
                 <div class="cart-header-left">
-                    <div class="section-tag"><i class="fa-solid fa-cart-shopping"></i> Your Order</div>
-                    <div class="section-title">Shopping Cart</div>
+                    <div class="section-tag"><i class="fa-solid fa-cart-shopping"></i> <?php echo __('your_order', 'Your Order'); ?></div>
+                    <div class="section-title"><?php echo __('shopping_cart', 'Shopping Cart'); ?></div>
                 </div>
                 <div class="cart-header-actions">
-                    <a href="../menu.php" class="cart-continue-btn">← Continue Shopping</a>
+                    <a href="../menu.php" class="cart-continue-btn"><?php echo __('continue_shopping_arrow', '← Continue Shopping'); ?></a>
                     <?php if (!empty($cart)): ?>
-                        <form method="POST" style="display:inline;" onsubmit="return confirm('Clear all items from cart?');">
+                        <form method="POST" style="display:inline;" onsubmit="return confirm('<?php echo __('confirm_clear_cart', 'Clear all items from cart?'); ?>');">
                             <input type="hidden" name="clear_cart" value="1">
-                            <button type="submit" class="cart-clear-btn"><i class="fa-solid fa-trash"></i> Clear Cart</button>
+                            <button type="submit" class="cart-clear-btn"><i class="fa-solid fa-trash"></i> <?php echo __('clear_cart', 'Clear Cart'); ?></button>
                         </form>
                     <?php endif; ?>
                 </div>
@@ -81,9 +81,9 @@ $cartCount = getCartCount($pdo, $user_id);
                 <!-- Empty Cart -->
                 <div class="cart-empty-state">
                     <div class="cart-empty-icon"><i class="fa-solid fa-cart-shopping"></i></div>
-                    <h3>Your cart is empty</h3>
-                    <p>Looks like you haven't added anything yet.<br>Start exploring our delicious menu!</p>
-                    <a href="../menu.php" class="cart-empty-browse"><i class="fa-solid fa-utensils"></i> Browse Menu</a>
+                    <h3><?php echo __('cart_is_empty', 'Your cart is empty'); ?></h3>
+                    <p><?php echo __('cart_is_empty_desc', "Looks like you haven't added anything yet.<br>Start exploring our delicious menu!"); ?></p>
+                    <a href="../menu.php" class="cart-empty-browse"><i class="fa-solid fa-utensils"></i> <?php echo __('browse_menu', 'Browse Menu'); ?></a>
                 </div>
 
             <?php else: ?>
@@ -106,7 +106,7 @@ $cartCount = getCartCount($pdo, $user_id);
                                 <div class="cart-item-image">
                                     <a href="<?php echo $foodLink; ?>">
                                         <?php if (!empty($imgPath)): ?>
-                                            <img src="<?php echo SITE_BASE_URL . '/' . htmlspecialchars($imgPath); ?>" alt="<?php echo htmlspecialchars($item['food_name']); ?>">
+                                            <img src="<?php echo SITE_BASE_URL . '/' . htmlspecialchars($imgPath); ?>" alt="<?php echo htmlspecialchars(__($item['food_name'], $item['food_name'])); ?>">
                                         <?php else: ?>
                                             <?php echo htmlspecialchars($emojiIcon); ?>
                                         <?php endif; ?>
@@ -116,16 +116,16 @@ $cartCount = getCartCount($pdo, $user_id);
                                 <!-- Body -->
                                 <div class="cart-item-body">
                                     <div class="cart-item-name">
-                                        <a href="<?php echo $foodLink; ?>"><?php echo htmlspecialchars($item['food_name']); ?></a>
+                                        <a href="<?php echo $foodLink; ?>"><?php echo htmlspecialchars(__($item['food_name'], $item['food_name'])); ?></a>
                                     </div>
                                     <div class="cart-item-unit-price">
-                                        Rs. <?php echo number_format((float)$item['price'], 2); ?> per item
+                                        <?php echo __('currency_rs', 'Rs.'); ?> <?php echo t_num(number_format((float)$item['price'], 2)); ?> <?php echo __('per_item', 'per item'); ?>
                                     </div>
 
                                     <!-- Quantity Controls -->
                                     <div class="cart-qty-controls">
                                         <button type="button" class="cart-qty-btn" data-action="decrease" data-cart-id="<?php echo (int)$item['id']; ?>" aria-label="Decrease quantity">−</button>
-                                        <div class="cart-qty-value" id="qty-<?php echo (int)$item['id']; ?>"><?php echo (int)$item['quantity']; ?></div>
+                                        <div class="cart-qty-value" id="qty-<?php echo (int)$item['id']; ?>"><?php echo t_num((int)$item['quantity']); ?></div>
                                         <button type="button" class="cart-qty-btn" data-action="increase" data-cart-id="<?php echo (int)$item['id']; ?>" aria-label="Increase quantity">+</button>
                                     </div>
                                 </div>
@@ -133,9 +133,9 @@ $cartCount = getCartCount($pdo, $user_id);
                                 <!-- Right: Subtotal + Remove -->
                                 <div class="cart-item-right">
                                     <div class="cart-item-subtotal" id="subtotal-<?php echo (int)$item['id']; ?>">
-                                        Rs. <?php echo number_format($itemSubtotal, 2); ?>
+                                        <?php echo __('currency_rs', 'Rs.'); ?> <?php echo t_num(number_format($itemSubtotal, 2)); ?>
                                     </div>
-                                    <button type="button" class="cart-remove-btn" data-action="remove" data-cart-id="<?php echo (int)$item['id']; ?>" title="Remove item" aria-label="Remove <?php echo htmlspecialchars($item['food_name']); ?>">
+                                    <button type="button" class="cart-remove-btn" data-action="remove" data-cart-id="<?php echo (int)$item['id']; ?>" title="Remove item" aria-label="<?php echo sprintf(__('remove_item_aria', 'Remove %s'), htmlspecialchars(__($item['food_name'], $item['food_name']))); ?>">
                                         ✕
                                     </button>
                                 </div>
@@ -146,23 +146,23 @@ $cartCount = getCartCount($pdo, $user_id);
 
                     <!-- Summary Panel -->
                     <div class="cart-summary-panel">
-                        <div class="cart-summary-title">Order Summary</div>
+                        <div class="cart-summary-title"><?php echo __('order_summary', 'Order Summary'); ?></div>
                         
                         <div class="cart-summary-row">
-                            <span>Items (<?php echo $cartCount; ?>)</span>
-                            <span id="summarySubtotal">Rs. <?php echo number_format($subtotal, 2); ?></span>
+                            <span><?php echo __('items_plural', 'Items'); ?> (<?php echo t_num($cartCount); ?>)</span>
+                            <span id="summarySubtotal"><?php echo __('currency_rs', 'Rs.'); ?> <?php echo t_num(number_format($subtotal, 2)); ?></span>
                         </div>
                         <div class="cart-summary-row">
-                            <span>Delivery Fee</span>
-                            <span id="summaryDelivery">Rs. <?php echo number_format($deliveryFee, 2); ?></span>
+                            <span><?php echo __('delivery_fee', 'Delivery Fee'); ?></span>
+                            <span id="summaryDelivery"><?php echo __('currency_rs', 'Rs.'); ?> <?php echo t_num(number_format($deliveryFee, 2)); ?></span>
                         </div>
                         <div class="cart-summary-row total">
-                            <span>Total</span>
-                            <strong id="summaryTotal">Rs. <?php echo number_format($total, 2); ?></strong>
+                            <span><?php echo __('total', 'Total'); ?></span>
+                            <strong id="summaryTotal"><?php echo __('currency_rs', 'Rs.'); ?> <?php echo t_num(number_format($total, 2)); ?></strong>
                         </div>
 
                         <button class="cart-checkout-btn" type="button" id="checkoutBtn">
-                            <i class="fa-solid fa-cart-shopping"></i> Proceed to Checkout
+                            <i class="fa-solid fa-cart-shopping"></i> <?php echo __('proceed_to_checkout', 'Proceed to Checkout'); ?>
                         </button>
                     </div>
                 </div>
@@ -178,6 +178,13 @@ $cartCount = getCartCount($pdo, $user_id);
     <script>
     // ── Cart Page AJAX Controls ──────────────────────────────
     const DELIVERY_FEE = 50;
+    const activeLang = '<?php echo $activeLang; ?>';
+
+    function t_num_js(numStr) {
+        if (activeLang !== 'ne') return numStr;
+        const nepDigits = ['०', '१', '२', '३', '४', '५', '६', '७', '८', '९'];
+        return numStr.toString().replace(/\d/g, d => nepDigits[d]);
+    }
 
     function updateSummary() {
         // Recalculate from all visible items
@@ -187,7 +194,14 @@ $cartCount = getCartCount($pdo, $user_id);
         cards.forEach(card => {
             const price = parseFloat(card.dataset.price) || 0;
             const qtyEl = card.querySelector('.cart-qty-value');
-            const qty = parseInt(qtyEl?.textContent) || 0;
+            
+            // To safely extract number regardless of locale display
+            let qtyText = qtyEl?.textContent || '0';
+            if (activeLang === 'ne') {
+                const nepDigits = {'०':0, '१':1, '२':2, '३':3, '४':4, '५':5, '६':6, '७':7, '८':8, '९':9};
+                qtyText = qtyText.replace(/[०-९]/g, d => nepDigits[d]);
+            }
+            const qty = parseInt(qtyText) || 0;
             subtotal += price * qty;
             itemCount += qty;
         });
@@ -200,13 +214,14 @@ $cartCount = getCartCount($pdo, $user_id);
         const subEl = document.getElementById('summarySubtotal');
         const delEl = document.getElementById('summaryDelivery');
         const totEl = document.getElementById('summaryTotal');
-        if (subEl) subEl.textContent = 'Rs. ' + fmt(subtotal);
-        if (delEl) delEl.textContent = 'Rs. ' + fmt(deliveryFee);
-        if (totEl) totEl.textContent = 'Rs. ' + fmt(total);
+        const currencyRs = '<?php echo __('currency_rs', 'Rs.'); ?>';
+        if (subEl) subEl.textContent = currencyRs + ' ' + t_num_js(fmt(subtotal));
+        if (delEl) delEl.textContent = currencyRs + ' ' + t_num_js(fmt(deliveryFee));
+        if (totEl) totEl.textContent = currencyRs + ' ' + t_num_js(fmt(total));
 
         // Update cart badges
         document.querySelectorAll('#cartCount, .cart-count, [data-cart-count]').forEach(el => {
-            el.textContent = itemCount;
+            el.textContent = t_num_js(itemCount);
         });
     }
 
@@ -242,14 +257,14 @@ $cartCount = getCartCount($pdo, $user_id);
                 // Update quantity display
                 const qtyEl = document.getElementById('qty-' + cartId);
                 const subEl = document.getElementById('subtotal-' + cartId);
-                if (qtyEl) qtyEl.textContent = json.new_quantity;
-                if (subEl) subEl.textContent = 'Rs. ' + json.item_subtotal;
+                if (qtyEl) qtyEl.textContent = t_num_js(json.new_quantity);
+                if (subEl) subEl.textContent = '<?php echo __('currency_rs', 'Rs.'); ?> ' + t_num_js(json.item_subtotal);
                 updateSummary();
             }
 
             // Update cart count badges
             document.querySelectorAll('#cartCount, .cart-count').forEach(el => {
-                el.textContent = json.cart_count;
+                el.textContent = t_num_js(json.cart_count);
             });
         })
         .catch(err => {

@@ -7,10 +7,10 @@ $foods = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <section class="section" id="menu" style="padding-top: 0;">
   <div class="section-header">
     <div>
-      <div class="section-tag">Today's Picks</div>
-      <div class="section-title">Most Popular<br />Right Now</div>
+      <div class="section-tag"><?php echo __('today_picks', "Today's Picks"); ?></div>
+      <div class="section-title"><?php echo __('most_popular', 'Most Popular<br />Right Now'); ?></div>
     </div>
-    <a href="menu.php" class="view-all">View All <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="menu.php" class="view-all"><?php echo __('view_all', 'View All'); ?> <i class="fa-solid fa-arrow-right"></i></a>
   </div>
 
   <div class="foods-grid">
@@ -19,13 +19,13 @@ $foods = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <article class="food-card reveal-on-scroll">
         <div class="food-img">
           <?php if (!empty($food['image_path'])): ?>
-            <img src="<?php echo htmlspecialchars($food['image_path']); ?>" alt="<?php echo htmlspecialchars($food['name']); ?>" class="food-photo">
+            <img src="<?php echo htmlspecialchars($food['image_path']); ?>" alt="<?php echo htmlspecialchars(__($food['name'])); ?>" class="food-photo">
           <?php else: ?>
             <?php echo htmlspecialchars($food['emoji']); ?>
           <?php endif; ?>
           <?php if (!empty($food['badge'])): ?>
             <span class="food-badge<?php echo $food['badge'] === 'New' ? ' new' : ''; ?>">
-              <?php echo htmlspecialchars($food['badge']); ?>
+              <?php echo htmlspecialchars(__($food['badge'])); ?>
             </span>
           <?php endif; ?>
           <div class="food-fav"><?php echo $food['is_favorite'] ? '<i class="fa-solid fa-heart" style="color:#ef4444"></i>' : '<i class="fa-regular fa-heart"></i>'; ?></div>
@@ -33,24 +33,24 @@ $foods = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <div class="food-info">
           <div class="food-meta">
-            <span class="food-category"><?php echo htmlspecialchars($food['category']); ?></span>
-            <span class="food-rating"><i class="fa-solid fa-star" style="color:#f59e0b"></i> <?php echo htmlspecialchars($food['rating']); ?></span>
+            <span class="food-category"><?php echo htmlspecialchars(__($food['category'])); ?></span>
+            <span class="food-rating"><i class="fa-solid fa-star" style="color:#f59e0b"></i> <?php echo htmlspecialchars(t_num($food['rating'])); ?></span>
           </div>
 
-          <div class="food-name"><?php echo htmlspecialchars($food['name']); ?></div>
-          <div class="food-desc"><?php echo htmlspecialchars($food['description']); ?></div>
+          <div class="food-name"><?php echo htmlspecialchars(__($food['name'])); ?></div>
+          <div class="food-desc"><?php echo htmlspecialchars(__($food['description'])); ?></div>
 
           <div class="food-footer">
             <div>
-              <div class="food-time">🕐 <?php echo htmlspecialchars($food['delivery_time']); ?></div>
-              <div class="food-price">Rs. <?php echo number_format((float) $food['price'], 2); ?></div>
+              <div class="food-time">🕐 <?php echo htmlspecialchars(t_delivery_time($food['delivery_time'])); ?></div>
+              <div class="food-price"><?php echo __('currency_rs', 'Rs.'); ?> <?php echo htmlspecialchars(t_num(number_format((float) $food['price'], 2))); ?></div>
             </div>
 
             <form action="actions/add_to_cart.php" method="post" onclick="event.stopPropagation();">
               <input type="hidden" name="food_id" value="<?php echo (int) $food['id']; ?>" />
-              <input type="hidden" name="food_name" value="<?php echo htmlspecialchars($food['name']); ?>" />
+              <input type="hidden" name="food_name" value="<?php echo htmlspecialchars(__($food['name'])); ?>" />
               <input type="hidden" name="price" value="<?php echo (float) $food['price']; ?>" />
-              <button class="add-btn" type="submit" aria-label="Add <?php echo htmlspecialchars($food['name']); ?> to cart" data-name="<?php echo htmlspecialchars($food['name']); ?>">+</button>
+              <button class="add-btn" type="submit" aria-label="Add <?php echo htmlspecialchars(__($food['name'])); ?> to cart" data-name="<?php echo htmlspecialchars(__($food['name'])); ?>">+</button>
             </form>
           </div>
         </div>
@@ -59,5 +59,3 @@ $foods = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php endforeach; ?>
   </div>
 </section>
-
-

@@ -10,7 +10,7 @@ $selectedRole = $old['role'] ?? 'user';
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Register — SwiftBite</title>
+    <title><?php echo __('register_title', 'Register'); ?> — SwiftBite</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -234,34 +234,34 @@ $selectedRole = $old['role'] ?? 'user';
                 <span class="theme-icon theme-icon-moon"><i class="fa-solid fa-moon"></i></span>
             </button>
         </div>
-        <div class="auth-tagline">Fast. Fresh. Delivered.</div>
+        <div class="auth-tagline"><?php echo __('hero_tagline', 'Fast. Fresh. Delivered.'); ?></div>
 
-        <div class="role-label">Choose account type</div>
+        <div class="role-label"><?php echo __('choose_account_type', 'Choose account type'); ?></div>
 
         <button type="button" class="role-btn <?php echo $selectedRole==='user'?'active':''; ?>" id="btnUser" onclick="setRole('user')">
-            <span class="ri"><i class="fa-solid fa-user"></i></span> Customer
+            <span class="ri"><i class="fa-solid fa-user"></i></span> <?php echo __('role_customer', 'Customer'); ?>
             <span class="role-check">✓</span>
         </button>
         <button type="button" class="role-btn <?php echo $selectedRole==='restaurant'?'active':''; ?>" id="btnRestaurant" onclick="setRole('restaurant')">
-            <span class="ri"><i class="fa-solid fa-utensils"></i></span> Restaurant Owner
+            <span class="ri"><i class="fa-solid fa-utensils"></i></span> <?php echo __('role_owner', 'Restaurant Owner'); ?>
             <span class="role-check">✓</span>
         </button>
         <button type="button" class="role-btn <?php echo $selectedRole==='delivery_partner'?'active':''; ?>" id="btnRider" onclick="setRole('delivery_partner')">
-            <span class="ri"><i class="fa-solid fa-motorcycle"></i></span> Delivery Rider
+            <span class="ri"><i class="fa-solid fa-motorcycle"></i></span> <?php echo __('role_rider', 'Delivery Rider'); ?>
             <span class="role-check">✓</span>
         </button>
 
         <div class="approval-notice" id="approvalNotice"
              <?php echo in_array($selectedRole,['restaurant','delivery_partner']) ? 'style="display:block"' : ''; ?>>
-            <strong><i class="fa-solid fa-hourglass-half" style="color:#f59e0b"></i> Pending Approval</strong>
-            Your account will be reviewed by an admin before you can log in.
+            <strong><i class="fa-solid fa-hourglass-half" style="color:#f59e0b"></i> <?php echo __('pending_approval', 'Pending Approval'); ?></strong>
+            <?php echo __('pending_approval_desc', 'Your account will be reviewed by an admin before you can log in.'); ?>
         </div>
     </div>
 
     <!-- RIGHT: Form -->
     <div class="auth-right">
-        <div class="auth-title" id="formTitle">Create Account</div>
-        <div class="auth-subtitle">Fill in the details below to get started</div>
+        <div class="auth-title" id="formTitle"><?php echo __('create_account', 'Create Account'); ?></div>
+        <div class="auth-subtitle"><?php echo __('register_subtitle', 'Fill in the details below to get started'); ?></div>
 
         <?php echo renderFlash(); ?>
 
@@ -271,62 +271,62 @@ $selectedRole = $old['role'] ?? 'user';
 
             <!-- Common fields -->
             <div class="auth-field">
-                <label>Full Name</label>
+                <label><?php echo __('full_name', 'Full Name'); ?></label>
                 <input type="text" name="name" placeholder="John Doe" required
                        value="<?php echo htmlspecialchars($old['name'] ?? ''); ?>">
             </div>
             <div class="auth-field">
-                <label>Email</label>
+                <label><?php echo __('email', 'Email'); ?></label>
                 <input type="email" name="email" placeholder="you@example.com" required
                        value="<?php echo htmlspecialchars($old['email'] ?? ''); ?>">
             </div>
             <div class="auth-field">
-                <label>Password</label>
+                <label><?php echo __('password', 'Password'); ?></label>
                 <input type="password" name="password" placeholder="••••••••" required minlength="6">
-                <div class="pwd-hint">At least 6 characters</div>
+                <div class="pwd-hint"><?php echo __('pwd_hint', 'At least 6 characters'); ?></div>
             </div>
 
             <!-- ── Restaurant fields ── -->
             <div class="extra-fields" id="restaurantFields"
                  <?php echo $selectedRole==='restaurant' ? 'style="display:block"' : ''; ?>>
-                <div class="section-label"><i class="fa-solid fa-utensils"></i> Restaurant Details</div>
+                <div class="section-label"><i class="fa-solid fa-utensils"></i> <?php echo __('restaurant_details', 'Restaurant Details'); ?></div>
                 <div class="auth-field">
-                    <label>Restaurant Name</label>
+                    <label><?php echo __('restaurant_name', 'Restaurant Name'); ?></label>
                     <input type="text" name="rest_name" placeholder="e.g. Burger Palace"
                            value="<?php echo htmlspecialchars($old['rest_name'] ?? ''); ?>">
                 </div>
                 <div class="field-row">
                     <div class="auth-field">
-                        <label>City</label>
+                        <label><?php echo __('city', 'City'); ?></label>
                         <select name="rest_city">
                             <?php foreach (['Kathmandu','Lalitpur','Bhaktapur'] as $c): ?>
-                                <option value="<?php echo $c; ?>" <?php echo ($old['rest_city']??'')===$c?'selected':''; ?>><?php echo $c; ?></option>
+                                <option value="<?php echo $c; ?>" <?php echo ($old['rest_city']??'')===$c?'selected':''; ?>><?php echo __($c, $c); ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="auth-field">
-                        <label>Cuisine</label>
+                        <label><?php echo __('cuisine', 'Cuisine'); ?></label>
                         <select name="rest_cuisine">
                             <?php foreach (['Fast Food','Nepali','Italian','Chinese','Japanese','Healthy','Indian','Thai','Mixed'] as $c): ?>
-                                <option value="<?php echo $c; ?>" <?php echo ($old['rest_cuisine']??'')===$c?'selected':''; ?>><?php echo $c; ?></option>
+                                <option value="<?php echo $c; ?>" <?php echo ($old['rest_cuisine']??'')===$c?'selected':''; ?>><?php echo __($c, $c); ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
                 </div>
                 <div class="auth-field">
-                    <label>Restaurant Phone</label>
+                    <label><?php echo __('restaurant_phone', 'Restaurant Phone'); ?></label>
                     <input type="text" name="rest_phone" placeholder="01-4567890"
                            value="<?php echo htmlspecialchars($old['rest_phone'] ?? ''); ?>">
                 </div>
                 <div class="auth-field">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-                        <label style="margin-bottom:0;">Restaurant Address</label>
+                        <label style="margin-bottom:0;"><?php echo __('restaurant_address', 'Restaurant Address'); ?></label>
                         <button type="button" onclick="openRegMap()"
                             style="background:none;border:none;color:#ff4f00;font-size:0.78rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;padding:0;">
-                            <i class="fa-solid fa-map-location-dot"></i> Pick on Map
+                            <i class="fa-solid fa-map-location-dot"></i> <?php echo __('pick_on_map', 'Pick on Map'); ?>
                         </button>
                     </div>
-                    <input type="text" name="rest_address" id="regAddressInput" placeholder="Click 'Pick on Map' or type your address"
+                    <input type="text" name="rest_address" id="regAddressInput" placeholder="<?php echo __('pick_on_map_placeholder', "Click 'Pick on Map' or type your address"); ?>"
                            value="<?php echo htmlspecialchars($old['rest_address'] ?? ''); ?>">
                     <input type="hidden" name="rest_lat" id="regLatInput" value="">
                     <input type="hidden" name="rest_lng" id="regLngInput" value="">
@@ -336,49 +336,49 @@ $selectedRole = $old['role'] ?? 'user';
             <!-- ── Rider fields ── -->
             <div class="extra-fields" id="riderFields"
                  <?php echo $selectedRole==='delivery_partner' ? 'style="display:block"' : ''; ?>>
-                <div class="section-label"><i class="fa-solid fa-motorcycle"></i> Rider Details</div>
+                <div class="section-label"><i class="fa-solid fa-motorcycle"></i> <?php echo __('rider_details', 'Rider Details'); ?></div>
                 <div class="field-row">
                     <div class="auth-field">
-                        <label>Phone Number</label>
+                        <label><?php echo __('phone_number', 'Phone Number'); ?></label>
                         <input type="text" name="rider_phone" placeholder="98XXXXXXXX"
                                value="<?php echo htmlspecialchars($old['rider_phone'] ?? ''); ?>">
                     </div>
                     <div class="auth-field">
-                        <label>Vehicle Type</label>
+                        <label><?php echo __('vehicle_type', 'Vehicle Type'); ?></label>
                         <select name="rider_vehicle">
-                            <option value="Motorcycle" <?php echo ($old['rider_vehicle']??'')==='Motorcycle'?'selected':''; ?>>🏍️ Motorcycle</option>
-                            <option value="Bicycle"    <?php echo ($old['rider_vehicle']??'')==='Bicycle'?'selected':''; ?>>🚲 Bicycle</option>
-                            <option value="Scooter"    <?php echo ($old['rider_vehicle']??'')==='Scooter'?'selected':''; ?>>🛵 Scooter</option>
-                            <option value="Car"        <?php echo ($old['rider_vehicle']??'')==='Car'?'selected':''; ?>>🚗 Car</option>
+                            <option value="Motorcycle" <?php echo ($old['rider_vehicle']??'')==='Motorcycle'?'selected':''; ?>>🏍️ <?php echo __('vehicle_motorcycle', 'Motorcycle'); ?></option>
+                            <option value="Bicycle"    <?php echo ($old['rider_vehicle']??'')==='Bicycle'?'selected':''; ?>>🚲 <?php echo __('vehicle_bicycle', 'Bicycle'); ?></option>
+                            <option value="Scooter"    <?php echo ($old['rider_vehicle']??'')==='Scooter'?'selected':''; ?>>🛵 <?php echo __('vehicle_scooter', 'Scooter'); ?></option>
+                            <option value="Car"        <?php echo ($old['rider_vehicle']??'')==='Car'?'selected':''; ?>>🚗 <?php echo __('vehicle_car', 'Car'); ?></option>
                         </select>
                     </div>
                 </div>
                 <div class="field-row">
                     <div class="auth-field">
-                        <label>City / Area</label>
+                        <label><?php echo __('city_area', 'City / Area'); ?></label>
                         <input type="text" name="rider_address" placeholder="e.g. Baneshwor"
                                value="<?php echo htmlspecialchars($old['rider_address'] ?? ''); ?>">
                     </div>
                     <div class="auth-field">
-                        <label>Profile Photo <span style="color:#bbb;font-weight:400;">(required)</span></label>
+                        <label><?php echo __('profile_photo', 'Profile Photo'); ?> <span style="color:#bbb;font-weight:400;">(<?php echo __('required', 'required'); ?>)</span></label>
                         <div class="photo-upload-box" id="photoBox">
                             <input type="file" name="rider_photo" id="riderPhoto" accept="image/*" onchange="previewPhoto(this)">
                             <img class="photo-preview" id="photoPreview" src="" alt="">
                             <div id="photoContent">
                                 <div class="photo-icon"><i class="fa-solid fa-camera"></i></div>
-                                <div class="photo-label">Upload photo</div>
-                                <div class="photo-hint">JPG/PNG · max 2MB</div>
+                                <div class="photo-label"><?php echo __('upload_photo', 'Upload photo'); ?></div>
+                                <div class="photo-hint"><?php echo __('photo_upload_hint', 'JPG/PNG · max 2MB'); ?></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <button class="auth-btn" type="submit" id="submitBtn">Create Account</button>
+            <button class="auth-btn" type="submit" id="submitBtn"><?php echo __('create_account', 'Create Account'); ?></button>
         </form>
 
-        <div class="auth-footer">Already have an account? <a href="login.php">Sign In</a></div>
-        <a href="../index.php" class="auth-back">← Back to SwiftBite</a>
+        <div class="auth-footer"><?php echo __('already_have_account', 'Already have an account?'); ?> <a href="login.php"><?php echo __('nav_login', 'Sign In'); ?></a></div>
+        <a href="../index.php" class="auth-back">← <?php echo __('back_to_swiftbite', 'Back to SwiftBite'); ?></a>
     </div>
 </div>
 
@@ -406,9 +406,9 @@ $selectedRole = $old['role'] ?? 'user';
 
 <script>
 const titles = {
-    user:             'Create Account',
-    restaurant:       '<i class="fa-solid fa-utensils" style="color:var(--orange)"></i> Register Restaurant',
-    delivery_partner: '<i class="fa-solid fa-motorcycle" style="color:var(--orange)"></i> Apply as Rider'
+    user:             '<?php echo __("create_account", "Create Account"); ?>',
+    restaurant:       '<i class="fa-solid fa-utensils" style="color:var(--orange)"></i> <?php echo __("register_restaurant", "Register Restaurant"); ?>',
+    delivery_partner: '<i class="fa-solid fa-motorcycle" style="color:var(--orange)"></i> <?php echo __("apply_as_rider", "Apply as Rider"); ?>'
 };
 const btnMap = {
     user: 'btnUser', restaurant: 'btnRestaurant', delivery_partner: 'btnRider'

@@ -24,10 +24,10 @@ if (!empty($featuredRests)):
 <section class="section" id="restaurants">
   <div class="section-header">
     <div>
-      <div class="section-tag">Popular Restaurants</div>
-      <div class="section-title">Top Rated<br />Near You</div>
+      <div class="section-tag"><?php echo __('popular_restaurants', 'Popular Restaurants'); ?></div>
+      <div class="section-title"><?php echo __('top_rated_near_you', 'Top Rated<br />Near You'); ?></div>
     </div>
-    <a href="restaurants.php" class="view-all">View All <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="restaurants.php" class="view-all"><?php echo __('view_all', 'View All'); ?> <i class="fa-solid fa-arrow-right"></i></a>
   </div>
 
   <div class="rest-home-grid">
@@ -41,25 +41,25 @@ if (!empty($featuredRests)):
               <span class="rest-home-emoji"><?php echo htmlspecialchars($rest['logo_emoji']); ?></span>
             <?php endif; ?>
             <span class="rest-home-status <?php echo $rest['is_open'] ? 'open' : 'closed'; ?>">
-              <?php echo $rest['is_open'] ? '● Open' : '● Closed'; ?>
+              <?php echo $rest['is_open'] ? '● ' . __('status_open', 'Open') : '● ' . __('status_closed', 'Closed'); ?>
             </span>
           </div>
           <div class="rest-home-body">
             <div class="rest-home-top">
               <div>
-                <div class="rest-home-name"><?php echo htmlspecialchars($rest['name']); ?></div>
+                <div class="rest-home-name"><?php echo htmlspecialchars(__($rest['name'], $rest['name'])); ?></div>
                 <div class="rest-home-cuisine">
                   <?php echo $cuisineEmojis[$rest['cuisine_type']] ?? '<i class="fa-solid fa-utensils"></i>'; ?>
-                  <?php echo htmlspecialchars($rest['cuisine_type']); ?>
+                  <?php echo htmlspecialchars(__($rest['cuisine_type'], $rest['cuisine_type'])); ?>
                 </div>
               </div>
-              <div class="rest-home-rating"><i class="fa-solid fa-star" style="color:#f59e0b"></i> <?php echo htmlspecialchars($rest['rating']); ?></div>
+              <div class="rest-home-rating"><i class="fa-solid fa-star" style="color:#f59e0b"></i> <?php echo t_num($rest['rating']); ?></div>
             </div>
             <div class="rest-home-meta">
-              <span>🕐 <?php echo htmlspecialchars($rest['delivery_time']); ?></span>
-              <span><i class="fa-solid fa-truck"></i> Rs. <?php echo number_format((float) $rest['delivery_fee'], 0); ?></span>
+              <span>🕐 <?php echo t_delivery_time($rest['delivery_time']); ?></span>
+              <span><i class="fa-solid fa-truck"></i> <?php echo __('currency_rs', 'Rs.'); ?> <?php echo t_num(number_format((float) $rest['delivery_fee'], 0)); ?></span>
               <?php if (isset($foodCounts[$rest['id']])): ?>
-                <span><i class="fa-solid fa-utensils"></i> <?php echo $foodCounts[$rest['id']]; ?> items</span>
+                <span><i class="fa-solid fa-utensils"></i> <?php echo t_num($foodCounts[$rest['id']]) . ' ' . __('items', 'items'); ?></span>
               <?php endif; ?>
             </div>
           </div>

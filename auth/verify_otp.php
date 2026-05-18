@@ -1,4 +1,4 @@
-﻿<?php 
+<?php 
 require_once '../core/bootstrap.php';
 
 // Make sure user came from step 1
@@ -20,7 +20,7 @@ if ($at_pos > 2) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Verify OTP — SwiftBite</title>
+    <title><?php echo __('verify_otp', 'Verify OTP'); ?> — SwiftBite</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -113,8 +113,8 @@ if ($at_pos > 2) {
         </div>
 
         <div class="auth-icon"><i class="fa-solid fa-envelope"></i></div>
-        <div class="auth-title">Verify OTP</div>
-        <div class="auth-subtitle">We've sent a 6-digit verification code to your email</div>
+        <div class="auth-title"><?php echo __('verify_otp', 'Verify OTP'); ?></div>
+        <div class="auth-subtitle"><?php echo __('verify_otp_subtitle', "We've sent a 6-digit verification code to your email"); ?></div>
 
         <div class="email-badge-wrap">
             <span class="email-badge"><i class="fa-solid fa-envelope"></i> <?php echo htmlspecialchars($masked_email); ?></span>
@@ -139,7 +139,7 @@ if ($at_pos > 2) {
                 <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" data-index="5">
             </div>
 
-            <button class="auth-btn" type="submit">Verify Code <i class="fa-solid fa-arrow-right"></i></button>
+            <button class="auth-btn" type="submit"><?php echo __('verify_code', 'Verify Code'); ?> <i class="fa-solid fa-arrow-right"></i></button>
         </form>
 
         <div class="resend-section">
@@ -148,12 +148,12 @@ if ($at_pos > 2) {
                 <input type="hidden" name="email" value="<?php echo htmlspecialchars($_SESSION['otp_email']); ?>">
                 <input type="hidden" name="resend" value="1">
                 <button type="submit" class="resend-link" id="resendBtn">
-                    Resend OTP (<span id="countdown">60</span>s)
+                    <?php echo __('resend_otp', 'Resend OTP'); ?> (<span id="countdown">60</span>s)
                 </button>
             </form>
         </div>
 
-        <a href="forgot_password.php" class="auth-back">← Try a different email</a>
+        <a href="forgot_password.php" class="auth-back">← <?php echo __('try_different_email', 'Try a different email'); ?></a>
     </div>
 
     <script>
@@ -221,7 +221,7 @@ if ($at_pos > 2) {
             if (seconds <= 0) {
                 clearInterval(timer);
                 btn.classList.remove('disabled');
-                btn.textContent = '🔄 Resend OTP';
+                btn.textContent = '🔄 <?php echo __("resend_otp", "Resend OTP"); ?>';
             }
         }, 1000);
     })();

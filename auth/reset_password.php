@@ -1,4 +1,4 @@
-﻿<?php 
+<?php 
 require_once '../core/bootstrap.php';
 
 // Must have verified OTP
@@ -13,7 +13,7 @@ unset($_SESSION['rp_error']);
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Reset Password — SwiftBite</title>
+    <title><?php echo __('reset_password', 'Reset Password'); ?> — SwiftBite</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -80,8 +80,8 @@ unset($_SESSION['rp_error']);
         </div>
 
         <div class="auth-icon">🔒</div>
-        <div class="auth-title">Set New Password</div>
-        <div class="auth-subtitle">Your identity has been verified! Create a strong new password for your account.</div>
+        <div class="auth-title"><?php echo __('set_new_password', 'Set New Password'); ?></div>
+        <div class="auth-subtitle"><?php echo __('reset_password_subtitle', 'Your identity has been verified! Create a strong new password for your account.'); ?></div>
 
         <?php if ($error): ?>
             <div class="auth-alert error"><i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> <?php echo htmlspecialchars($error); ?></div>
@@ -90,7 +90,7 @@ unset($_SESSION['rp_error']);
         <form action="../actions/reset_password_action.php" method="POST">
             <?php echo csrfInput(); ?>
             <div class="auth-field">
-                <label for="password">New Password</label>
+                <label for="password"><?php echo __('new_password', 'New Password'); ?></label>
                 <input type="password" name="password" id="password" placeholder="••••••••" required minlength="6">
                 <div class="pwd-strength">
                     <div class="pwd-bar"><div class="pwd-bar-fill" id="pwdFill"></div></div>
@@ -98,10 +98,10 @@ unset($_SESSION['rp_error']);
                 </div>
             </div>
             <div class="auth-field">
-                <label for="confirm_password">Confirm Password</label>
+                <label for="confirm_password"><?php echo __('confirm_password', 'Confirm Password'); ?></label>
                 <input type="password" name="confirm_password" id="confirm_password" placeholder="••••••••" required minlength="6">
             </div>
-            <button class="auth-btn" type="submit">Reset Password ✓</button>
+            <button class="auth-btn" type="submit"><?php echo __('reset_password', 'Reset Password'); ?> ✓</button>
         </form>
     </div>
 
@@ -122,11 +122,11 @@ unset($_SESSION['rp_error']);
 
             const levels = [
                 { width: '0%', color: '#ddd', text: '' },
-                { width: '20%', color: '#ff3b30', text: 'Weak' },
-                { width: '40%', color: '#ff9500', text: 'Fair' },
-                { width: '60%', color: '#ffcc00', text: 'Good' },
-                { width: '80%', color: '#34c759', text: 'Strong' },
-                { width: '100%', color: '#00c7be', text: 'Excellent' }
+                { width: '20%', color: '#ff3b30', text: '<?php echo __("pwd_weak", "Weak"); ?>' },
+                { width: '40%', color: '#ff9500', text: '<?php echo __("pwd_fair", "Fair"); ?>' },
+                { width: '60%', color: '#ffcc00', text: '<?php echo __("pwd_good", "Good"); ?>' },
+                { width: '80%', color: '#34c759', text: '<?php echo __("pwd_strong", "Strong"); ?>' },
+                { width: '100%', color: '#00c7be', text: '<?php echo __("pwd_excellent", "Excellent"); ?>' }
             ];
 
             const l = levels[score];
