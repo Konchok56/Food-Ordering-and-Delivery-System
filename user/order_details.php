@@ -192,7 +192,7 @@ $deadlineMs = $deadline * 1000;
         <div class="cancel-modal">
             <div class="modal-icon"><i class="fa-solid fa-trash"></i></div>
             <h3>Cancel Order?</h3>
-            <p>Are you sure you want to cancel <strong>Order #<?php echo str_pad($order['id'], 5, '0', STR_PAD_LEFT); ?></strong>? This action <strong>cannot be undone</strong> and the order will be permanently removed.</p>
+            <p>Are you sure you want to cancel <strong>Order #<?php echo str_pad($order['id'], 5, '0', STR_PAD_LEFT); ?></strong>? The order will be marked as cancelled and you can view it in your order history.</p>
             <div class="modal-btns">
                 <button class="modal-keep" id="modalKeepBtn">Keep Order</button>
                 <button class="modal-confirm-cancel" id="modalCancelBtn">Yes, Cancel</button>
