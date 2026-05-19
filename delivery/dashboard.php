@@ -620,7 +620,7 @@ const miniMaps = {};
         }
 
         simBtn.disabled = true;
-        simBtn.textContent = '<i class="fa-solid fa-hourglass-half" style="color:#f59e0b"></i> Loading route...';
+        simBtn.innerHTML = '<i class="fa-solid fa-hourglass-half" style="color:#f59e0b"></i> Loading route...';
 
         // Stop page auto-refresh during simulation
         clearTimeout(refreshTimeout);
@@ -668,10 +668,10 @@ const miniMaps = {};
             if (step >= total) {
                 clearInterval(activeSimulations[orderId]);
                 delete activeSimulations[orderId];
-                simBtn.textContent  = '<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> Delivered!';
+                simBtn.innerHTML    = '<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> Delivered!';
                 simBtn.disabled     = true;
                 simBar.style.width  = '100%';
-                simText.textContent = '<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> Simulation complete — rider arrived!';
+                simText.innerHTML   = '<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> Simulation complete — rider arrived!';
                 return;
             }
 
@@ -701,7 +701,7 @@ const miniMaps = {};
             // Update progress bar
             const pct = Math.round((step / (total - 1)) * 100);
             simBar.style.width  = pct + '%';
-            simText.textContent = `<i class="fa-solid fa-motorcycle"></i> Simulating... ${pct}% (${step + 1}/${total} points)`;
+            simText.innerHTML   = `<i class="fa-solid fa-motorcycle"></i> Simulating... ${pct}% (${step + 1}/${total} points)`;
             step++;
         }
 
@@ -778,14 +778,14 @@ document.querySelectorAll('.btn-toggle-tracking').forEach(btn => {
 
                     const now = new Date().toLocaleTimeString();
                     if (data.success) {
-                        document.getElementById('track-sub-' + orderId).textContent =
+                        document.getElementById('track-sub-' + orderId).innerHTML =
                             `<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> Sent at ${now} · ${lat}, ${lng} · ±${acc}m`;
                     } else {
-                        document.getElementById('track-sub-' + orderId).textContent =
+                        document.getElementById('track-sub-' + orderId).innerHTML =
                             `<i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b"></i> Server error at ${now}: ${data.message}`;
                     }
                 } catch(e) {
-                    document.getElementById('track-sub-' + orderId).textContent =
+                    document.getElementById('track-sub-' + orderId).innerHTML =
                         `<i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b"></i> Network error — will retry on next movement`;
                 }
             },
@@ -822,8 +822,8 @@ function setTrackingState(orderId, state, title, sub) {
     if (!banner) return;
     banner.className = 'live-tracking-banner ' + state;
     document.getElementById('track-dot-' + orderId).className = 'tracking-dot ' + (state === 'active' ? 'green' : (state === 'error' ? 'red' : ''));
-    document.getElementById('track-title-' + orderId).textContent = title;
-    document.getElementById('track-sub-' + orderId).textContent = sub;
+    document.getElementById('track-title-' + orderId).innerHTML = title;
+    document.getElementById('track-sub-' + orderId).innerHTML = sub;
 }
 
 // ── Availability Toggle Logic ──
