@@ -552,9 +552,9 @@ document.querySelectorAll('.location-form').forEach(function(form) {
         navigator.geolocation.getCurrentPosition(function(pos) {
             form.querySelector('[name="delivery_lat"]').value = pos.coords.latitude.toFixed(7);
             form.querySelector('[name="delivery_lng"]').value = pos.coords.longitude.toFixed(7);
-            btn.textContent = '<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> GPS Captured'; btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> GPS Captured'; btn.disabled = false;
         }, function() {
-            alert('Unable to get location.'); btn.textContent = '<i class="fa-solid fa-location-dot"></i> Use My GPS'; btn.disabled = false;
+            alert('Unable to get location.'); btn.innerHTML = '<i class="fa-solid fa-location-dot"></i> Use My GPS'; btn.disabled = false;
         }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
     });
 });
