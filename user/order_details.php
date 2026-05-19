@@ -411,7 +411,7 @@ $deadlineMs = $deadline * 1000;
 
         /* ── Toast ── */
         function showToast(msg, type = '') {
-            toast.textContent = msg;
+            toast.innerHTML   = msg;
             toast.className   = 'order-toast' + (type ? ' ' + type : '');
             void toast.offsetWidth;
             toast.classList.add('show');
