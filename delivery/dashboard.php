@@ -418,7 +418,7 @@ $activeOrders = $pdo->query("
                                 </a>
                             </div>
                             <div class="field-label" style="margin-top:12px;">Items (<?php echo $order['item_count']; ?>)</div>
-                            <div class="field-value"><?php echo htmlspecialchars(mb_strimwidth($order['item_names'], 0, 60, '...')); ?></div>
+                            <div class="field-value"><?php echo $order['item_names'] !== '' ? htmlspecialchars(mb_strimwidth($order['item_names'], 0, 60, '...')) : '<span style="color:#8b6a44;font-style:italic;">No items recorded</span>'; ?></div>
                         </div>
                         <div class="card-section">
                             <div class="field-label">Delivery Address</div>
@@ -549,7 +549,7 @@ $activeOrders = $pdo->query("
                             </div>
 
                             <div class="field-label" style="margin-top:12px;">Items (<?php echo $order['item_count']; ?>)</div>
-                            <div class="field-value"><?php echo htmlspecialchars(mb_strimwidth($order['item_names'], 0, 60, '...')); ?></div>
+                            <div class="field-value"><?php echo $order['item_names'] !== '' ? htmlspecialchars(mb_strimwidth($order['item_names'], 0, 60, '...')) : '<span style="color:#8b6a44;font-style:italic;">No items recorded</span>'; ?></div>
                         </div>
 
                         <div class="card-section">
@@ -730,9 +730,9 @@ document.querySelectorAll('.location-form').forEach(function(form) {
         navigator.geolocation.getCurrentPosition(function(pos) {
             form.querySelector('[name="delivery_lat"]').value = pos.coords.latitude.toFixed(7);
             form.querySelector('[name="delivery_lng"]').value = pos.coords.longitude.toFixed(7);
-            btn.textContent = '<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> GPS Captured'; btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> GPS Captured'; btn.disabled = false;
         }, function() {
-            alert('Unable to get location.'); btn.textContent = '<i class="fa-solid fa-location-dot"></i> Use My GPS'; btn.disabled = false;
+            alert('Unable to get location.'); btn.innerHTML = '<i class="fa-solid fa-location-dot"></i> Use My GPS'; btn.disabled = false;
         }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
     });
 });
