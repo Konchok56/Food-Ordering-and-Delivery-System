@@ -196,6 +196,16 @@ $activeOrders = $pdo->query("
 
         .btn-save { background: var(--orange); color: #fff; border: none; padding: 12px; border-radius: 14px; font-weight: 800; font-size: 0.9rem; cursor: pointer; width: 100%; font-family: 'DM Sans', sans-serif; transition: opacity .2s; }
         .btn-save:hover { opacity: 0.88; }
+
+        /* ── GDODS-51: Delivery Step Buttons ── */
+        .step-actions { padding: 14px 22px; border-top: 1px solid rgba(255,255,255,0.06); }
+        html:not([data-theme='dark']) .step-actions { border-top-color: rgba(0,0,0,0.06); }
+        .step-label-text { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #8b6a44; margin-bottom: 10px; }
+        .btn-step { width: 100%; padding: 13px; border: none; border-radius: 14px; font-weight: 800; font-size: 0.9rem; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-step:hover { opacity: 0.88; transform: translateY(-1px); }
+        .btn-step:disabled { opacity: 0.4; pointer-events: none; }
+        .btn-pickup  { background: linear-gradient(135deg, #007aff, #5ac8fa); color: #fff; }
+        .btn-deliver { background: linear-gradient(135deg, #1a7a34, #34c759); color: #fff; }
         .btn-locate { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); color: #e8d5c0; padding: 12px; border-radius: 14px; font-weight: 700; font-size: 0.85rem; cursor: pointer; width: 100%; font-family: 'DM Sans', sans-serif; transition: all .2s; }
         .btn-locate:hover { background: rgba(255,79,0,0.12); color: var(--orange); }
         .btn-simulate { background: linear-gradient(135deg, #6c47ff, #a78bfa); border: none; color: #fff; padding: 12px; border-radius: 14px; font-weight: 800; font-size: 0.85rem; cursor: pointer; width: 100%; font-family: 'DM Sans', sans-serif; transition: all .2s; }
@@ -390,39 +400,53 @@ $activeOrders = $pdo->query("
                         <div class="status-pill <?php echo $statusClass; ?>"><?php echo $sIcon . ' ' . $sLabel; ?></div>
                     </div>
 
-                    <!-- Rider + Status form inline fields -->
-                    <form action="../actions/update_order_status.php" method="POST">
-                        <?php echo csrfInput(); ?>
-                        <input type="hidden" name="order_id" value="<?php echo (int)$order['id']; ?>">
-
-                        <div class="form-inline">
-                            <div>
-                                <label class="inp-label">Your Name</label>
-                                <input class="inp" type="text" name="delivery_partner_name"
-                                    value="<?php echo htmlspecialchars($order['delivery_partner_name'] ?? $rider['name']); ?>"
-                                    placeholder="Rider name" required>
-                            </div>
-                            <div>
-                                <label class="inp-label">Your Phone</label>
-                                <input class="inp" type="text" name="delivery_partner_phone"
-                                    value="<?php echo htmlspecialchars($order['delivery_partner_phone'] ?? $rider['phone'] ?? ''); ?>"
-                                    placeholder="98XXXXXXXX" required>
-                            </div>
-                            <div>
-                                <label class="inp-label">Update Status</label>
-                                <select class="sel" name="status" required>
-                                    <?php foreach (['pending','confirmed','preparing','out_for_delivery','delivered','cancelled'] as $s): ?>
-                                        <option value="<?php echo $s; ?>" <?php echo $order['status'] === $s ? 'selected' : ''; ?>>
-                                            <?php echo ucwords(str_replace('_', ' ', $s)); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div style="display:flex;align-items:flex-end;">
-                                <button type="submit" class="btn-save">💾 Save Status</button>
-                            </div>
+                    <!-- Rider Name & Phone (hidden — pre-fills for submission) -->
+                    <div class="form-inline">
+                        <div>
+                            <label class="inp-label">Your Name</label>
+                            <input class="inp rider-name-inp" type="text"
+                                value="<?php echo htmlspecialchars($order['delivery_partner_name'] ?? $rider['name']); ?>"
+                                placeholder="Rider name">
                         </div>
-                    </form>
+                        <div>
+                            <label class="inp-label">Your Phone</label>
+                            <input class="inp rider-phone-inp" type="text"
+                                value="<?php echo htmlspecialchars($order['delivery_partner_phone'] ?? $rider['phone'] ?? ''); ?>"
+                                placeholder="98XXXXXXXX">
+                        </div>
+                    </div>
+
+                    <!-- GDODS-51: Step Buttons -->
+                    <div class="step-actions">
+                        <div class="step-label-text"><i class="fa-solid fa-route"></i> Update Delivery Status</div>
+                        <?php if (in_array($order['status'], ['confirmed', 'preparing'])): ?>
+                            <form action="../actions/update_order_status.php" method="POST">
+                                <?php echo csrfInput(); ?>
+                                <input type="hidden" name="order_id" value="<?php echo (int)$order['id']; ?>">
+                                <input type="hidden" name="status" value="out_for_delivery">
+                                <input type="hidden" name="delivery_partner_name" value="<?php echo htmlspecialchars($order['delivery_partner_name'] ?? $rider['name']); ?>">
+                                <input type="hidden" name="delivery_partner_phone" value="<?php echo htmlspecialchars($order['delivery_partner_phone'] ?? $rider['phone'] ?? ''); ?>">
+                                <button type="submit" class="btn-step btn-pickup">
+                                    <i class="fa-solid fa-bag-shopping"></i> Mark as Picked Up
+                                </button>
+                            </form>
+                        <?php elseif ($order['status'] === 'out_for_delivery'): ?>
+                            <form action="../actions/update_order_status.php" method="POST">
+                                <?php echo csrfInput(); ?>
+                                <input type="hidden" name="order_id" value="<?php echo (int)$order['id']; ?>">
+                                <input type="hidden" name="status" value="delivered">
+                                <input type="hidden" name="delivery_partner_name" value="<?php echo htmlspecialchars($order['delivery_partner_name'] ?? $rider['name']); ?>">
+                                <input type="hidden" name="delivery_partner_phone" value="<?php echo htmlspecialchars($order['delivery_partner_phone'] ?? $rider['phone'] ?? ''); ?>">
+                                <button type="submit" class="btn-step btn-deliver">
+                                    <i class="fa-solid fa-circle-check"></i> Mark as Delivered
+                                </button>
+                            </form>
+                        <?php else: ?>
+                            <div style="color:#8b6a44; font-size:0.85rem; padding:8px 0;">
+                                <i class="fa-solid fa-hourglass-half"></i> Waiting for order to be confirmed before delivery steps begin.
+                            </div>
+                        <?php endif; ?>
+                    </div>
 
                     <!-- Customer & Order Info -->
                     <div class="card-body">
