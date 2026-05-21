@@ -366,7 +366,7 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
 
         /* ── Toast Helper ── */
         function showToast(msg, type = '') {
-            toast.textContent  = msg;
+            toast.innerHTML    = msg;
             toast.className    = 'order-toast' + (type ? ' ' + type : '');
             void toast.offsetWidth;
             toast.classList.add('show');
