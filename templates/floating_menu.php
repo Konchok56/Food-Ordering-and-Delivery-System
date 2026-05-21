@@ -182,21 +182,10 @@ if (isset($_SESSION['user_id'])) {
   fix();
   document.addEventListener('DOMContentLoaded', fix);
   window.addEventListener('load', fix);
-
-  // Poll for notification count update every 30s
-  var notifBadge = document.getElementById('notifCountBadge');
-  if (notifBadge) {
-    var baseUrl = (window.SwiftBiteConfig && window.SwiftBiteConfig.baseUrl) || '';
-    setInterval(function() {
-      fetch(baseUrl + 'actions/get_notification_count.php')
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-          var c = parseInt(data.count, 10) || 0;
-          notifBadge.textContent = c > 0 ? c : '';
-          notifBadge.setAttribute('data-count', c);
-        })
-        .catch(function(){});
-    }, 30000);
-  }
 })();
 </script>
+
+<?php if (isset($_SESSION['user_id'])): ?>
+<script src="<?php echo $base_url; ?>assets/js/notifications.js"></script>
+<?php endif; ?>
+

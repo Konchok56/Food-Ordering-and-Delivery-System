@@ -52,8 +52,52 @@ try {
         exit;
     }
 
+    // Fetch the existing order details before updating to see if a rider is being assigned
+    $origOrderStmt = $pdo->prepare("SELECT delivery_partner_phone, delivery_partner_name, customer_name, total FROM orders WHERE id = ? LIMIT 1");
+    $origOrderStmt->execute([$order_id]);
+    $origOrder = $origOrderStmt->fetch(PDO::FETCH_ASSOC);
+
     $updateStmt = $pdo->prepare("UPDATE orders SET status = ?, delivery_partner_name = ?, delivery_partner_phone = ?, updated_at = NOW() WHERE id = ?");
     $updateStmt->execute([$status, $deliveryPartnerName, $deliveryPartnerPhone, $order_id]);
+
+    // Notify the rider if they are newly assigned
+    if ($origOrder) {
+        $riderUser = null;
+        if (!empty($deliveryPartnerPhone)) {
+            $riderStmt = $pdo->prepare("SELECT id, name FROM users WHERE role = 'delivery_partner' AND phone = ? LIMIT 1");
+            $riderStmt->execute([$deliveryPartnerPhone]);
+            $riderUser = $riderStmt->fetch(PDO::FETCH_ASSOC);
+        }
+        if (!$riderUser && !empty($deliveryPartnerName)) {
+            $riderStmt = $pdo->prepare("SELECT id, name FROM users WHERE role = 'delivery_partner' AND name = ? LIMIT 1");
+            $riderStmt->execute([$deliveryPartnerName]);
+            $riderUser = $riderStmt->fetch(PDO::FETCH_ASSOC);
+        }
+
+        if ($riderUser && ($deliveryPartnerPhone !== ($origOrder['delivery_partner_phone'] ?? '') || $deliveryPartnerName !== ($origOrder['delivery_partner_name'] ?? ''))) {
+            $checkNotif = $pdo->prepare("SELECT COUNT(*) FROM notifications WHERE user_id = ? AND type = 'order_assigned' AND link LIKE ?");
+            $checkNotif->execute([$riderUser['id'], "%id=" . $order_id]);
+            $alreadyNotified = (int)$checkNotif->fetchColumn();
+
+            if ($alreadyNotified === 0) {
+                $orderLabel = '#' . str_pad($order_id, 5, '0', STR_PAD_LEFT);
+                $oImgStmt = $pdo->prepare("SELECT image_path FROM order_items WHERE order_id = ? AND image_path IS NOT NULL AND image_path != '' LIMIT 1");
+                $oImgStmt->execute([$order_id]);
+                $oImg = $oImgStmt->fetchColumn() ?: null;
+
+                addNotification(
+                    $pdo,
+                    (int)$riderUser['id'],
+                    'order_assigned',
+                    '🛵 New Order Assigned! ' . $orderLabel,
+                    'You have been assigned to deliver order ' . $orderLabel . ' for ' . $origOrder['customer_name'] . '. Total: Rs. ' . number_format((float)$origOrder['total'], 2) . '.',
+                    '🛵',
+                    $oImg,
+                    SITE_BASE_URL . '/delivery/dashboard.php'
+                );
+            }
+        }
+    }
 
     // Notify the customer about their order status change
     $orderOwner = $pdo->prepare("SELECT user_id FROM orders WHERE id = ? LIMIT 1");
