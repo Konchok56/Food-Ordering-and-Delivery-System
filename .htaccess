@@ -5,8 +5,8 @@ Options -Indexes
 Options -MultiViews
 
 # ── Error pages ───────────────────────────────────────────
-ErrorDocument 404 /food/swiftbite_php_starter/404.php
-ErrorDocument 403 /food/swiftbite_php_starter/404.php
+ErrorDocument 404 /food/404.php
+ErrorDocument 403 /food/404.php
 
 # ── PHP settings ─────────────────────────────────────────
 php_flag display_errors off

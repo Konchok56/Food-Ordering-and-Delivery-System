@@ -140,3 +140,24 @@ $nav_current_lang = $_SESSION['lang'] ?? $_COOKIE['lang'] ?? 'en';
         <i class="fa-solid fa-bars"></i>
     </button>
 </nav>
+
+<script>
+// ── Language Switcher Toggle ──
+(function () {
+    const selector = document.querySelector('.lang-selector');
+    const btn      = selector ? selector.querySelector('.lang-btn') : null;
+    if (!btn) return;
+
+    btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        selector.classList.toggle('open');
+        btn.setAttribute('aria-expanded', selector.classList.contains('open'));
+    });
+
+    // Close when clicking anywhere outside
+    document.addEventListener('click', function () {
+        selector.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+    });
+})();
+</script>
