@@ -89,9 +89,9 @@ try {
                     $pdo,
                     (int)$riderUser['id'],
                     'order_assigned',
-                    '🛵 New Order Assigned! ' . $orderLabel,
+                    '<i class="fa-solid fa-motorcycle"></i> New Order Assigned! ' . $orderLabel,
                     'You have been assigned to deliver order ' . $orderLabel . ' for ' . $origOrder['customer_name'] . '. Total: Rs. ' . number_format((float)$origOrder['total'], 2) . '.',
-                    '🛵',
+                    '<i class="fa-solid fa-motorcycle"></i>',
                     $oImg,
                     SITE_BASE_URL . '/delivery/dashboard.php'
                 );

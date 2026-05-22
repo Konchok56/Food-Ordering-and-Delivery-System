@@ -346,9 +346,9 @@ $selectedRole = $old['role'] ?? 'user';
                     <div class="auth-field">
                         <label><?php echo __('vehicle_type', 'Vehicle Type'); ?></label>
                         <select name="rider_vehicle">
-                            <option value="Motorcycle" <?php echo ($old['rider_vehicle']??'')==='Motorcycle'?'selected':''; ?>>🏍️ <?php echo __('vehicle_motorcycle', 'Motorcycle'); ?></option>
-                            <option value="Bicycle"    <?php echo ($old['rider_vehicle']??'')==='Bicycle'?'selected':''; ?>>🚲 <?php echo __('vehicle_bicycle', 'Bicycle'); ?></option>
-                            <option value="Scooter"    <?php echo ($old['rider_vehicle']??'')==='Scooter'?'selected':''; ?>>🛵 <?php echo __('vehicle_scooter', 'Scooter'); ?></option>
+                            <option value="Motorcycle" <?php echo ($old['rider_vehicle']??'')==='Motorcycle'?'selected':''; ?>><i class="fa-solid fa-motorcycle"></i> <?php echo __('vehicle_motorcycle', 'Motorcycle'); ?></option>
+                            <option value="Bicycle"    <?php echo ($old['rider_vehicle']??'')==='Bicycle'?'selected':''; ?>><i class="fa-solid fa-bicycle"></i> <?php echo __('vehicle_bicycle', 'Bicycle'); ?></option>
+                            <option value="Scooter"    <?php echo ($old['rider_vehicle']??'')==='Scooter'?'selected':''; ?>><i class="fa-solid fa-motorcycle"></i> <?php echo __('vehicle_scooter', 'Scooter'); ?></option>
                             <option value="Car"        <?php echo ($old['rider_vehicle']??'')==='Car'?'selected':''; ?>>🚗 <?php echo __('vehicle_car', 'Car'); ?></option>
                         </select>
                     </div>

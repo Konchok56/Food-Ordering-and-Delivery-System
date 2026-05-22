@@ -277,7 +277,7 @@ while ($row = $fcStmt->fetch(PDO::FETCH_ASSOC)) {
                     </div>
                     <div class="form-group">
                         <label for="logo_emoji">Logo Emoji *</label>
-                        <input type="text" id="logo_emoji" name="logo_emoji" placeholder="e.g. 🍔" value="<?php echo $editRest ? htmlspecialchars($editRest['logo_emoji']) : '🏪'; ?>">
+                        <input type="text" id="logo_emoji" name="logo_emoji" placeholder="e.g. <i class="fa-solid fa-burger"></i>" value="<?php echo $editRest ? htmlspecialchars($editRest['logo_emoji']) : '🏪'; ?>">
                     </div>
                     <div class="form-group full">
                         <label>Options</label>

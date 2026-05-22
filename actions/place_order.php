@@ -224,7 +224,7 @@ try {
         $pdo,
         $user_id,
         'order_placed',
-        'Order Placed Successfully! 🎉',
+        'Order Placed Successfully! <i class="fa-solid fa-champagne-glasses" style="color:#22c55e"></i>',
         'Your order ' . $orderLabel . ' has been placed. Total: Rs. ' . number_format($total, 2) . '. We\'ll start preparing it soon!',
         '<i class="fa-solid fa-champagne-glasses" style="color:#22c55e"></i>',
         $firstImage,

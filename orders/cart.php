@@ -1,7 +1,7 @@
 <?php
 require_once '../core/bootstrap.php';
 
-$user_id = $_SESSION['user_id'];
+$user_id = $_SESSION['user_id'] ?? null;
 
 // Handle "Clear All" action
 if (isset($_POST['clear_cart']) && $_POST['clear_cart'] === '1') {
