@@ -37,10 +37,26 @@ if (isset($_GET['lang'])) {
 // 2. Fetch the active language (default to English 'en')
 $current_lang = $_SESSION['lang'] ?? $_COOKIE['lang'] ?? 'en';
 
+/**
+ * Strip UTF-8 BOM (EF BB BF) from a file if present, saving it back clean.
+ * Windows editors and automation tools sometimes add this invisible signature
+ * at the start of files. When PHP includes such a file, the BOM bytes are
+ * emitted as output BEFORE any headers — breaking sessions, cookies, and
+ * redirects (GitHub Issue #49).
+ */
+function _strip_bom_if_needed(string $path): void {
+    if (!file_exists($path)) return;
+    $content = file_get_contents($path);
+    if (strncmp($content, "\xEF\xBB\xBF", 3) === 0) {
+        file_put_contents($path, substr($content, 3));
+    }
+}
+
 // Load language translation arrays
 $lang_file = __DIR__ . '/../lang/' . $current_lang . '.php';
 $translations = [];
 if (file_exists($lang_file)) {
+    _strip_bom_if_needed($lang_file);
     $translations = include $lang_file;
 }
 
@@ -49,6 +65,7 @@ $fallback_translations = [];
 if ($current_lang !== 'en') {
     $en_file = __DIR__ . '/../lang/en.php';
     if (file_exists($en_file)) {
+        _strip_bom_if_needed($en_file);
         $fallback_translations = include $en_file;
     }
 }
