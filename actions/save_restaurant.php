@@ -22,9 +22,11 @@ $rating = (float)($_POST['rating'] ?? 4.5);
 $delivery_time = trim($_POST['delivery_time'] ?? '30-45 min');
 $delivery_fee = (float)($_POST['delivery_fee'] ?? 50.00);
 $min_order = (float)($_POST['min_order'] ?? 200.00);
-$logo_emoji = trim($_POST['logo_emoji'] ?? '🍴');
+$logo_emoji = trim($_POST['logo_emoji'] ?? '<i class="fa-solid fa-utensils"></i>');
 $is_featured = isset($_POST['is_featured']) ? 1 : 0;
 $is_open = isset($_POST['is_open']) ? 1 : 0;
+$latitude = !empty($_POST['latitude']) ? (float)$_POST['latitude'] : null;
+$longitude = !empty($_POST['longitude']) ? (float)$_POST['longitude'] : null;
 
 if (empty($name) || empty($description) || empty($cuisine_type)) {
     header("Location: ../admin/manage_restaurants.php?error=Please fill all required fields");
@@ -62,8 +64,8 @@ if (!empty($_FILES['restaurant_image']['name'])) {
 
 try {
     if ($isEdit) {
-        $sql = "UPDATE restaurants SET name=?, description=?, cuisine_type=?, address=?, city=?, phone=?, rating=?, delivery_time=?, delivery_fee=?, min_order=?, logo_emoji=?, is_featured=?, is_open=?";
-        $params = [$name, $description, $cuisine_type, $address, $city, $phone, $rating, $delivery_time, $delivery_fee, $min_order, $logo_emoji, $is_featured, $is_open];
+        $sql = "UPDATE restaurants SET name=?, description=?, cuisine_type=?, address=?, latitude=?, longitude=?, city=?, phone=?, rating=?, delivery_time=?, delivery_fee=?, min_order=?, logo_emoji=?, is_featured=?, is_open=?";
+        $params = [$name, $description, $cuisine_type, $address, $latitude, $longitude, $city, $phone, $rating, $delivery_time, $delivery_fee, $min_order, $logo_emoji, $is_featured, $is_open];
         
         if ($imagePath) {
             $sql .= ", image_path=?";
@@ -75,8 +77,8 @@ try {
         $pdo->prepare($sql)->execute($params);
         header("Location: ../admin/manage_restaurants.php?success=Restaurant updated successfully!");
     } else {
-        $pdo->prepare("INSERT INTO restaurants (name, description, cuisine_type, address, city, phone, rating, delivery_time, delivery_fee, min_order, logo_emoji, is_featured, is_open, image_path) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
-            ->execute([$name, $description, $cuisine_type, $address, $city, $phone, $rating, $delivery_time, $delivery_fee, $min_order, $logo_emoji, $is_featured, $is_open, $imagePath]);
+        $pdo->prepare("INSERT INTO restaurants (name, description, cuisine_type, address, latitude, longitude, city, phone, rating, delivery_time, delivery_fee, min_order, logo_emoji, is_featured, is_open, image_path) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+            ->execute([$name, $description, $cuisine_type, $address, $latitude, $longitude, $city, $phone, $rating, $delivery_time, $delivery_fee, $min_order, $logo_emoji, $is_featured, $is_open, $imagePath]);
         header("Location: ../admin/manage_restaurants.php?success=Restaurant added successfully!");
     }
 } catch (PDOException $e) {

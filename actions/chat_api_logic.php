@@ -5,10 +5,10 @@ $base = SITE_BASE_URL;
 // 1. Greeting
 if (preg_match('/\b(hi|hello|hey|greetings|good morning|good afternoon|good evening)\b/i', $message)) {
     $greetings = [
-        "Hello! 👋 Welcome to SwiftBite. Ready for something delicious?",
-        "Hi there! 👋 What are you craving today?",
+        "Hello! <i class=\"fa-solid fa-hand-wave\"></i> Welcome to SwiftBite. Ready for something delicious?",
+        "Hi there! <i class=\"fa-solid fa-hand-wave\"></i> What are you craving today?",
         "Hey! SwiftBite at your service. How can I help you?",
-        "Greetings! 👋 Hungry? I can help you find the best food in town."
+        "Greetings! <i class=\"fa-solid fa-hand-wave\"></i> Hungry? I can help you find the best food in town."
     ];
     $reply = $greetings[array_rand($greetings)];
 }
@@ -27,16 +27,16 @@ elseif (preg_match('/\b(order|where is my food|status|track|my food)\b/i', $mess
             $reply .= "Total: <b>Rs. " . number_format($order['total'], 2) . "</b><br><br>";
             
             if ($order['status'] === 'out_for_delivery') {
-                $reply .= "🛵 <b>Your food is on the way!</b> <a href='{$base}/orders/track.php?id={$order['id']}' style='color:#41A124;font-weight:bold;'>Track live location</a>";
+                $reply .= "<i class=\"fa-solid fa-motorcycle\"></i> <b>Your food is on the way!</b> <a href='{$base}/orders/track.php?id={$order['id']}' style='color:#41A124;font-weight:bold;'>Track live location</a>";
             } elseif ($order['status'] === 'delivered') {
-                $reply .= "🎉 <b>Order Delivered!</b> Hope you're enjoying your meal!";
+                $reply .= "<i class=\"fa-solid fa-champagne-glasses\" style=\"color:#22c55e\"></i> <b>Order Delivered!</b> Hope you're enjoying your meal!";
             } elseif ($order['status'] === 'cancelled') {
-                $reply .= "❌ This order was cancelled. Want to try something else? <a href='{$base}/menu.php' style='color:#41A124;font-weight:bold;'>Browse Menu</a>";
+                $reply .= "<i class=\"fa-solid fa-circle-xmark\" style=\"color:#ef4444\"></i> This order was cancelled. Want to try something else? <a href='{$base}/menu.php' style='color:#41A124;font-weight:bold;'>Browse Menu</a>";
             } else {
                 $reply .= "📅 We're working on it! Check full details on your <a href='{$base}/user/order_details.php?id={$order['id']}' style='color:#41A124;font-weight:bold;'>Order Details</a> page.";
             }
         } else {
-            $reply = "I couldn't find any recent orders for you. Ready to place your first order? <a href='{$base}/menu.php' style='color:#41A124;font-weight:bold;'>Explore the menu!</a> 🍔";
+            $reply = "I couldn't find any recent orders for you. Ready to place your first order? <a href='{$base}/menu.php' style='color:#41A124;font-weight:bold;'>Explore the menu!</a> <i class=\"fa-solid fa-burger\"></i>";
         }
     } else {
         $reply = "To track your order, please <a href='{$base}/auth/login.php' style='color:#41A124;font-weight:bold;'>log in</a> first.";
@@ -73,12 +73,12 @@ elseif (preg_match('/\b(add|buy|want|order|get)\b\s+(?:(\d+)\s+)?(.*)/i', $messa
                 $pdo->prepare("INSERT INTO cart (user_id, food_id, food_name, price, quantity) VALUES (?, ?, ?, ?, ?)")
                    ->execute([$_SESSION['user_id'], $food['id'], $food['name'], $food['price'], $qty]);
             }
-            $emoji = $food['emoji'] ?: '✅';
+            $emoji = $food['emoji'] ?: '<i class=\"fa-solid fa-circle-check\" style=\"color:#22c55e\"></i>';
             $reply = "$emoji <b>Added $qty × {$food['name']}</b> to your cart!<br>";
             $reply .= "Total for this item: <b>Rs. " . number_format($food['price'] * $qty, 2) . "</b><br>";
-            $reply .= "🛒 <a href='{$base}/orders/cart.php' style='color:#41A124;font-weight:bold;'>Go to Checkout</a>";
+            $reply .= "<i class=\"fa-solid fa-cart-shopping\"></i> <a href='{$base}/orders/cart.php' style='color:#41A124;font-weight:bold;'>Go to Checkout</a>";
         } elseif (!$food) {
-            $reply = "Hmm, I couldn't find '<b>$searchQuery</b>' in our kitchen. 🧐 Maybe try checking the <a href='{$base}/menu.php' style='color:#41A124;font-weight:bold;'>full menu</a>?";
+            $reply = "Hmm, I couldn't find '<b>$searchQuery</b>' in our kitchen. <i class=\"fa-solid fa-magnifying-glass\"></i> Maybe try checking the <a href='{$base}/menu.php' style='color:#41A124;font-weight:bold;'>full menu</a>?";
         } else {
             $reply = "Please <a href='{$base}/auth/login.php' style='color:#41A124;font-weight:bold;'>log in</a> to start adding items to your cart!";
         }
@@ -99,7 +99,7 @@ elseif (preg_match('/\b(burger|pizza|momo|chicken|veg|drinks|dessert|chowmein|bi
     if ($items) {
         $reply = "Here's what I found for '<b>$term</b>':<br><br>";
         foreach ($items as $item) {
-            $reply .= "{$item['emoji']} <b>{$item['name']}</b> - Rs.{$item['price']} (⭐{$item['rating']})<br>";
+            $reply .= "{$item['emoji']} <b>{$item['name']}</b> - Rs.{$item['price']} (<i class=\"fa-solid fa-star\" style=\"color:#f59e0b\"></i>{$item['rating']})<br>";
             $reply .= "<a href='{$base}/food_detail.php?id={$item['id']}' style='color:#41A124;font-size:0.8rem;'>View Item</a> | ";
             $reply .= "<a href='#' onclick='window.parent.postMessage({action:\"chat_input\", text:\"add {$item['name']}\"}, \"*\");return false;' style='color:#41A124;font-size:0.8rem;'>Add to Cart</a><br><br>";
         }
@@ -113,34 +113,34 @@ elseif (preg_match('/\b(recommend|suggest|what should i eat|hungry|i want food|p
     if (isset($_SESSION['user_id'])) {
         $recs = getRecommendations($pdo, $_SESSION['user_id'], 2);
         if (!empty($recs)) {
-            $reply = "Based on your taste, you'll love these! ✨<br><br>";
+            $reply = "Based on your taste, you'll love these! <i class=\"fa-solid fa-wand-magic-sparkles\" style=\"color:#f59e0b\"></i><br><br>";
             foreach ($recs as $food) {
-                $reply .= "{$food['emoji']} <b>{$food['name']}</b><br>⭐ {$food['rating']} rated<br>";
+                $reply .= "{$food['emoji']} <b>{$food['name']}</b><br><i class=\"fa-solid fa-star\" style=\"color:#f59e0b\"></i> {$food['rating']} rated<br>";
                 $reply .= "<a href='{$base}/food_detail.php?id={$food['id']}' style='color:#41A124;font-weight:bold;'>Check it out!</a><br><br>";
             }
         } else {
-            $reply = "Check out our top picks on the <a href='{$base}/menu.php' style='color:#41A124;font-weight:bold;'>menu page</a> — everything is delicious! 🍕";
+            $reply = "Check out our top picks on the <a href='{$base}/menu.php' style='color:#41A124;font-weight:bold;'>menu page</a> — everything is delicious! <i class=\"fa-solid fa-pizza-slice\"></i>";
         }
     } else {
-        $reply = "We have amazing dishes! Explore our <a href='{$base}/menu.php' style='color:#41A124;font-weight:bold;'>full menu</a> to find your next favourite. 😋";
+        $reply = "We have amazing dishes! Explore our <a href='{$base}/menu.php' style='color:#41A124;font-weight:bold;'>full menu</a> to find your next favourite. <i class=\"fa-solid fa-face-smile\"></i>";
     }
 }
 // 6. Operating Hours
 elseif (preg_match('/\b(hours|open|close|when|timing)\b/i', $message)) {
-    $reply = "SwiftBite partners are active 24/7! 🕒<br>Most restaurants deliver from <b>8:00 AM to 11:30 PM</b>. You can check individual restaurant status on their page.";
+    $reply = "SwiftBite partners are active 24/7! <i class=\"fa-solid fa-clock\"></i><br>Most restaurants deliver from <b>8:00 AM to 11:30 PM</b>. You can check individual restaurant status on their page.";
 }
 // 7. Contact / Support
 elseif (preg_match('/\b(human|agent|support|help|contact|problem|issue|complain)\b/i', $message)) {
-    $reply = "Need help? 🎧<br>📧 Email: <b>support@swiftbite.com</b><br>📞 Call: <b>+977-1-SWIFT-BITE</b><br>Our team is available 24/7 to assist you!";
+    $reply = "Need help? <i class=\"fa-solid fa-headset\"></i><br><i class=\"fa-solid fa-envelope\"></i> Email: <b>support@swiftbite.com</b><br><i class=\"fa-solid fa-phone\"></i> Call: <b>+977-1-SWIFT-BITE</b><br>Our team is available 24/7 to assist you!";
 }
 // 8. Thank you
 elseif (preg_match('/\b(thanks|thank you|awesome|great|good|bye)\b/i', $message)) {
-    $replies = ["You're welcome! 😊", "Anytime! Let me know if you need anything else.", "Happy to help! Enjoy SwiftBite! 🍔", "Bye! Hope to see you back soon! 👋"];
+    $replies = ["You're welcome! <i class=\"fa-solid fa-face-smile\"></i>", "Anytime! Let me know if you need anything else.", "Happy to help! Enjoy SwiftBite! <i class=\"fa-solid fa-burger\"></i>", "Bye! Hope to see you back soon! <i class=\"fa-solid fa-hand-wave\"></i>"];
     $reply = $replies[array_rand($greetings)];
 }
 // 9. Fallback
 else {
-    $reply = "I'm still learning! 🤖<br>Try asking me:<br>";
+    $reply = "I'm still learning! <i class=\"fa-solid fa-robot\"></i><br>Try asking me:<br>";
     $reply .= "• <b>\"add 2 chicken burgers\"</b><br>";
     $reply .= "• <b>\"where is my food\"</b><br>";
     $reply .= "• <b>\"show me some pizza\"</b><br>";

@@ -38,7 +38,7 @@ if ($user['role'] === 'restaurant' && (isset($user['is_approved']) && $user['is_
 
 // Block unapproved delivery partners
 if ($user['role'] === 'delivery_partner' && (isset($user['is_approved']) && $user['is_approved'] == 0)) {
-    flash('warning', '⏳ Your rider application is still under review. Please wait for admin approval.');
+    flash('warning', '<i class="fa-solid fa-hourglass-half" style="color:#f59e0b"></i> Your rider application is still under review. Please wait for admin approval.');
     redirect('auth/login.php');
 }
 

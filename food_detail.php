@@ -1,23 +1,5 @@
 <?php
-session_start();
-
-// Remember me auto-login
-if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
-    include('core/db.php');
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE remember_token=?");
-    $stmt->execute([$_COOKIE['remember_token']]);
-    $user = $stmt->fetch();
-    if ($user) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_name'] = $user['name'];
-        $_SESSION['role'] = $user['role'];
-    }
-}
-
-// Cart count from DB
-include('core/db.php');
-include('core/cart_helper.php');
-$cartCount = isset($_SESSION['user_id']) ? getCartCount($pdo, $_SESSION['user_id']) : 0;
+require_once 'core/bootstrap.php';
 
 // Get food ID
 $foodId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
@@ -94,9 +76,10 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><?php echo htmlspecialchars($food['name']); ?> — SwiftBite</title>
-    <meta name="description" content="<?php echo htmlspecialchars(substr($food['description'], 0, 155)); ?>" />
+    <title><?php echo htmlspecialchars(__($food['name'], $food['name'])); ?> — SwiftBite</title>
+    <meta name="description" content="<?php echo htmlspecialchars(substr(__($food['description'], $food['description']), 0, 155)); ?>" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="assets/css/style.css?v=8" />
@@ -536,34 +519,34 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
         <!-- Cart & Review success toasts -->
         <?php if ($cartSuccess): ?>
             <div class="cart-toast" id="cartToast">
-                ✅ Added to cart successfully!
+                <i class="fa-solid fa-circle-check" style="color:#22c55e"></i> <?php echo __('added_to_cart_success', 'Added to cart successfully!'); ?>
             </div>
         <?php endif; ?>
         <?php if ($reviewSuccess): ?>
             <div class="cart-toast review-toast" id="reviewToast">
-                ⭐ Review submitted successfully!
+                <i class="fa-solid fa-star" style="color:#f59e0b"></i> <?php echo __('review_submitted_success', 'Review submitted successfully!'); ?>
             </div>
         <?php endif; ?>
         <?php if ($alreadyReviewed): ?>
             <div class="cart-toast review-toast" id="alreadyReviewedToast" style="background: linear-gradient(135deg, #ff3b30 0%, #d93025 100%); box-shadow: 0 10px 40px rgba(255, 59, 48, 0.35);">
-                🚫 You have already reviewed this item!
+                🚫 <?php echo __('already_reviewed_error', 'You have already reviewed this item!'); ?>
             </div>
         <?php endif; ?>
         <?php if ($notDelivered): ?>
             <div class="cart-toast review-toast" id="notDeliveredToast" style="background: linear-gradient(135deg, #ff3b30 0%, #d93025 100%); box-shadow: 0 10px 40px rgba(255, 59, 48, 0.35);">
-                🚫 You can only review items after they are delivered!
+                🚫 <?php echo __('not_delivered_error', 'You can only review items after they are delivered!'); ?>
             </div>
         <?php endif; ?>
 
         <!-- Breadcrumb -->
         <div class="breadcrumb">
-            <a href="index.php">Home</a>
+            <a href="index.php"><?php echo __('home', 'Home'); ?></a>
             <span class="sep">›</span>
-            <a href="menu.php">Menu</a>
+            <a href="menu.php"><?php echo __('menu', 'Menu'); ?></a>
             <span class="sep">›</span>
-            <a href="menu.php?category=<?php echo urlencode($food['category']); ?>"><?php echo htmlspecialchars($food['category']); ?></a>
+            <a href="menu.php?category=<?php echo urlencode($food['category']); ?>"><?php echo htmlspecialchars(__($food['category'], $food['category'])); ?></a>
             <span class="sep">›</span>
-            <span class="current"><?php echo htmlspecialchars($food['name']); ?></span>
+            <span class="current"><?php echo htmlspecialchars(__($food['name'], $food['name'])); ?></span>
         </div>
 
         <!-- Detail Content -->
@@ -571,7 +554,7 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
             <!-- Left: Image -->
             <div class="detail-image-wrap">
                 <?php if (!empty($food['image_path'])): ?>
-                    <img src="<?php echo htmlspecialchars($food['image_path']); ?>" alt="<?php echo htmlspecialchars($food['name']); ?>">
+                    <img src="<?php echo htmlspecialchars($food['image_path']); ?>" alt="<?php echo htmlspecialchars(__($food['name'], $food['name'])); ?>">
                 <?php else: ?>
                     <div class="detail-emoji"><?php echo htmlspecialchars($food['emoji']); ?></div>
                 <?php endif; ?>
@@ -579,13 +562,13 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
                 <?php if (!empty($food['badge'])): ?>
                     <div class="detail-badge <?php echo strtolower($food['badge']); ?>">
                         <?php
-                        $badgeIcons = ['Hot' => '🔥', 'New' => '🆕', 'Popular' => '⭐', 'Sale' => '💰'];
-                        echo ($badgeIcons[$food['badge']] ?? '') . ' ' . htmlspecialchars($food['badge']);
+                        $badgeIcons = ['Hot' => '<i class="fa-solid fa-fire" style="color:#ef4444"></i>', 'New' => '🆕', 'Popular' => '<i class="fa-solid fa-star" style="color:#f59e0b"></i>', 'Sale' => '<i class="fa-solid fa-coins"></i>'];
+                        echo ($badgeIcons[$food['badge']] ?? '') . ' ' . htmlspecialchars(__($food['badge'], $food['badge']));
                         ?>
                     </div>
                 <?php endif; ?>
 
-                <div class="detail-fav"><?php echo $food['is_favorite'] ? '❤️' : '🤍'; ?></div>
+                <div class="detail-fav"><?php echo $food['is_favorite'] ? '<i class="fa-solid fa-heart" style="color:#ef4444"></i>' : '<i class="fa-regular fa-heart"></i>'; ?></div>
             </div>
 
             <!-- Right: Info -->
@@ -593,8 +576,8 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
                 <!-- Category & Rating -->
                 <div class="detail-category-row">
                     <div class="detail-cat-pill">
-                        <?php echo htmlspecialchars($food['emoji'] ?: '🍴'); ?>
-                        <?php echo htmlspecialchars($food['category']); ?>
+                        <?php echo htmlspecialchars($food['emoji'] ?: '<i class="fa-solid fa-utensils"></i>'); ?>
+                        <?php echo htmlspecialchars(__($food['category'], $food['category'])); ?>
                     </div>
                     <div class="detail-rating">
                         <span class="stars"><?php
@@ -605,52 +588,52 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
                             if ($half) echo '★';
                             echo str_repeat('☆', 5 - $full - $half);
                         ?></span>
-                        <?php echo htmlspecialchars($food['rating']); ?>
+                        <?php echo t_num($food['rating']); ?>
                     </div>
                 </div>
 
                 <!-- Name -->
-                <h1 class="detail-name"><?php echo htmlspecialchars($food['name']); ?></h1>
+                <h1 class="detail-name"><?php echo htmlspecialchars(__($food['name'], $food['name'])); ?></h1>
 
                 <!-- Delivery / Info pills -->
                 <div class="detail-delivery-row">
-                    <div class="detail-pill">🕐 <?php echo htmlspecialchars($food['delivery_time']); ?></div>
+                    <div class="detail-pill">🕐 <?php echo t_delivery_time($food['delivery_time']); ?></div>
                     <?php if ($food['is_featured']): ?>
-                        <div class="detail-pill">⚡ Featured</div>
+                        <div class="detail-pill"><i class="fa-solid fa-bolt"></i> <?php echo __('featured', 'Featured'); ?></div>
                     <?php endif; ?>
                     <?php if ($food['is_favorite']): ?>
-                        <div class="detail-pill">❤️ Favorite</div>
+                        <div class="detail-pill"><i class="fa-solid fa-heart" style="color:#ef4444"></i> <?php echo __('favorite', 'Favorite'); ?></div>
                     <?php endif; ?>
                 </div>
 
                 <div class="detail-divider"></div>
 
                 <!-- Description -->
-                <div class="detail-desc-label">Description</div>
-                <p class="detail-desc"><?php echo nl2br(htmlspecialchars($food['description'])); ?></p>
+                <div class="detail-desc-label"><?php echo __('description', 'Description'); ?></div>
+                <p class="detail-desc"><?php echo nl2br(htmlspecialchars(__($food['description'], $food['description']))); ?></p>
 
                 <!-- Purchase Card -->
                 <div class="detail-purchase">
                     <div class="detail-price-row">
                         <div class="detail-price">
-                            Rs. <?php echo number_format((float) $food['price'], 2); ?>
-                            <span>per item</span>
+                            <?php echo __('currency_rs', 'Rs.'); ?> <?php echo t_num(number_format((float) $food['price'], 2)); ?>
+                            <span><?php echo __('per_item', 'per item'); ?></span>
                         </div>
 
                         <div class="qty-control">
                             <button type="button" class="qty-btn" id="qtyMinus" aria-label="Decrease quantity">−</button>
-                            <div class="qty-value" id="qtyValue">1</div>
+                            <div class="qty-value" id="qtyValue"><?php echo t_num(1); ?></div>
                             <button type="button" class="qty-btn" id="qtyPlus" aria-label="Increase quantity">+</button>
                         </div>
                     </div>
 
                     <form action="actions/add_to_cart.php" method="POST" id="addToCartForm">
                         <input type="hidden" name="food_id" value="<?php echo (int) $food['id']; ?>">
-                        <input type="hidden" name="food_name" value="<?php echo htmlspecialchars($food['name']); ?>">
+                        <input type="hidden" name="food_name" value="<?php echo htmlspecialchars(__($food['name'], $food['name'])); ?>">
                         <input type="hidden" name="price" value="<?php echo (float) $food['price']; ?>">
                         <input type="hidden" name="quantity" id="qtyInput" value="1">
-                        <button type="submit" class="detail-add-btn" id="addToCartBtn" data-name="<?php echo htmlspecialchars($food['name']); ?>">
-                            🛒 Add to Cart — <span class="detail-total" id="totalPrice">Rs. <?php echo number_format((float) $food['price'], 2); ?></span>
+                        <button type="submit" class="detail-add-btn" id="addToCartBtn" data-name="<?php echo htmlspecialchars(__($food['name'], $food['name'])); ?>">
+                            <i class="fa-solid fa-cart-shopping"></i> <?php echo __('add_to_cart', 'Add to Cart'); ?> — <span class="detail-total" id="totalPrice"><?php echo __('currency_rs', 'Rs.'); ?> <?php echo t_num(number_format((float) $food['price'], 2)); ?></span>
                         </button>
                     </form>
                 </div>
@@ -659,23 +642,23 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
                 <div class="detail-highlights">
                     <div class="highlight-card">
                         <div class="highlight-icon">🕐</div>
-                        <div class="highlight-label">Delivery</div>
-                        <div class="highlight-value"><?php echo htmlspecialchars($food['delivery_time']); ?></div>
+                        <div class="highlight-label"><?php echo __('delivery', 'Delivery'); ?></div>
+                        <div class="highlight-value"><?php echo t_delivery_time($food['delivery_time']); ?></div>
                     </div>
                     <div class="highlight-card">
-                        <div class="highlight-icon">⭐</div>
-                        <div class="highlight-label">Rating</div>
-                        <div class="highlight-value"><?php echo htmlspecialchars($food['rating']); ?> / 5.0</div>
+                        <div class="highlight-icon"><i class="fa-solid fa-star" style="color:#f59e0b"></i></div>
+                        <div class="highlight-label"><?php echo __('rating', 'Rating'); ?></div>
+                        <div class="highlight-value"><?php echo t_num($food['rating']); ?> / <?php echo t_num('5.0'); ?></div>
                     </div>
                     <div class="highlight-card">
                         <div class="highlight-icon">🏷️</div>
-                        <div class="highlight-label">Category</div>
-                        <div class="highlight-value"><?php echo htmlspecialchars($food['category']); ?></div>
+                        <div class="highlight-label"><?php echo __('category', 'Category'); ?></div>
+                        <div class="highlight-value"><?php echo htmlspecialchars(__($food['category'], $food['category'])); ?></div>
                     </div>
                     <div class="highlight-card">
-                        <div class="highlight-icon"><?php echo $food['is_featured'] ? '⚡' : '📋'; ?></div>
-                        <div class="highlight-label">Status</div>
-                        <div class="highlight-value"><?php echo $food['is_featured'] ? 'Featured' : 'Regular'; ?></div>
+                        <div class="highlight-icon"><?php echo $food['is_featured'] ? '<i class="fa-solid fa-bolt"></i>' : '📋'; ?></div>
+                        <div class="highlight-label"><?php echo __('status', 'Status'); ?></div>
+                        <div class="highlight-value"><?php echo $food['is_featured'] ? __('featured', 'Featured') : __('regular', 'Regular'); ?></div>
                     </div>
                 </div>
             </div>
@@ -685,8 +668,8 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
         <section class="reviews-section">
             <div class="section-header" style="margin-bottom: 32px;">
                 <div>
-                    <div class="section-tag">Customer Feedback</div>
-                    <div class="section-title">Reviews & Ratings</div>
+                    <div class="section-tag"><?php echo __('customer_feedback', 'Customer Feedback'); ?></div>
+                    <div class="section-title"><?php echo __('reviews_ratings', 'Reviews & Ratings'); ?></div>
                 </div>
             </div>
 
@@ -695,55 +678,55 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
                     <?php if (!$canReview): ?>
                         <div class="review-form-card" style="background: var(--cream); border-radius: 24px; padding: 32px; border: 2px solid var(--cream2); text-align: center;">
                             <div style="font-size: 2.5rem; margin-bottom: 12px;">🔒</div>
-                            <h3 style="margin-bottom: 10px; font-family: 'Syne', sans-serif; font-size: 1.3rem;">Review Locked</h3>
-                            <p style="color: var(--muted); font-weight: 500; margin-bottom: 20px;">You can only review items that you have purchased and received.</p>
-                            <a href="menu.php" class="btn-primary" style="display: inline-flex; padding: 12px 24px; border-radius: 12px; text-decoration: none; font-weight: 700;">Order Now</a>
+                            <h3 style="margin-bottom: 10px; font-family: 'Syne', sans-serif; font-size: 1.3rem;"><?php echo __('review_locked', 'Review Locked'); ?></h3>
+                            <p style="color: var(--muted); font-weight: 500; margin-bottom: 20px;"><?php echo __('review_locked_desc', 'You can only review items that you have purchased and received.'); ?></p>
+                            <a href="menu.php" class="btn-primary" style="display: inline-flex; padding: 12px 24px; border-radius: 12px; text-decoration: none; font-weight: 700;"><?php echo __('order_now', 'Order Now'); ?></a>
                         </div>
                     <?php else: ?>
                         <div class="review-form-card" style="background: var(--cream); border-radius: 24px; padding: 32px; border: 2px solid var(--cream2);">
-                            <h3 style="margin-bottom: 20px; font-family: 'Syne', sans-serif; font-size: 1.3rem;">Write a Review</h3>
+                            <h3 style="margin-bottom: 20px; font-family: 'Syne', sans-serif; font-size: 1.3rem;"><?php echo __('write_review', 'Write a Review'); ?></h3>
                             <form action="actions/add_review.php" method="POST">
                                 <input type="hidden" name="food_id" value="<?php echo (int) $food['id']; ?>">
                                 <div style="margin-bottom: 20px;">
-                                    <label style="font-weight: 600; display: block; margin-bottom: 8px;">Rating</label>
+                                    <label style="font-weight: 600; display: block; margin-bottom: 8px;"><?php echo __('rating', 'Rating'); ?></label>
                                     <select name="rating" required style="width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--cream2); outline: none; background: #fff; font-family: 'DM Sans', sans-serif;">
-                                        <option value="5">5 - Excellent! ⭐⭐⭐⭐⭐</option>
-                                        <option value="4">4 - Very Good ⭐⭐⭐⭐</option>
-                                        <option value="3">3 - Average ⭐⭐⭐</option>
-                                        <option value="2">2 - Poor ⭐⭐</option>
-                                        <option value="1">1 - Terrible ⭐</option>
+                                        <option value="5"><?php echo sprintf(__('%s_excellent', '%s - Excellent!'), t_num(5)); ?></option>
+                                        <option value="4"><?php echo sprintf(__('%s_very_good', '%s - Very Good'), t_num(4)); ?></option>
+                                        <option value="3"><?php echo sprintf(__('%s_average', '%s - Average'), t_num(3)); ?></option>
+                                        <option value="2"><?php echo sprintf(__('%s_poor', '%s - Poor'), t_num(2)); ?></option>
+                                        <option value="1"><?php echo sprintf(__('%s_terrible', '%s - Terrible'), t_num(1)); ?></option>
                                     </select>
                                 </div>
                                 <div style="margin-bottom: 20px;">
-                                    <label style="font-weight: 600; display: block; margin-bottom: 8px;">Comment</label>
-                                    <textarea name="comment" rows="3" placeholder="Share your experience format..." style="width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--cream2); outline: none; resize: vertical; font-family: 'DM Sans', sans-serif; background: #fff;"></textarea>
+                                    <label style="font-weight: 600; display: block; margin-bottom: 8px;"><?php echo __('comment', 'Comment'); ?></label>
+                                    <textarea name="comment" rows="3" placeholder="<?php echo __('share_experience_placeholder', 'Share your experience...'); ?>" style="width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--cream2); outline: none; resize: vertical; font-family: 'DM Sans', sans-serif; background: #fff;"></textarea>
                                 </div>
-                                <button type="submit" style="padding: 14px 28px; background: var(--dark); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s;">Submit Review</button>
+                                <button type="submit" style="padding: 14px 28px; background: var(--dark); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s;"><?php echo __('submit_review', 'Submit Review'); ?></button>
                             </form>
                         </div>
                     <?php endif; ?>
                 <?php else: ?>
-                    <p style="padding: 24px; background: var(--cream); border-radius: 20px; text-align: center; color: var(--muted); font-weight: 600; border: 2px solid var(--cream2);">Please <a href="auth/login.php" style="color: var(--orange); text-decoration: underline;">log in</a> to drop a review.</p>
+                    <p style="padding: 24px; background: var(--cream); border-radius: 20px; text-align: center; color: var(--muted); font-weight: 600; border: 2px solid var(--cream2);"><?php echo sprintf(__('please_login_review', 'Please %s to drop a review.'), '<a href="auth/login.php" style="color: var(--orange); text-decoration: underline;">' . __('login_lower', 'log in') . '</a>'); ?></p>
                 <?php endif; ?>
 
                 <!-- Reviews List -->
                 <div class="reviews-list" style="display: flex; flex-direction: column; gap: 20px;">
                     <?php if (empty($reviews)): ?>
-                        <p style="color: var(--muted); text-align: center; padding: 20px;">No reviews yet. Be the first to review!</p>
+                        <p style="color: var(--muted); text-align: center; padding: 20px;"><?php echo __('no_reviews_yet', 'No reviews yet. Be the first to review!'); ?></p>
                     <?php else: ?>
                         <?php foreach($reviews as $rev): ?>
                             <div style="background: #fff; padding: 24px; border-radius: 20px; box-shadow: var(--shadow); border: 2px solid var(--cream2);">
                                 <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                                    <div style="font-weight: 700; color: var(--dark);"><?php echo htmlspecialchars($rev['user_name']); ?></div>
+                                    <div style="font-weight: 700; color: var(--dark);"><?php echo htmlspecialchars(__($rev['user_name'], $rev['user_name'])); ?></div>
                                     <div style="color: var(--yellow); letter-spacing: 1px;">
                                         <?php echo str_repeat('★', $rev['rating']) . str_repeat('☆', 5 - $rev['rating']); ?>
                                     </div>
                                 </div>
                                 <div style="color: var(--muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 12px;">
-                                    <?php echo nl2br(htmlspecialchars($rev['comment'])); ?>
+                                    <?php echo nl2br(htmlspecialchars(__($rev['comment'], $rev['comment']))); ?>
                                 </div>
                                 <div style="font-size: 0.8rem; color: #a1a1aa; font-weight: 500;">
-                                    <?php echo date('M d, Y', strtotime($rev['created_at'])); ?>
+                                    <?php echo t_num(date('d', strtotime($rev['created_at']))) . ' ' . __(date('M', strtotime($rev['created_at']))) . ', ' . t_num(date('Y', strtotime($rev['created_at']))); ?>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -757,10 +740,10 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
         <section class="related-section" style="padding-top: 0;">
             <div class="section-header">
                 <div>
-                    <div class="section-tag">You May Also Like</div>
-                    <div class="section-title">Similar Dishes</div>
+                    <div class="section-tag"><?php echo __('you_may_also_like', 'You May Also Like'); ?></div>
+                    <div class="section-title"><?php echo __('similar_dishes', 'Similar Dishes'); ?></div>
                 </div>
-                <a href="menu.php?category=<?php echo urlencode($food['category']); ?>" class="view-all">View All →</a>
+                <a href="menu.php?category=<?php echo urlencode($food['category']); ?>" class="view-all"><?php echo __('view_all', 'View All'); ?> <i class="fa-solid fa-arrow-right"></i></a>
             </div>
 
             <div class="foods-grid" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
@@ -769,28 +752,28 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
                         <article class="food-card">
                             <div class="food-img">
                                 <?php if (!empty($rel['image_path'])): ?>
-                                    <img src="<?php echo htmlspecialchars($rel['image_path']); ?>" alt="<?php echo htmlspecialchars($rel['name']); ?>" class="food-photo">
+                                    <img src="<?php echo htmlspecialchars($rel['image_path']); ?>" alt="<?php echo htmlspecialchars(__($rel['name'], $rel['name'])); ?>" class="food-photo">
                                 <?php else: ?>
                                     <?php echo htmlspecialchars($rel['emoji']); ?>
                                 <?php endif; ?>
                                 <?php if (!empty($rel['badge'])): ?>
-                                    <span class="food-badge<?php echo $rel['badge'] === 'New' ? ' new' : ''; ?>">
-                                        <?php echo htmlspecialchars($rel['badge']); ?>
+                                    <span class="food-badge<?php echo strtolower($rel['badge']) === 'new' ? ' new' : ''; ?>">
+                                        <?php echo htmlspecialchars(__($rel['badge'], $rel['badge'])); ?>
                                     </span>
                                 <?php endif; ?>
-                                <div class="food-fav"><?php echo $rel['is_favorite'] ? '❤️' : '🤍'; ?></div>
+                                <div class="food-fav"><?php echo $rel['is_favorite'] ? '<i class="fa-solid fa-heart" style="color:#ef4444"></i>' : '<i class="fa-regular fa-heart"></i>'; ?></div>
                             </div>
                             <div class="food-info">
                                 <div class="food-meta">
-                                    <span class="food-category"><?php echo htmlspecialchars($rel['category']); ?></span>
-                                    <span class="food-rating">⭐ <?php echo htmlspecialchars($rel['rating']); ?></span>
+                                    <span class="food-category"><?php echo htmlspecialchars(__($rel['category'], $rel['category'])); ?></span>
+                                    <span class="food-rating"><i class="fa-solid fa-star" style="color:#f59e0b"></i> <?php echo t_num($rel['rating']); ?></span>
                                 </div>
-                                <div class="food-name"><?php echo htmlspecialchars($rel['name']); ?></div>
-                                <div class="food-desc"><?php echo htmlspecialchars($rel['description']); ?></div>
+                                <div class="food-name"><?php echo htmlspecialchars(__($rel['name'], $rel['name'])); ?></div>
+                                <div class="food-desc"><?php echo htmlspecialchars(__($rel['description'], $rel['description'])); ?></div>
                                 <div class="food-footer">
                                     <div>
-                                        <div class="food-time">🕐 <?php echo htmlspecialchars($rel['delivery_time']); ?></div>
-                                        <div class="food-price">Rs. <?php echo number_format((float) $rel['price'], 2); ?></div>
+                                        <div class="food-time">🕐 <?php echo t_delivery_time($rel['delivery_time']); ?></div>
+                                        <div class="food-price"><?php echo __('currency_rs', 'Rs.'); ?> <?php echo t_num(number_format((float) $rel['price'], 2)); ?></div>
                                     </div>
                                 </div>
                             </div>
@@ -803,8 +786,8 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
     </div>
 
     <?php include 'templates/footer.php'; ?>
-
     <?php include 'templates/floating_menu.php'; ?>
+
 
     <script>
         // Quantity control
@@ -814,17 +797,26 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
         const totalPrice = document.getElementById('totalPrice');
         const qtyMinus = document.getElementById('qtyMinus');
         const qtyPlus = document.getElementById('qtyPlus');
+        const activeLang = '<?php echo $activeLang; ?>';
 
         let qty = 1;
 
+        function t_num_js(numStr) {
+            if (activeLang !== 'ne') return numStr;
+            const nepDigits = ['०', '१', '२', '३', '४', '५', '६', '७', '८', '९'];
+            return numStr.toString().replace(/\d/g, d => nepDigits[d]);
+        }
+
         function updateQty(newQty) {
             qty = Math.max(1, Math.min(20, newQty));
-            qtyValue.textContent = qty;
+            qtyValue.textContent = t_num_js(qty);
             qtyInput.value = qty;
-            totalPrice.textContent = 'Rs. ' + (price * qty).toLocaleString('en-IN', {
+            
+            const rawPrice = (price * qty).toLocaleString('en-IN', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
+            totalPrice.textContent = '<?php echo __('currency_rs', 'Rs.'); ?> ' + t_num_js(rawPrice);
         }
 
         qtyMinus.addEventListener('click', () => updateQty(qty - 1));

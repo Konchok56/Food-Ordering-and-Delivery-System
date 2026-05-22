@@ -1,12 +1,16 @@
-<?php http_response_code(404); ?>
+<?php
+require_once 'core/bootstrap.php';
+http_response_code(404);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 — Page Not Found | SwiftBite</title>
+    <title><?php echo __('page_not_found_title', '404 — Page Not Found | SwiftBite'); ?></title>
     <meta name="robots" content="noindex">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -167,27 +171,28 @@
     <div class="blob blob-2"></div>
 
     <div class="card">
-        <div class="plate">🍽️</div>
-        <div class="error-code">404</div>
-        <div class="error-title">Oops! Page Not Found</div>
+        <div class="plate"><i class="fa-solid fa-utensils"></i></div>
+        <div class="error-code"><?php echo t_num('404'); ?></div>
+        <div class="error-title"><?php echo __('oops_page_not_found', 'Oops! Page Not Found'); ?></div>
         <p class="error-desc">
-            Looks like this dish fell off the menu. The page you're looking for doesn't exist or may have been moved.
+            <?php echo __('page_not_found_desc', "Looks like this dish fell off the menu. The page you're looking for doesn't exist or may have been moved."); ?>
         </p>
 
         <div class="btn-group">
-            <a href="/food/swiftbite_php_starter/index.php" class="btn btn-primary">🏠 Back to Home</a>
-            <a href="javascript:history.back()" class="btn btn-ghost">← Go Back</a>
+            <a href="index.php" class="btn btn-primary"><i class="fa-solid fa-house"></i> <?php echo __('back_to_home', 'Back to Home'); ?></a>
+            <a href="javascript:history.back()" class="btn btn-ghost"><?php echo __('go_back_arrow', '← Go Back'); ?></a>
         </div>
 
         <div class="suggestions">
-            <p>Or explore</p>
+            <p><?php echo __('or_explore', 'Or explore'); ?></p>
             <div class="suggestion-links">
-                <a href="/food/swiftbite_php_starter/menu.php">🍕 Menu</a>
-                <a href="/food/swiftbite_php_starter/restaurants.php">🏪 Restaurants</a>
-                <a href="/food/swiftbite_php_starter/orders/cart.php">🛒 Cart</a>
-                <a href="/food/swiftbite_php_starter/auth/login.php">🔑 Login</a>
+                <a href="menu.php"><i class="fa-solid fa-pizza-slice"></i> <?php echo __('menu', 'Menu'); ?></a>
+                <a href="restaurants.php">🏪 <?php echo __('restaurants', 'Restaurants'); ?></a>
+                <a href="orders/cart.php"><i class="fa-solid fa-cart-shopping"></i> <?php echo __('cart', 'Cart'); ?></a>
+                <a href="auth/login.php"><i class="fa-solid fa-key"></i> <?php echo __('login', 'Login'); ?></a>
             </div>
         </div>
     </div>
 </body>
 </html>
+

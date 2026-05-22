@@ -33,6 +33,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// ── Language Translation Support ──────────────────────────
+require_once __DIR__ . '/lang.php';
+
 // ── Database (singleton) ──────────────────────────────────
 if (!isset($GLOBALS['pdo'])) {
     try {
@@ -53,6 +56,10 @@ if (!isset($GLOBALS['pdo'])) {
     }
 }
 $pdo = $GLOBALS['pdo'];
+
+// ── Auto-apply pending DB migrations ─────────────────────
+// require_once __DIR__ . '/auto_migrate.php';
+// runAutoMigrations($pdo);
 
 // ── Remember-me auto login ────────────────────────────────
 if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
@@ -153,10 +160,10 @@ function flash(string $type, string $message): void {
  */
 function renderFlash(): string {
     if (empty($_SESSION['_flash'])) return '';
-    $icons = ['success' => '✅', 'error' => '❌', 'info' => 'ℹ️', 'warning' => '⚠️'];
+    $icons = ['success' => '<i class="fa-solid fa-circle-check" style="color:#22c55e"></i>', 'error' => '<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i>', 'info' => '<i class="fa-solid fa-circle-info" style="color:#3b82f6"></i>', 'warning' => '<i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b"></i>'];
     $html  = '';
     foreach ($_SESSION['_flash'] as $f) {
-        $icon = $icons[$f['type']] ?? 'ℹ️';
+        $icon = $icons[$f['type']] ?? '<i class="fa-solid fa-circle-info" style="color:#3b82f6"></i>';
         $html .= '<div class="flash-msg flash-' . htmlspecialchars($f['type']) . '">'
                . $icon . ' ' . htmlspecialchars($f['message'])
                . '</div>';
@@ -183,6 +190,7 @@ function renderError(int $code, string $title, string $message): string {
         <meta name="viewport" content="width=device-width,initial-scale=1">
         <title>{$code} — SwiftBite</title>
         <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <style>
             *{box-sizing:border-box;margin:0;padding:0}
             body{font-family:'DM Sans',sans-serif;background:#fff8f0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}

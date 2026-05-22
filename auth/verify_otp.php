@@ -20,10 +20,11 @@ if ($at_pos > 2) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Verify OTP — SwiftBite</title>
+    <title><?php echo __('verify_otp', 'Verify OTP'); ?> — SwiftBite</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
@@ -111,16 +112,16 @@ if ($at_pos > 2) {
             <div class="step-dot"></div>
         </div>
 
-        <div class="auth-icon">📧</div>
-        <div class="auth-title">Verify OTP</div>
-        <div class="auth-subtitle">We've sent a 6-digit verification code to your email</div>
+        <div class="auth-icon"><i class="fa-solid fa-envelope"></i></div>
+        <div class="auth-title"><?php echo __('verify_otp', 'Verify OTP'); ?></div>
+        <div class="auth-subtitle"><?php echo __('verify_otp_subtitle', "We've sent a 6-digit verification code to your email"); ?></div>
 
         <div class="email-badge-wrap">
-            <span class="email-badge">📧 <?php echo htmlspecialchars($masked_email); ?></span>
+            <span class="email-badge"><i class="fa-solid fa-envelope"></i> <?php echo htmlspecialchars($masked_email); ?></span>
         </div>
 
         <?php if ($error): ?>
-            <div class="auth-alert error">❌ <?php echo htmlspecialchars($error); ?></div>
+            <div class="auth-alert error"><i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> <?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
 
@@ -138,7 +139,7 @@ if ($at_pos > 2) {
                 <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" data-index="5">
             </div>
 
-            <button class="auth-btn" type="submit">Verify Code →</button>
+            <button class="auth-btn" type="submit"><?php echo __('verify_code', 'Verify Code'); ?> <i class="fa-solid fa-arrow-right"></i></button>
         </form>
 
         <div class="resend-section">
@@ -147,12 +148,12 @@ if ($at_pos > 2) {
                 <input type="hidden" name="email" value="<?php echo htmlspecialchars($_SESSION['otp_email']); ?>">
                 <input type="hidden" name="resend" value="1">
                 <button type="submit" class="resend-link" id="resendBtn">
-                    Resend OTP (<span id="countdown">60</span>s)
+                    <?php echo __('resend_otp', 'Resend OTP'); ?> (<span id="countdown">60</span>s)
                 </button>
             </form>
         </div>
 
-        <a href="forgot_password.php" class="auth-back">← Try a different email</a>
+        <a href="forgot_password.php" class="auth-back">← <?php echo __('try_different_email', 'Try a different email'); ?></a>
     </div>
 
     <script>
@@ -220,7 +221,7 @@ if ($at_pos > 2) {
             if (seconds <= 0) {
                 clearInterval(timer);
                 btn.classList.remove('disabled');
-                btn.textContent = '🔄 Resend OTP';
+                btn.textContent = '🔄 <?php echo __("resend_otp", "Resend OTP"); ?>';
             }
         }, 1000);
     })();

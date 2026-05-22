@@ -18,15 +18,15 @@ try {
 <section class="section" id="categories">
   <div class="section-header">
     <div>
-      <div class="section-tag">Browse Categories</div>
-      <div class="section-title">What Are You<br />Craving Today?</div>
+      <div class="section-tag"><?php echo __('browse_categories', 'Browse Categories'); ?></div>
+      <div class="section-title"><?php echo __('craving_today', 'What Are You<br />Craving Today?'); ?></div>
     </div>
-    <a href="menu.php" class="view-all">View All →</a>
+    <a href="menu.php" class="view-all"><?php echo __('view_all', 'View All'); ?> <i class="fa-solid fa-arrow-right"></i></a>
   </div>
 
   <div class="categories-grid">
     <?php if (empty($db_categories)): ?>
-      <p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px 0;">No categories found.</p>
+      <p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px 0;"><?php echo __('no_categories_found', 'No categories found.'); ?></p>
     <?php else: ?>
       <?php foreach ($db_categories as $index => $cat): ?>
         <button class="cat-card <?php echo $index === 0 ? 'active' : ''; ?>" type="button" onclick="location.href='menu.php?category=<?php echo urlencode($cat['category']); ?>'">
@@ -34,11 +34,11 @@ try {
             <?php if (!empty($cat['category_image'])): ?>
               <img src="<?php echo htmlspecialchars($cat['category_image']); ?>" alt="<?php echo htmlspecialchars($cat['category']); ?>" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
             <?php else: ?>
-              <?php echo htmlspecialchars($cat['emoji'] ?: '🍛'); ?>
+              <?php echo htmlspecialchars($cat['emoji'] ?: '<i class="fa-solid fa-bowl-food"></i>'); ?>
             <?php endif; ?>
           </div>
-          <div class="cat-name"><?php echo htmlspecialchars($cat['category']); ?></div>
-          <div class="cat-count"><?php echo (int)$cat['count']; ?> items</div>
+          <div class="cat-name"><?php echo htmlspecialchars(__($cat['category'], $cat['category'])); ?></div>
+          <div class="cat-count"><?php echo t_num($cat['count']) . ' ' . __('items', 'items'); ?></div>
         </button>
       <?php endforeach; ?>
     <?php endif; ?>

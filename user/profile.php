@@ -1,8 +1,6 @@
 <?php
-session_start();
-include('../core/db.php');
-include('../core/csrf.php');
-include('../core/cart_helper.php');
+require_once '../core/bootstrap.php';
+require_once '../core/csrf.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
@@ -25,8 +23,9 @@ unset($_SESSION['profile_success'], $_SESSION['profile_error']);
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Profile — SwiftBite</title>
+    <title><?php echo __('my_profile', 'My Profile'); ?> — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../assets/css/style.css?v=8" />
     <style>
         .page { padding: 100px 24px 60px; min-height: 100vh; background: var(--cream); }
@@ -59,7 +58,7 @@ unset($_SESSION['profile_success'], $_SESSION['profile_error']);
     <div class="page">
         <div class="inner">
             <div class="header">
-                <h1>My Profile</h1>
+                <h1><?php echo __('my_profile', 'My Profile'); ?></h1>
             </div>
 
             <div class="card">
@@ -68,55 +67,55 @@ unset($_SESSION['profile_success'], $_SESSION['profile_error']);
                 </div>
                 
                 <?php if ($success): ?>
-                    <div class="alert alert-success">✅ <?php echo htmlspecialchars($success); ?></div>
+                    <div class="alert alert-success"><i class="fa-solid fa-circle-check" style="color:#22c55e"></i> <?php echo htmlspecialchars(__($success, $success)); ?></div>
                 <?php endif; ?>
                 <?php if ($error): ?>
-                    <div class="alert alert-error">❌ <?php echo htmlspecialchars($error); ?></div>
+                    <div class="alert alert-error"><i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> <?php echo htmlspecialchars(__($error, $error)); ?></div>
                 <?php endif; ?>
 
                 <form action="../actions/update_profile.php" method="POST">
                     <?php echo csrfInput(); ?>
                     
                     <div class="form-group">
-                        <label for="name">Full Name</label>
+                        <label for="name"><?php echo __('full_name', 'Full Name'); ?></label>
                         <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($user['name']); ?>" required>
                     </div>
                     
                     <div class="form-group">
-                        <label for="email">Email Address <span style="font-weight:400;color:var(--muted);">(Cannot be changed)</span></label>
+                        <label for="email"><?php echo __('email_address', 'Email Address'); ?> <span style="font-weight:400;color:var(--muted);"><?php echo __('cannot_be_changed', '(Cannot be changed)'); ?></span></label>
                         <input type="email" value="<?php echo htmlspecialchars($user['email']); ?>" disabled style="opacity: 0.7; cursor: not-allowed; border-color: transparent;">
                     </div>
                     
                     <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($user['phone'] ?? ''); ?>" placeholder="9812345678">
+                        <label for="phone"><?php echo __('phone_number', 'Phone Number'); ?></label>
+                        <input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($user['phone'] ?? ''); ?>" placeholder="<?php echo __('phone_placeholder', 'e.g. 9812345678'); ?>">
                     </div>
                     
                     <div class="form-group">
-                        <label for="address">Delivery Address</label>
-                        <input type="text" id="address" name="address" value="<?php echo htmlspecialchars($user['address'] ?? ''); ?>" placeholder="Street, area...">
+                        <label for="address"><?php echo __('delivery_address', 'Delivery Address'); ?></label>
+                        <input type="text" id="address" name="address" value="<?php echo htmlspecialchars($user['address'] ?? ''); ?>" placeholder="<?php echo __('address_placeholder', 'Street, area, building...'); ?>">
                     </div>
                     
                     <div class="form-group">
-                        <label for="city">City</label>
+                        <label for="city"><?php echo __('city', 'City'); ?></label>
                         <select id="city" name="city">
-                            <option value="Kathmandu" <?php echo ($user['city'] ?? 'Kathmandu') === 'Kathmandu' ? 'selected' : ''; ?>>Kathmandu</option>
-                            <option value="Lalitpur" <?php echo ($user['city'] ?? '') === 'Lalitpur' ? 'selected' : ''; ?>>Lalitpur</option>
-                            <option value="Bhaktapur" <?php echo ($user['city'] ?? '') === 'Bhaktapur' ? 'selected' : ''; ?>>Bhaktapur</option>
+                            <option value="Kathmandu" <?php echo ($user['city'] ?? 'Kathmandu') === 'Kathmandu' ? 'selected' : ''; ?>><?php echo __('kathmandu', 'Kathmandu'); ?></option>
+                            <option value="Lalitpur" <?php echo ($user['city'] ?? '') === 'Lalitpur' ? 'selected' : ''; ?>><?php echo __('lalitpur', 'Lalitpur'); ?></option>
+                            <option value="Bhaktapur" <?php echo ($user['city'] ?? '') === 'Bhaktapur' ? 'selected' : ''; ?>><?php echo __('bhaktapur', 'Bhaktapur'); ?></option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="status">Profile Status</label>
+                        <label for="status"><?php echo __('profile_status', 'Profile Status'); ?></label>
                         <select id="status" name="status">
-                            <option value="active" <?php echo ($user['status'] ?? 'active') === 'active' ? 'selected' : ''; ?>>🟢 Active</option>
-                            <option value="inactive" <?php echo ($user['status'] ?? 'active') === 'inactive' ? 'selected' : ''; ?>>⚪ Inactive</option>
+                            <option value="active" <?php echo ($user['status'] ?? 'active') === 'active' ? 'selected' : ''; ?>>🟢 <?php echo __('active', 'Active'); ?></option>
+                            <option value="inactive" <?php echo ($user['status'] ?? 'active') === 'inactive' ? 'selected' : ''; ?>>⚪ <?php echo __('inactive', 'Inactive'); ?></option>
                         </select>
-                        <small style="color:var(--muted); font-size:0.85rem; margin-top:6px; display:block;">If inactive, your profile may not be publicly visible.</small>
+                        <small style="color:var(--muted); font-size:0.85rem; margin-top:6px; display:block;"><?php echo __('profile_status_hint', 'If inactive, your profile may not be publicly visible.'); ?></small>
                     </div>
 
-                    <button type="submit" class="update-btn">💾 Save Changes</button>
-                    <a href="../auth/logout.php" class="logout-link">🚪 Sign Out</a>
+                    <button type="submit" class="update-btn">💾 <?php echo __('save_changes', 'Save Changes'); ?></button>
+                    <a href="../auth/logout.php" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i> <?php echo __('sign_out', 'Sign Out'); ?></a>
                 </form>
             </div>
             

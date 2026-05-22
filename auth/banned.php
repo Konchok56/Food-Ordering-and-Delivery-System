@@ -1,6 +1,4 @@
-<?php
-session_start();
-include('../core/config.php');
+require_once '../core/bootstrap.php';
 
 $reason = $_SESSION['banned_reason'] ?? 'Violation of our Terms of Service.';
 // If no session reason is available, we simply show a generic message.
@@ -10,8 +8,9 @@ $reason = $_SESSION['banned_reason'] ?? 'Violation of our Terms of Service.';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Account Suspended — SwiftBite</title>
+    <title><?php echo __('account_suspended_title', 'Account Suspended'); ?> — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         :root {
             --cream: #fff8f0;
@@ -117,22 +116,22 @@ $reason = $_SESSION['banned_reason'] ?? 'Violation of our Terms of Service.';
 <body>
     <div class="container">
         <div class="icon-circle">⛔</div>
-        <h1>Account Suspended</h1>
-        <p>Your SwiftBite access has been restricted by an administrator.</p>
+        <h1><?php echo __('account_suspended_title', 'Account Suspended'); ?></h1>
+        <p><?php echo __('account_suspended_desc', 'Your SwiftBite access has been restricted by an administrator.'); ?></p>
         
         <div class="reason-box">
-            <span class="reason-label">Reason for suspension:</span>
+            <span class="reason-label"><?php echo __('reason_suspension', 'Reason for suspension'); ?>:</span>
             <div class="reason-text">"<?php echo nl2br(htmlspecialchars($reason)); ?>"</div>
         </div>
 
         <div class="contact-info">
-            <span>If you believe this is a mistake, please contact support at:</span>
+            <span><?php echo __('banned_contact_support', 'If you believe this is a mistake, please contact support at'); ?>:</span>
             <br><br>
             <strong>+977 9800000000</strong>
-            <span style="font-size:0.9rem; color:var(--muted)">Available 9 AM - 5 PM (NPT)</span>
+            <span style="font-size:0.9rem; color:var(--muted)"><?php echo __('banned_support_hours', 'Available 9 AM - 5 PM (NPT)'); ?></span>
         </div>
 
-        <a href="../index.php" class="back-link">Return to Homepage</a>
+        <a href="../index.php" class="back-link"><?php echo __('return_homepage', 'Return to Homepage'); ?></a>
     </div>
 </body>
 </html>

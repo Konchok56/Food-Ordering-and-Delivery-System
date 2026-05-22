@@ -63,20 +63,17 @@ if ($elapsed > CANCEL_WINDOW_SECONDS) {
     exit;
 }
 
-// All checks passed — delete from DB inside a transaction
+// All checks passed — update status to cancelled inside a transaction
 try {
-    // Grab first food image before deleting items
+    // Grab first food image for notification
     $imgStmt = $pdo->prepare("SELECT image_path FROM order_items WHERE order_id = ? AND image_path IS NOT NULL AND image_path != '' LIMIT 1");
     $imgStmt->execute([$order_id]);
     $cancelImage = $imgStmt->fetchColumn() ?: null;
 
     $pdo->beginTransaction();
 
-    // Delete order items first (FK constraint)
-    $pdo->prepare("DELETE FROM order_items WHERE order_id = ?")->execute([$order_id]);
-
-    // Delete the order itself
-    $pdo->prepare("DELETE FROM orders WHERE id = ? AND user_id = ?")->execute([$order_id, $user_id]);
+    // Update the order status to cancelled (preserves order history)
+    $pdo->prepare("UPDATE orders SET status = 'cancelled' WHERE id = ? AND user_id = ?")->execute([$order_id, $user_id]);
 
     $pdo->commit();
 
@@ -85,13 +82,13 @@ try {
     addNotification(
         $pdo, $user_id, 'order_cancelled',
         'Order Cancelled',
-        'Your order ' . $orderLabel . ' has been cancelled and removed successfully.',
-        '❌',
+        'Your order ' . $orderLabel . ' has been cancelled successfully.',
+        '<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i>',
         $cancelImage,
         SITE_BASE_URL . '/user/order_history.php'
     );
 
-    // --- 📧 Send Cancellation Email ---
+    // --- Send Cancellation Email ---
     $userEmailStmt = $pdo->prepare("SELECT email, name FROM users WHERE id = ? LIMIT 1");
     $userEmailStmt->execute([$user_id]);
     $userEmailRow = $userEmailStmt->fetch(PDO::FETCH_ASSOC);
@@ -99,7 +96,7 @@ try {
         sendOrderCancelledByCustomerEmail($userEmailRow['email'], $userEmailRow['name'], $order_id);
     }
 
-    echo json_encode(['success' => true, 'message' => 'Your order has been cancelled and removed successfully.']);
+    echo json_encode(['success' => true, 'message' => 'Your order has been cancelled successfully.']);
 } catch (Exception $e) {
     $pdo->rollBack();
     echo json_encode(['success' => false, 'message' => 'Something went wrong. Please try again.']);

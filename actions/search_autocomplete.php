@@ -42,7 +42,7 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
         'name'       => $row['name'],
         'category'   => $row['category'],
         'price'      => 'Rs. ' . number_format((float) $row['price'], 0),
-        'emoji'      => $row['emoji'] ?? '🍴',
+        'emoji'      => $row['emoji'] ?? '<i class="fa-solid fa-utensils"></i>',
         'image_path' => $row['image_path'] ?? '',
         'badge'      => $row['badge'] ?? '',
         'url'        => 'food_detail.php?id=' . (int) $row['id'],

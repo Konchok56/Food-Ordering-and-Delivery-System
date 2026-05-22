@@ -15,7 +15,7 @@ $stmt->execute([$order_id, $user_id]);
 $order = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$order) {
-    die("<h2 style='text-align:center; margin-top:50px;'>Order not found or access denied.</h2>");
+    die("<h2 style='text-align:center; margin-top:50px;'>" . __('order_not_found', 'Order not found or access denied.') . "</h2>");
 }
 
 $cartCount = getCartCount($pdo, $user_id);
@@ -25,8 +25,9 @@ $cartCount = getCartCount($pdo, $user_id);
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Order Confirmed — SwiftBite</title>
+    <title><?php echo __('order_confirmed', 'Order Confirmed'); ?> — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../assets/css/style.css?v=8" />
     <style>
         .conf-page { min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 120px 24px 60px; }
@@ -62,31 +63,31 @@ $cartCount = getCartCount($pdo, $user_id);
     <div class="conf-page">
         <div class="conf-card">
             <div class="conf-icon" style="animation-delay: 0.2s;">✓</div>
-            <h1 class="conf-title">Order Received!</h1>
-            <p class="conf-msg">Thank you, <?php echo htmlspecialchars(explode(' ', $order['customer_name'])[0]); ?>. Your delicious food is being prepared.</p>
+            <h1 class="conf-title"><?php echo __('order_received', 'Order Received!'); ?></h1>
+            <p class="conf-msg"><?php echo sprintf(__('thank_you_order_msg', 'Thank you, %s. Your delicious food is being prepared.'), htmlspecialchars(explode(' ', $order['customer_name'])[0])); ?></p>
             
             <div class="conf-details">
                 <div class="conf-row">
-                    <span>Order ID</span>
-                    <span>#<?php echo str_pad($order['id'], 5, '0', STR_PAD_LEFT); ?></span>
+                    <span><?php echo __('order_id', 'Order ID'); ?></span>
+                    <span>#<?php echo t_num(str_pad($order['id'], 5, '0', STR_PAD_LEFT)); ?></span>
                 </div>
                 <div class="conf-row">
-                    <span>Total Amount</span>
-                    <span>Rs. <?php echo number_format($order['total'], 2); ?></span>
+                    <span><?php echo __('total_amount', 'Total Amount'); ?></span>
+                    <span><?php echo __('currency_rs', 'Rs.'); ?> <?php echo t_num(number_format($order['total'], 2)); ?></span>
                 </div>
                 <div class="conf-row">
-                    <span>Payment</span>
-                    <span style="text-transform:uppercase;"><?php echo htmlspecialchars($order['payment_method']); ?></span>
+                    <span><?php echo __('payment', 'Payment'); ?></span>
+                    <span style="text-transform:uppercase;"><?php echo $order['payment_method'] === 'cod' ? __('cash_on_delivery_cod', 'Cash on Delivery (COD)') : htmlspecialchars(strtoupper($order['payment_method'])); ?></span>
                 </div>
                 <div class="conf-row" style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--cream2);">
-                    <span>Estimated Delivery</span>
-                    <span>30 - 45 min</span>
+                    <span><?php echo __('estimated_delivery', 'Estimated Delivery'); ?></span>
+                    <span><?php echo t_delivery_time('30 - 45 min'); ?></span>
                 </div>
             </div>
 
             <div class="conf-actions">
-                <a href="../user/order_history.php" class="btn-track">🔍 Trace Order</a>
-                <a href="../index.php" class="btn-home">← Back to Home</a>
+                <a href="../user/order_history.php" class="btn-track">🔍 <?php echo __('trace_order', 'Trace Order'); ?></a>
+                <a href="../index.php" class="btn-home"><?php echo __('back_to_home_arrow', '← Back to Home'); ?></a>
             </div>
         </div>
     </div>

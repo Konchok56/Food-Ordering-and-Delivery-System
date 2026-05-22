@@ -58,8 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             <input type="hidden" name="success_url" value="<?php echo htmlspecialchars($success_url); ?>">
             <input type="hidden" name="failure_url" value="<?php echo htmlspecialchars($failure_url); ?>">
             
-            <button type="submit" name="action" value="pay" class="btn btn-success">✅ Simulate Successful Payment</button>
-            <button type="submit" name="action" value="cancel" class="btn btn-danger">❌ Cancel Payment</button>
+            <button type="submit" name="action" value="pay" class="btn btn-success"><i class="fa-solid fa-circle-check" style="color:#22c55e"></i> Simulate Successful Payment</button>
+            <button type="submit" name="action" value="cancel" class="btn btn-danger"><i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> Cancel Payment</button>
         </form>
     </div>
 </body>

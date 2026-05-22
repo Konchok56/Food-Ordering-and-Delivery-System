@@ -40,9 +40,9 @@ $foodStmt = $pdo->prepare($sql);
 $foodStmt->execute($params);
 $foods = $foodStmt->fetchAll(PDO::FETCH_ASSOC);
 
-$pageTitle = 'Full Menu — SwiftBite';
-if ($keyword) $pageTitle = "Search: $keyword — SwiftBite";
-elseif ($activeCategory) $pageTitle = "$activeCategory — SwiftBite";
+$pageTitle = __('full_menu', 'Full Menu') . ' — SwiftBite';
+if ($keyword) $pageTitle = __('search', 'Search') . ": " . htmlspecialchars($keyword) . ' — SwiftBite';
+elseif ($activeCategory) $pageTitle = htmlspecialchars(__($activeCategory, $activeCategory)) . ' — SwiftBite';
 
 $getCatEmoji = function($n) use ($categories) {
     foreach ($categories as $c) { if ($c['category']===$n) return $c['emoji'] ?: ''; }
@@ -69,8 +69,9 @@ function menuUrl($extra=[]) {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><?php echo htmlspecialchars($pageTitle); ?></title>
-    <meta name="description" content="Browse the full SwiftBite menu." />
+    <meta name="description" content="<?php echo __('menu_meta_desc', 'Browse the full SwiftBite menu.'); ?>" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="assets/css/style.css?v=8" />
@@ -211,9 +212,9 @@ function menuUrl($extra=[]) {
 <div class="menu-page">
     <!-- Hero -->
     <div class="menu-hero">
-        <div class="section-tag">&#x1F37D;&#xFE0F; Our Menu</div>
-        <div class="section-title">Explore Our<br />Full Menu</div>
-        <p>Discover all the delicious dishes we have to offer.</p>
+        <div class="section-tag"><i class="fa-solid fa-utensils"></i> <?php echo __('our_menu', 'Our Menu'); ?></div>
+        <div class="section-title"><?php echo __('explore_our_menu', 'Explore Our<br />Full Menu'); ?></div>
+        <p><?php echo __('discover_delicious_dishes', 'Discover all the delicious dishes we have to offer.'); ?></p>
     </div>
 
     <!-- Search -->
@@ -222,7 +223,7 @@ function menuUrl($extra=[]) {
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
             <input type="text" name="keyword" id="menuSearchInput"
                    value="<?php echo htmlspecialchars($keyword); ?>"
-                   placeholder="Search food, category..."
+                   placeholder="<?php echo __('search_food_placeholder', 'Search food, category...'); ?>"
                    autocomplete="off" data-autocomplete aria-label="Search menu">
             <?php if ($activeCategory): ?><input type="hidden" name="category" value="<?php echo htmlspecialchars($activeCategory); ?>"><?php endif; ?>
             <?php if ($sortBy !== 'featured'): ?><input type="hidden" name="sort" value="<?php echo htmlspecialchars($sortBy); ?>"><?php endif; ?>
@@ -238,14 +239,14 @@ function menuUrl($extra=[]) {
     <!-- Category Tabs -->
     <div class="menu-filters">
         <a href="<?php echo menuUrl(['category'=>null]); ?>" class="filter-tab <?php echo $activeCategory===''?'active':''; ?>">
-            All <span class="tab-count"><?php echo array_sum(array_column($categories,'count')); ?></span>
+            <?php echo __('all', 'All'); ?> <span class="tab-count"><?php echo t_num(array_sum(array_column($categories,'count'))); ?></span>
         </a>
         <?php foreach ($categories as $cat): ?>
             <a href="<?php echo menuUrl(['category'=>$cat['category']]); ?>"
                class="filter-tab <?php echo $activeCategory===$cat['category']?'active':''; ?>">
                 <?php echo htmlspecialchars($cat['emoji'] ?: ''); ?>
-                <?php echo htmlspecialchars($cat['category']); ?>
-                <span class="tab-count"><?php echo $cat['count']; ?></span>
+                <?php echo htmlspecialchars(__($cat['category'], $cat['category'])); ?>
+                <span class="tab-count"><?php echo t_num($cat['count']); ?></span>
             </a>
         <?php endforeach; ?>
     </div>
@@ -263,11 +264,17 @@ function menuUrl($extra=[]) {
                 <div class="fs-section">
                     <div class="fs-title">
                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 6h18M6 12h12M9 18h6"/></svg>
-                        Sort By
+                        <?php echo __('sort_by', 'Sort By'); ?>
                     </div>
                     <ul class="sort-list">
                         <?php
-                        $sorts = ['featured'=>'Featured (Default)','rating'=>'Top Rated','newest'=>'Newest Arrivals','price_asc'=>'Price: Low to High','price_desc'=>'Price: High to Low'];
+                        $sorts = [
+                            'featured' => __('sort_featured', 'Featured (Default)'),
+                            'rating' => __('sort_rating', 'Top Rated'),
+                            'newest' => __('sort_newest', 'Newest Arrivals'),
+                            'price_asc' => __('sort_price_asc', 'Price: Low to High'),
+                            'price_desc' => __('sort_price_desc', 'Price: High to Low')
+                        ];
                         foreach ($sorts as $val=>$label): ?>
                             <li>
                                 <input type="radio" name="sort" id="sort_<?php echo $val; ?>" value="<?php echo $val; ?>" <?php echo $sortBy===$val?'checked':''; ?>>
@@ -286,13 +293,13 @@ function menuUrl($extra=[]) {
                 <div class="fs-section" style="padding-top:16px;">
                     <div class="fs-title">
                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 1 0 0 7h5a3.5 3.5 0 1 1 0 7H6"/></svg>
-                        Price Range
+                        <?php echo __('price_range', 'Price Range'); ?>
                     </div>
                     <div class="price-row">
-                        <input type="number" name="min_price" placeholder="Min" min="0" step="1"
+                        <input type="number" name="min_price" placeholder="<?php echo __('min', 'Min'); ?>" min="0" step="1"
                                value="<?php echo $minPrice!==''?(int)$minPrice:''; ?>">
                         <span class="price-sep">&mdash;</span>
-                        <input type="number" name="max_price" placeholder="Max" min="0" step="1"
+                        <input type="number" name="max_price" placeholder="<?php echo __('max', 'Max'); ?>" min="0" step="1"
                                value="<?php echo $maxPrice!==''?(int)$maxPrice:''; ?>">
                     </div>
                 </div>
@@ -303,30 +310,30 @@ function menuUrl($extra=[]) {
                 <div class="fs-section" style="padding-top:16px;">
                     <div class="fs-title">
                         <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24" style="color:var(--orange,#ff4f00)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                        Min Rating
+                        <?php echo __('min_rating_title', 'Min Rating'); ?>
                     </div>
                     <ul class="rating-list">
                         <?php
-                        $ratings = ['4.5'=>'4.5+ Stars','4'=>'4+ Stars','3.5'=>'3.5+ Stars'];
+                        $ratings = ['4.5'=>sprintf(__('%s_stars', '%s+ Stars'), t_num('4.5')),'4'=>sprintf(__('%s_stars', '%s+ Stars'), t_num('4')),'3.5'=>sprintf(__('%s_stars', '%s+ Stars'), t_num('3.5'))];
                         foreach ($ratings as $val=>$label): ?>
                             <li>
                                 <input type="radio" name="min_rating" id="r<?php echo str_replace('.','_',$val); ?>" value="<?php echo $val; ?>" <?php echo $minRating==$val?'checked':''; ?>>
                                 <label for="r<?php echo str_replace('.','_',$val); ?>">
                                     <span><?php echo $label; ?></span>
-                                    <span class="rating-check">&#10003;</span>
+                                    <span class="rating-check"><i class="fa-solid fa-check"></i></span>
                                 </label>
                             </li>
                         <?php endforeach; ?>
                     </ul>
                     <a href="<?php echo menuUrl(['min_rating'=>null]); ?>"
-                       class="any-rating-btn <?php echo $minRating===''?'active':''; ?>">Any Rating</a>
+                       class="any-rating-btn <?php echo $minRating===''?'active':''; ?>"><?php echo __('any_rating', 'Any Rating'); ?></a>
                 </div>
 
                 <div class="sb-btn-row">
-                    <button type="submit" class="apply-btn">Apply Filters</button>
+                    <button type="submit" class="apply-btn"><?php echo __('apply_filters', 'Apply Filters'); ?></button>
                     <a href="menu.php<?php echo $keyword ? '?keyword='.urlencode($keyword) : ''; ?>" class="reset-btn" title="Reset all filters">
                         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                        Reset
+                        <?php echo __('btn_reset', 'Reset'); ?>
                     </a>
                 </div>
             </form>
@@ -336,24 +343,24 @@ function menuUrl($extra=[]) {
         <div class="menu-main">
             <div class="menu-results-info">
                 <div class="results-count">
-                    Showing <span><?php echo count($foods); ?></span> item<?php echo count($foods)!==1?'s':''; ?>
-                    <?php if ($keyword): ?> for <span>"<?php echo htmlspecialchars($keyword); ?>"</span><?php endif; ?>
+                    <?php echo __('showing', 'Showing'); ?> <span><?php echo t_num(count($foods)); ?></span> <?php echo count($foods)!==1?__('items_lower', 'items'):__('item_lower', 'item'); ?>
+                    <?php if ($keyword): ?> <?php echo __('for', 'for'); ?> <span>"<?php echo htmlspecialchars($keyword); ?>"</span><?php endif; ?>
                     <?php if ($activeCategory): ?>
-                        <span class="search-tag"><?php echo htmlspecialchars($getCatEmoji($activeCategory).' '.$activeCategory); ?></span>
+                        <span class="search-tag"><?php echo htmlspecialchars($getCatEmoji($activeCategory).' '.__($activeCategory, $activeCategory)); ?></span>
                     <?php endif; ?>
                 </div>
                 <?php if ($keyword||$activeCategory||$activeCity||$minPrice!==''||$maxPrice!==''||$minRating!==''||$sortBy!=='featured'): ?>
-                    <a href="menu.php" class="view-all">Clear filters &times;</a>
+                    <a href="menu.php" class="view-all"><?php echo __('clear_filters_times', 'Clear filters &times;'); ?></a>
                 <?php endif; ?>
             </div>
 
             <div class="menu-grid">
                 <?php if (empty($foods)): ?>
                     <div class="menu-empty">
-                        <div class="empty-icon">&#x1F50D;</div>
-                        <h3>No results found</h3>
-                        <p><?php echo $keyword ? 'Nothing matched "'.htmlspecialchars($keyword).'". Try a different keyword.' : 'No items match your filters.'; ?></p>
-                        <a href="menu.php">View All Items</a>
+                        <div class="empty-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                        <h3><?php echo __('no_results_found', 'No results found'); ?></h3>
+                        <p><?php echo $keyword ? sprintf(__('nothing_matched_for', 'Nothing matched "%s". Try a different keyword.'), htmlspecialchars($keyword)) : __('no_items_match_filters', 'No items match your filters.'); ?></p>
+                        <a href="menu.php"><?php echo __('view_all_items', 'View All Items'); ?></a>
                     </div>
                 <?php else: ?>
                     <?php foreach ($foods as $food): ?>
@@ -366,27 +373,27 @@ function menuUrl($extra=[]) {
                                     <?php echo htmlspecialchars($food['emoji']); ?>
                                 <?php endif; ?>
                                 <?php if (!empty($food['badge'])): ?>
-                                    <span class="food-badge<?php echo $food['badge']==='New'?' new':''; ?>"><?php echo htmlspecialchars($food['badge']); ?></span>
+                                    <span class="food-badge<?php echo strtolower($food['badge'])==='new'?' new':''; ?>"><?php echo htmlspecialchars(__($food['badge'], $food['badge'])); ?></span>
                                 <?php endif; ?>
-                                <div class="food-fav"><?php echo $food['is_favorite'] ? '&#x2764;&#xFE0F;' : '&#x1F90D;'; ?></div>
+                                <div class="food-fav"><?php echo $food['is_favorite'] ? '<i class="fa-solid fa-heart" style="color:#ef4444"></i>' : '<i class="fa-regular fa-heart"></i>'; ?></div>
                             </div>
                             <div class="food-info">
                                 <div class="food-meta">
-                                    <span class="food-category"><?php echo htmlspecialchars($food['category']); ?></span>
-                                    <span class="food-rating">&#9733; <?php echo htmlspecialchars($food['rating']); ?></span>
+                                    <span class="food-category"><?php echo htmlspecialchars(__($food['category'], $food['category'])); ?></span>
+                                    <span class="food-rating"><i class="fa-solid fa-star" style="color:#f59e0b"></i> <?php echo t_num($food['rating']); ?></span>
                                 </div>
-                                <div class="food-name"><?php echo htmlspecialchars($food['name']); ?></div>
-                                <div class="food-desc"><?php echo htmlspecialchars($food['description']); ?></div>
+                                <div class="food-name"><?php echo htmlspecialchars(__($food['name'], $food['name'])); ?></div>
+                                <div class="food-desc"><?php echo htmlspecialchars(__($food['description'], $food['description'])); ?></div>
                                 <div class="food-footer">
                                     <div>
-                                        <div class="food-time">&#x1F550; <?php echo htmlspecialchars($food['delivery_time']); ?></div>
-                                        <div class="food-price">Rs. <?php echo number_format((float)$food['price'],2); ?></div>
+                                        <div class="food-time"><i class="fa-regular fa-clock"></i> <?php echo t_delivery_time($food['delivery_time']); ?></div>
+                                        <div class="food-price"><?php echo __('currency_rs', 'Rs.'); ?> <?php echo t_num(number_format((float)$food['price'],2)); ?></div>
                                     </div>
                                     <form action="actions/add_to_cart.php" method="post" onclick="event.stopPropagation();">
                                         <input type="hidden" name="food_id"   value="<?php echo (int)$food['id']; ?>" />
-                                        <input type="hidden" name="food_name" value="<?php echo htmlspecialchars($food['name']); ?>" />
+                                        <input type="hidden" name="food_name" value="<?php echo htmlspecialchars(__($food['name'], $food['name'])); ?>" />
                                         <input type="hidden" name="price"     value="<?php echo (float)$food['price']; ?>" />
-                                        <button class="add-btn" type="submit" aria-label="Add <?php echo htmlspecialchars($food['name']); ?> to cart" data-name="<?php echo htmlspecialchars($food['name']); ?>">+</button>
+                                        <button class="add-btn" type="submit" aria-label="<?php echo sprintf(__('add_to_cart_aria', 'Add %s to cart'), htmlspecialchars(__($food['name'], $food['name']))); ?>" data-name="<?php echo htmlspecialchars(__($food['name'], $food['name'])); ?>">+</button>
                                     </form>
                                 </div>
                             </div>
