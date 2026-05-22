@@ -1,8 +1,6 @@
-﻿<?php
-session_start();
-include('../core/db.php');
-include('../core/cart_helper.php');
-include('../core/csrf.php');
+<?php
+require_once '../core/bootstrap.php';
+require_once '../core/csrf.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
@@ -26,7 +24,7 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Orders — SwiftBite</title>
+    <title><?php echo __('my_orders', 'My Orders'); ?> — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../assets/css/style.css?v=8" />
@@ -160,11 +158,11 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
     <div class="cancel-modal-overlay" id="cancelModal">
         <div class="cancel-modal">
             <div class="modal-icon"><i class="fa-solid fa-trash"></i></div>
-            <h3>Cancel Order?</h3>
-            <p>Are you sure you want to cancel <strong id="modalOrderLabel">this order</strong>? This action <strong>cannot be undone</strong> and the order will be permanently removed.</p>
+            <h3><?php echo __('cancel_order_q', 'Cancel Order?'); ?></h3>
+            <p><?php echo __('cancel_order_confirm_msg', 'Are you sure you want to cancel <strong id="modalOrderLabel">this order</strong>? This action <strong>cannot be undone</strong> and the order will be permanently removed.'); ?></p>
             <div class="modal-btns">
-                <button class="modal-keep" id="modalKeepBtn">Keep Order</button>
-                <button class="modal-confirm-cancel" id="modalCancelBtn">Yes, Cancel</button>
+                <button class="modal-keep" id="modalKeepBtn"><?php echo __('keep_order', 'Keep Order'); ?></button>
+                <button class="modal-confirm-cancel" id="modalCancelBtn"><?php echo __('yes_cancel', 'Yes, Cancel'); ?></button>
             </div>
         </div>
     </div>
@@ -176,29 +174,29 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
         <div class="orders-inner">
 
             <div class="page-header">
-                <h1><i class="fa-solid fa-box"></i> My Orders</h1>
+                <h1><i class="fa-solid fa-box"></i> <?php echo __('my_orders', 'My Orders'); ?></h1>
             </div>
 
             <?php if (empty($orders)): ?>
                 <div class="empty-state">
                     <div class="empty-icon"><i class="fa-solid fa-utensils"></i></div>
-                    <h3>No orders yet</h3>
-                    <p>You haven't placed any orders. Start exploring our delicious menu to satisfy your cravings!</p>
-                    <a href="../menu.php" class="empty-btn">Explore Menu</a>
+                    <h3><?php echo __('no_orders_yet', 'No orders yet'); ?></h3>
+                    <p><?php echo __('no_orders_placed_desc', 'You haven\'t placed any orders. Start exploring our delicious menu to satisfy your cravings!'); ?></p>
+                    <a href="../menu.php" class="empty-btn"><?php echo __('explore_menu', 'Explore Menu'); ?></a>
                 </div>
             <?php else: ?>
                 <?php foreach ($orders as $order): ?>
                     <?php
                         $statusMap = [
-                            'pending'          => ['icon' => '<i class="fa-solid fa-hourglass-half" style="color:#f59e0b"></i>', 'text' => 'Waiting for confirmation'],
-                            'confirmed'        => ['icon' => '👍', 'text' => 'Confirmed'],
-                            'preparing'        => ['icon' => '🧑‍🍳', 'text' => 'Preparing Food'],
-                            'ready'            => ['icon' => '<i class="fa-solid fa-circle-check" style="color:#22c55e"></i>', 'text' => 'Ready for Pickup'],
-                            'out_for_delivery' => ['icon' => '<i class="fa-solid fa-motorcycle"></i>', 'text' => 'Out for Delivery'],
-                            'delivered'        => ['icon' => '<i class="fa-solid fa-champagne-glasses" style="color:#22c55e"></i>', 'text' => 'Delivered'],
-                            'cancelled'        => ['icon' => '<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i>', 'text' => 'Cancelled'],
+                            'pending'          => ['icon' => '<i class="fa-solid fa-hourglass-half" style="color:#f59e0b"></i>', 'text' => __('status_pending_desc', 'Waiting for confirmation')],
+                            'confirmed'        => ['icon' => '👍', 'text' => __('status_confirmed_desc', 'Confirmed')],
+                            'preparing'        => ['icon' => '🧑‍🍳', 'text' => __('status_preparing_desc', 'Preparing Food')],
+                            'ready'            => ['icon' => '<i class="fa-solid fa-circle-check" style="color:#22c55e"></i>', 'text' => __('status_ready_desc', 'Ready for Pickup')],
+                            'out_for_delivery' => ['icon' => '<i class="fa-solid fa-motorcycle"></i>', 'text' => __('status_out_for_delivery_desc', 'Out for Delivery')],
+                            'delivered'        => ['icon' => '<i class="fa-solid fa-champagne-glasses" style="color:#22c55e"></i>', 'text' => __('status_delivered_desc', 'Delivered')],
+                            'cancelled'        => ['icon' => '<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i>', 'text' => __('status_cancelled_desc', 'Cancelled')],
                         ];
-                        $s = $statusMap[$order['status']] ?? ['icon' => '<i class="fa-solid fa-box"></i>', 'text' => ucfirst($order['status'])];
+                        $s = $statusMap[$order['status']] ?? ['icon' => '<i class="fa-solid fa-box"></i>', 'text' => __($order['status'], ucfirst($order['status']))];
 
                         $deadline       = strtotime($order['created_at']) + CANCEL_WINDOW_SECONDS;
                         $canCancel      = ($order['status'] === 'pending') && (time() < $deadline);
@@ -207,8 +205,13 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
                     <div class="order-card" id="order-card-<?php echo $order['id']; ?>">
                         <div class="order-top">
                             <div>
-                                <div class="order-id">Order #<?php echo str_pad($order['id'], 5, '0', STR_PAD_LEFT); ?></div>
-                                <div class="order-date"><?php echo date('M d, Y • h:i A', strtotime($order['created_at'])); ?></div>
+                                <div class="order-id"><?php echo __('order_title_hash', 'Order'); ?> #<?php echo t_num(str_pad($order['id'], 5, '0', STR_PAD_LEFT)); ?></div>
+                                <div class="order-date"><?php 
+                                    $o_month = date('M', strtotime($order['created_at']));
+                                    $o_day = date('d, Y', strtotime($order['created_at']));
+                                    $o_time = date('h:i A', strtotime($order['created_at']));
+                                    echo __($o_month, $o_month) . ' ' . t_num($o_day) . ' • ' . t_num($o_time);
+                                    ?></div>
                             </div>
                             <div class="order-status status-<?php echo $order['status']; ?>">
                                 <?php echo $s['icon'] . ' ' . $s['text']; ?>
@@ -218,34 +221,34 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
                         <div class="order-body">
                             <div class="order-info">
                                 <div class="order-info-row">
-                                    <span>Method:</span>
-                                    <span style="text-transform:uppercase; font-weight:600;"><?php echo htmlspecialchars($order['payment_method']); ?></span>
+                                    <span><?php echo __('payment_method_label', 'Method:'); ?></span>
+                                    <span style="text-transform:uppercase; font-weight:600;"><?php echo $order['payment_method'] === 'cod' ? __('cash_on_delivery_cod', 'Cash on Delivery (COD)') : htmlspecialchars(strtoupper($order['payment_method'])); ?></span>
                                 </div>
                                 <div class="order-info-row">
-                                    <span>Items Subtotal:</span>
-                                    <span>Rs. <?php echo number_format($order['subtotal'], 2); ?></span>
+                                    <span><?php echo __('items_subtotal', 'Items Subtotal:'); ?></span>
+                                    <span><?php echo __('currency_rs', 'Rs.'); ?> <?php echo t_num(number_format($order['subtotal'], 2)); ?></span>
                                 </div>
                                 <div class="order-info-row total">
-                                    <span>Total Paid:</span>
-                                    <span>Rs. <?php echo number_format($order['total'], 2); ?></span>
+                                    <span><?php echo __('total_paid', 'Total Paid:'); ?></span>
+                                    <span><?php echo __('currency_rs', 'Rs.'); ?> <?php echo t_num(number_format($order['total'], 2)); ?></span>
                                 </div>
                             </div>
 
                             <div class="order-actions">
-                                <a href="order_details.php?id=<?php echo $order['id']; ?>" class="view-btn">View Details <i class="fa-solid fa-arrow-right"></i></a>
+                                <a href="order_details.php?id=<?php echo $order['id']; ?>" class="view-btn"><?php echo __('view_details', 'View Details'); ?> <i class="fa-solid fa-arrow-right"></i></a>
 
                                 <?php if ($canCancel): ?>
                                     <button
                                         class="cancel-btn"
                                         id="cancel-btn-<?php echo $order['id']; ?>"
                                         data-order-id="<?php echo $order['id']; ?>"
-                                        data-order-label="Order #<?php echo str_pad($order['id'], 5, '0', STR_PAD_LEFT); ?>"
+                                        data-order-label="<?php echo __('order_title_hash', 'Order'); ?> #<?php echo t_num(str_pad($order['id'], 5, '0', STR_PAD_LEFT)); ?>"
                                         data-deadline="<?php echo $deadlineMs; ?>"
                                     >
-                                        <i class="fa-solid fa-trash"></i> Cancel Order
+                                        <i class="fa-solid fa-trash"></i> <?php echo __('cancel_order', 'Cancel Order'); ?>
                                     </button>
                                     <div class="cancel-countdown" id="countdown-<?php echo $order['id']; ?>">
-                                        <span>Cancel within:</span>
+                                        <span><?php echo __('cancel_within', 'Cancel within:'); ?></span>
                                         <span class="timer-pill" id="timer-<?php echo $order['id']; ?>">--:--</span>
                                     </div>
                                 <?php endif; ?>
@@ -270,9 +273,22 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
         const keepBtn    = document.getElementById('modalKeepBtn');
         const confirmBtn = document.getElementById('modalCancelBtn');
         const toast      = document.getElementById('orderToast');
+        const activeLang = '<?php echo $activeLang; ?>';
 
         let pendingOrderId    = null;
         let pendingOrderLabel = null;
+
+        function t_num_js(numStr) {
+            if (activeLang !== 'ne') return numStr;
+            const nepDigits = ['०', '१', '२', '३', '४', '५', '६', '७', '८', '९'];
+            return numStr.toString().replace(/\d/g, d => nepDigits[d]);
+        }
+
+        function getExpiredText() {
+            if (activeLang === 'ne') return '⛔ समय समाप्त भयो';
+            if (activeLang === 'ja') return '⛔ 期限切れ';
+            return '⛔ Window Expired';
+        }
 
         /* ── Countdown Timers ── */
         document.querySelectorAll('.cancel-btn[data-deadline]').forEach(btn => {
@@ -285,14 +301,14 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
                 const remaining = Math.max(0, Math.floor((deadline - Date.now()) / 1000));
                 if (remaining <= 0) {
                     btn.disabled = true;
-                    btn.textContent = '⛔ Window Expired';
+                    btn.textContent = getExpiredText();
                     const countdownEl = document.getElementById('countdown-' + orderId);
                     if (countdownEl) countdownEl.style.display = 'none';
                     return;
                 }
                 const mins = String(Math.floor(remaining / 60)).padStart(2, '0');
                 const secs = String(remaining % 60).padStart(2, '0');
-                timerEl.textContent = `⏱ ${mins}:${secs}`;
+                timerEl.textContent = `⏱ ${t_num_js(mins)}:${t_num_js(secs)}`;
                 if (remaining <= 120) pillEl.classList.add('urgent');
                 else pillEl.classList.remove('urgent');
                 setTimeout(updateTimer, 1000);
@@ -308,7 +324,7 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
                 pendingOrderLabel = this.dataset.orderLabel;
                 document.getElementById('modalOrderLabel').textContent = pendingOrderLabel;
                 confirmBtn.disabled = false;
-                confirmBtn.textContent = 'Yes, Cancel';
+                confirmBtn.textContent = (activeLang === 'ne') ? 'हो, रद्द गर्नुहोस्' : ((activeLang === 'ja') ? 'はい、キャンセルします' : 'Yes, Cancel');
                 modal.classList.add('active');
             });
         });
@@ -328,7 +344,7 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
         confirmBtn.addEventListener('click', function () {
             if (!pendingOrderId) return;
             this.disabled       = true;
-            this.textContent    = 'Cancelling…';
+            this.textContent    = (activeLang === 'ne') ? 'रद्द गरिँदै...' : ((activeLang === 'ja') ? 'キャンセル中…' : 'Cancelling…');
 
             const formData = new FormData();
             formData.append('csrf_token', CSRF_TOKEN);
@@ -354,14 +370,15 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
                                 setTimeout(() => card.remove(), 300);
                             }, 350);
                         }
-                        showToast('<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> ' + data.message, 'success');
+                        showToast('<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> ' + (data.message_translated || data.message), 'success');
                     } else {
-                        showToast('<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> ' + data.message, 'error');
+                        showToast('<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> ' + (data.message_translated || data.message), 'error');
                     }
                 })
                 .catch(() => {
                     closeModal();
-                    showToast('<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> Network error. Please try again.', 'error');
+                    const netErrorStr = (activeLang === 'ne') ? 'नेटवर्क त्रुटि। फेरि प्रयास गर्नुहोस्।' : ((activeLang === 'ja') ? 'ネットワークエラー。もう一度お試しください。' : 'Network error. Please try again.');
+                    showToast('<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> ' + netErrorStr, 'error');
                 });
         });
 

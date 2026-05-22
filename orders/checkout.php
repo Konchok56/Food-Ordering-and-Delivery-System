@@ -46,7 +46,7 @@ $cartCount = getCartCount($pdo, $user_id);
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Checkout — SwiftBite</title>
+    <title><?php echo __('checkout', 'Checkout'); ?> — SwiftBite</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -184,55 +184,55 @@ $cartCount = getCartCount($pdo, $user_id);
                 
                 <!-- 1. Contact & Delivery -->
                 <div class="checkout-block">
-                    <h2><i class="fa-solid fa-location-dot"></i> Delivery Details</h2>
+                    <h2><i class="fa-solid fa-location-dot"></i> <?php echo __('delivery_details', 'Delivery Details'); ?></h2>
                     <div class="form-grid">
                         <div class="form-group full">
-                            <label for="name">Full Name *</label>
+                            <label for="name"><?php echo __('full_name_star', 'Full Name *'); ?></label>
                             <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($user['name']); ?>" required>
                         </div>
                         <div class="form-group">
-                            <label for="email">Email *</label>
+                            <label for="email"><?php echo __('email_star', 'Email *'); ?></label>
                             <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
                         </div>
                         <div class="form-group">
-                            <label for="phone">Phone Number *</label>
-                            <input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($user['phone'] ?? ''); ?>" required placeholder="e.g. 9812345678">
+                            <label for="phone"><?php echo __('phone_number_star', 'Phone Number *'); ?></label>
+                            <input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($user['phone'] ?? ''); ?>" required placeholder="<?php echo __('phone_placeholder', 'e.g. 9812345678'); ?>">
                         </div>
                         <div class="form-group full">
                             <div class="location-btn-wrap">
-                                <label for="address">Delivery Address *</label>
+                                <label for="address"><?php echo __('delivery_address_star', 'Delivery Address *'); ?></label>
                                 <button type="button" id="useLocationBtn" class="use-location-btn">
-                                    <i class="fa-solid fa-location-crosshairs"></i> Use Current Location
+                                    <i class="fa-solid fa-location-crosshairs"></i> <?php echo __('use_current_location', 'Use Current Location'); ?>
                                 </button>
                             </div>
-                            <input type="text" id="address" name="address" value="<?php echo htmlspecialchars($user['address'] ?? ''); ?>" required placeholder="Street, area, building...">
+                            <input type="text" id="address" name="address" value="<?php echo htmlspecialchars($user['address'] ?? ''); ?>" required placeholder="<?php echo __('address_placeholder', 'Street, area, building...'); ?>">
                         </div>
                         <div class="form-group full">
-                            <label for="city">City *</label>
+                            <label for="city"><?php echo __('city_star', 'City *'); ?></label>
                             <select id="city" name="city" required>
-                                <option value="Kathmandu" <?php echo ($user['city'] ?? 'Kathmandu') === 'Kathmandu' ? 'selected' : ''; ?>>Kathmandu</option>
-                                <option value="Lalitpur" <?php echo ($user['city'] ?? '') === 'Lalitpur' ? 'selected' : ''; ?>>Lalitpur</option>
-                                <option value="Bhaktapur" <?php echo ($user['city'] ?? '') === 'Bhaktapur' ? 'selected' : ''; ?>>Bhaktapur</option>
+                                <option value="Kathmandu" <?php echo ($user['city'] ?? 'Kathmandu') === 'Kathmandu' ? 'selected' : ''; ?>><?php echo __('kathmandu', 'Kathmandu'); ?></option>
+                                <option value="Lalitpur" <?php echo ($user['city'] ?? '') === 'Lalitpur' ? 'selected' : ''; ?>><?php echo __('lalitpur', 'Lalitpur'); ?></option>
+                                <option value="Bhaktapur" <?php echo ($user['city'] ?? '') === 'Bhaktapur' ? 'selected' : ''; ?>><?php echo __('bhaktapur', 'Bhaktapur'); ?></option>
                             </select>
                         </div>
                         <div class="form-group full">
-                            <label for="notes">Delivery Notes (Optional)</label>
-                            <textarea id="notes" name="notes" placeholder="e.g. Leave at the door, call when arrived..."></textarea>
+                            <label for="notes"><?php echo __('delivery_notes_optional', 'Delivery Notes (Optional)'); ?></label>
+                            <textarea id="notes" name="notes" placeholder="<?php echo __('notes_placeholder', 'e.g. Leave at the door, call when arrived...'); ?>"></textarea>
                         </div>
                     </div>
                 </div>
 
                 <!-- 2. Payment Method -->
                 <div class="checkout-block">
-                    <h2>💳 Payment Method</h2>
+                    <h2>💳 <?php echo __('payment_method', 'Payment Method'); ?></h2>
                     <div class="payment-methods">
                         <label class="payment-option">
                             <input type="radio" name="payment_method" value="cod" checked>
-                            <span>💵 Cash on Delivery (COD)</span>
+                            <span>💵 <?php echo __('cash_on_delivery_cod', 'Cash on Delivery (COD)'); ?></span>
                         </label>
                         <label class="payment-option">
                             <input type="radio" name="payment_method" value="esewa">
-                            <span>🟢 eSewa (Coming Soon)</span>
+                            <span>🟢 <?php echo __('esewa_coming_soon', 'eSewa (Coming Soon)'); ?></span>
                         </label>
                     </div>
                 </div>
@@ -241,7 +241,7 @@ $cartCount = getCartCount($pdo, $user_id);
 
             <!-- Sidebar Summary -->
             <div class="checkout-block summary-block">
-                <h2><i class="fa-solid fa-cart-shopping"></i> Order Summary</h2>
+                <h2><i class="fa-solid fa-cart-shopping"></i> <?php echo __('order_summary', 'Order Summary'); ?></h2>
                 
                 <div class="summary-items" style="margin-bottom: 20px;">
                     <?php foreach ($cart as $item): ?>
@@ -258,46 +258,46 @@ $cartCount = getCartCount($pdo, $user_id);
                                 <?php endif; ?>
                             </div>
                             <div class="summary-info">
-                                <div class="summary-name"><?php echo htmlspecialchars($item['food_name']); ?></div>
-                                <div class="summary-meta">Qty: <?php echo $item['quantity']; ?></div>
+                                <div class="summary-name"><?php echo htmlspecialchars(__($item['food_name'], $item['food_name'])); ?></div>
+                                <div class="summary-meta"><?php echo __('qty', 'Qty'); ?>: <?php echo t_num($item['quantity']); ?></div>
                             </div>
-                            <div class="summary-price">Rs. <?php echo number_format($item['price'] * $item['quantity'], 2); ?></div>
+                            <div class="summary-price"><?php echo __('currency_rs', 'Rs.'); ?> <?php echo t_num(number_format($item['price'] * $item['quantity'], 2)); ?></div>
                         </div>
                     <?php endforeach; ?>
                 </div>
 
                 <div class="promo-code-block" style="display: flex; gap: 8px; margin-bottom: 20px;">
-                    <input type="text" id="promoCode" placeholder="Promo Code" style="flex: 1; padding: 12px; border-radius: 12px; border: 2px solid var(--cream2); font-family: 'DM Sans', sans-serif; outline: none; transition: 0.2s;">
-                    <button type="button" id="applyPromoBtn" style="padding: 12px 20px; background: var(--dark); color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s;">Apply</button>
+                    <input type="text" id="promoCode" placeholder="<?php echo __('promo_code_placeholder', 'Promo Code'); ?>" style="flex: 1; padding: 12px; border-radius: 12px; border: 2px solid var(--cream2); font-family: 'DM Sans', sans-serif; outline: none; transition: 0.2s;">
+                    <button type="button" id="applyPromoBtn" style="padding: 12px 20px; background: var(--dark); color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s;"><?php echo __('apply', 'Apply'); ?></button>
                 </div>
                 <div id="promoMessage" style="font-size: 0.85rem; margin-top: -12px; margin-bottom: 12px; font-weight: 600;"></div>
 
                 <div class="summary-totals">
                     <div class="summary-row">
-                        <span>Subtotal</span>
-                        <span>Rs. <?php echo number_format($subtotal, 2); ?></span>
+                        <span><?php echo __('subtotal', 'Subtotal'); ?></span>
+                        <span><?php echo __('currency_rs', 'Rs.'); ?> <?php echo t_num(number_format($subtotal, 2)); ?></span>
                     </div>
                     <div class="summary-row">
-                        <span>Delivery Fee</span>
-                        <span>Rs. <?php echo number_format($deliveryFee, 2); ?></span>
+                        <span><?php echo __('delivery_fee', 'Delivery Fee'); ?></span>
+                        <span><?php echo __('currency_rs', 'Rs.'); ?> <?php echo t_num(number_format($deliveryFee, 2)); ?></span>
                     </div>
                     <div class="summary-row" id="discountRow" style="display: none; color: #34c759;">
-                        <span>Discount</span>
-                        <span>- Rs. <span id="discountValue">0.00</span></span>
+                        <span><?php echo __('discount', 'Discount'); ?></span>
+                        <span>- <?php echo __('currency_rs', 'Rs.'); ?> <span id="discountValue">०.००</span></span>
                     </div>
                     <div class="summary-row total">
-                        <span>Total</span>
-                        <span id="finalTotalStr">Rs. <?php echo number_format($total, 2); ?></span>
+                        <span><?php echo __('total', 'Total'); ?></span>
+                        <span id="finalTotalStr"><?php echo __('currency_rs', 'Rs.'); ?> <?php echo t_num(number_format($total, 2)); ?></span>
                     </div>
                 </div>
 
                 <?php if (($user['status'] ?? 'active') === 'inactive'): ?>
                     <div style="margin-top: 24px; padding: 14px; background: rgba(255,59,48,0.1); border: 1px solid rgba(255,59,48,0.2); border-radius: 12px; color: #cc2d25; font-size: 0.9rem; font-weight: 600; text-align: center;">
-                        <i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> You need to be active to order. Please update your status in your profile.
+                        <i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> <?php echo __('need_active_to_order', 'You need to be active to order. Please update your status in your profile.'); ?>
                     </div>
-                    <button type="button" class="place-order-btn" style="background:#ccc; box-shadow:none; cursor:not-allowed;" disabled><i class="fa-solid fa-rocket"></i> Place Order</button>
+                    <button type="button" class="place-order-btn" style="background:#ccc; box-shadow:none; cursor:not-allowed;" disabled><i class="fa-solid fa-rocket"></i> <?php echo __('place_order', 'Place Order'); ?></button>
                 <?php else: ?>
-                    <button type="submit" form="checkoutForm" class="place-order-btn"><i class="fa-solid fa-rocket"></i> Place Order</button>
+                    <button type="submit" form="checkoutForm" class="place-order-btn"><i class="fa-solid fa-rocket"></i> <?php echo __('place_order', 'Place Order'); ?></button>
                 <?php endif; ?>
             </div>
 
@@ -308,25 +308,25 @@ $cartCount = getCartCount($pdo, $user_id);
     <div class="map-modal-overlay" id="mapModalOverlay">
         <div class="map-modal">
             <div class="map-modal-header">
-                <h3><i class="fa-solid fa-map-location-dot" style="color:var(--orange);margin-right:8px;"></i>Set Delivery Location</h3>
+                <h3><i class="fa-solid fa-map-location-dot" style="color:var(--orange);margin-right:8px;"></i><?php echo __('set_delivery_location', 'Set Delivery Location'); ?></h3>
                 <button class="map-modal-close" id="mapModalClose" title="Close"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="map-modal-toolbar">
-                <input type="text" id="mapSearchInput" class="map-search-input" placeholder="Search an address or click on the map…">
+                <input type="text" id="mapSearchInput" class="map-search-input" placeholder="<?php echo __('map_search_placeholder', 'Search an address or click on the map…'); ?>">
                 <button type="button" id="mapSearchBtn" class="map-gps-btn" style="background:var(--dark);">
-                    <i class="fa-solid fa-magnifying-glass"></i> Search
+                    <i class="fa-solid fa-magnifying-glass"></i> <?php echo __('search', 'Search'); ?>
                 </button>
                 <button type="button" id="mapGpsBtn" class="map-gps-btn">
-                    <i class="fa-solid fa-location-crosshairs"></i> Use My GPS
+                    <i class="fa-solid fa-location-crosshairs"></i> <?php echo __('use_my_gps', 'Use My GPS'); ?>
                 </button>
             </div>
             <div id="leafletMap"></div>
             <div class="map-modal-footer">
                 <div class="map-selected-addr" id="mapSelectedAddr">
-                    <span style="color:var(--muted);">Click anywhere on the map to pin your location.</span>
+                    <span style="color:var(--muted);"><?php echo __('map_pin_instruction', 'Click anywhere on the map to pin your location.'); ?></span>
                 </div>
                 <button type="button" class="map-confirm-btn" id="mapConfirmBtn" disabled>
-                    <i class="fa-solid fa-check"></i> Confirm
+                    <i class="fa-solid fa-check"></i> <?php echo __('confirm', 'Confirm'); ?>
                 </button>
             </div>
         </div>
@@ -345,6 +345,13 @@ $cartCount = getCartCount($pdo, $user_id);
         const discountValue = document.getElementById('discountValue');
         const finalTotalStr = document.getElementById('finalTotalStr');
         const hiddenPromoCode = document.getElementById('hiddenPromoCode');
+        const activeLang = '<?php echo $activeLang; ?>';
+
+        function t_num_js(numStr) {
+            if (activeLang !== 'ne') return numStr;
+            const nepDigits = ['०', '१', '२', '३', '४', '५', '६', '७', '८', '९'];
+            return numStr.toString().replace(/\d/g, d => nepDigits[d]);
+        }
 
         applyPromoBtn.addEventListener('click', function() {
             const code = promoCodeInput.value.trim().toUpperCase();
@@ -364,10 +371,10 @@ $cartCount = getCartCount($pdo, $user_id);
             .then(res => res.json())
             .then(data => {
                 applyPromoBtn.disabled = false;
-                applyPromoBtn.textContent = 'Apply';
+                applyPromoBtn.textContent = '<?php echo __('apply', 'Apply'); ?>';
 
                 if (data.success) {
-                    promoMessage.textContent = '<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> ' + data.message;
+                    promoMessage.textContent = '✓ ' + data.message;
                     promoMessage.style.color = '#34c759';
                     
                     hiddenPromoCode.value = data.code;
@@ -376,21 +383,21 @@ $cartCount = getCartCount($pdo, $user_id);
                     const newTotal = originalTotal - discount;
 
                     discountRow.style.display = 'flex';
-                    discountValue.textContent = discount.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    discountValue.textContent = t_num_js(discount.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
                     
-                    finalTotalStr.textContent = 'Rs. ' + Math.max(0, newTotal).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    finalTotalStr.textContent = '<?php echo __('currency_rs', 'Rs.'); ?> ' + t_num_js(Math.max(0, newTotal).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
                 } else {
-                    promoMessage.textContent = '<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> ' + data.message;
+                    promoMessage.textContent = '✗ ' + data.message;
                     promoMessage.style.color = '#ff2400';
                     
                     hiddenPromoCode.value = '';
                     discountRow.style.display = 'none';
-                    finalTotalStr.textContent = 'Rs. ' + originalTotal.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    finalTotalStr.textContent = '<?php echo __('currency_rs', 'Rs.'); ?> ' + t_num_js(originalTotal.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
                 }
             })
             .catch(err => {
                 applyPromoBtn.disabled = false;
-                applyPromoBtn.textContent = 'Apply';
+                applyPromoBtn.textContent = '<?php echo __('apply', 'Apply'); ?>';
                 console.error(err);
             });
         });
@@ -434,7 +441,7 @@ $cartCount = getCartCount($pdo, $user_id);
             if (marker) marker.setLatLng([lat, lon]);
             else marker = L.marker([lat, lon]).addTo(leafletMap);
             pickedLat = lat; pickedLon = lon;
-            mapSelectedAddr.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Fetching address…';
+            mapSelectedAddr.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <?php echo __('fetching_address_dots', 'Fetching address…'); ?>';
             mapConfirmBtn.disabled = true;
             fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`)
                 .then(r => r.json()).then(d => {
@@ -470,19 +477,19 @@ $cartCount = getCartCount($pdo, $user_id);
 
         // GPS inside modal
         mapGpsBtn.addEventListener('click', () => {
-            if (!navigator.geolocation) { alert('Geolocation not supported.'); return; }
+            if (!navigator.geolocation) { alert('<?php echo __('geolocation_not_supported', 'Geolocation not supported.'); ?>'); return; }
             mapGpsBtn.disabled = true;
-            mapGpsBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Locating…';
+            mapGpsBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <?php echo __('locating_dots', 'Locating…'); ?>';
             navigator.geolocation.getCurrentPosition(pos => {
                 initMap(pos.coords.latitude, pos.coords.longitude);
                 leafletMap.setView([pos.coords.latitude, pos.coords.longitude], 17);
                 placeMarker(pos.coords.latitude, pos.coords.longitude);
                 mapGpsBtn.disabled = false;
-                mapGpsBtn.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i> Use My GPS';
+                mapGpsBtn.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i> <?php echo __('use_my_gps', 'Use My GPS'); ?>';
             }, err => {
-                alert('Could not get location: ' + (err.code === 1 ? 'Permission denied.' : 'Try again.'));
+                alert('<?php echo __('could_not_get_location', 'Could not get location: '); ?>' + (err.code === 1 ? '<?php echo __('permission_denied', 'Permission denied.'); ?>' : '<?php echo __('try_again', 'Try again.'); ?>'));
                 mapGpsBtn.disabled = false;
-                mapGpsBtn.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i> Use My GPS';
+                mapGpsBtn.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i> <?php echo __('use_my_gps', 'Use My GPS'); ?>';
             }, { enableHighAccuracy: true, timeout: 10000 });
         });
 
@@ -499,12 +506,12 @@ $cartCount = getCartCount($pdo, $user_id);
                         initMap(parseFloat(lat), parseFloat(lon));
                         leafletMap.setView([parseFloat(lat), parseFloat(lon)], 16);
                         placeMarker(parseFloat(lat), parseFloat(lon));
-                    } else { alert('Address not found. Try a different search.'); }
+                    } else { alert('<?php echo __('address_not_found', 'Address not found. Try a different search.'); ?>'); }
                     mapSearchBtn.disabled = false;
-                    mapSearchBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Search';
+                    mapSearchBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> <?php echo __('search', 'Search'); ?>';
                 }).catch(() => {
                     mapSearchBtn.disabled = false;
-                    mapSearchBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Search';
+                    mapSearchBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> <?php echo __('search', 'Search'); ?>';
                 });
         }
         mapSearchBtn.addEventListener('click', doMapSearch);
@@ -512,3 +519,4 @@ $cartCount = getCartCount($pdo, $user_id);
     </script>
 </body>
 </html>
+

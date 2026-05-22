@@ -1,0 +1,116 @@
+/**
+ * SwiftBite — Language Selector Dropdown Stylesheet
+ * Custom styles for premium, theme-adaptive language switcher.
+ */
+
+.lang-selector {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.lang-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 79, 0, 0.08);
+    border: 1px solid rgba(255, 79, 0, 0.2);
+    border-radius: 999px;
+    padding: 8px 16px;
+    color: #1a0a00;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lang-btn:hover {
+    background: rgba(255, 79, 0, 0.15);
+    border-color: rgba(255, 79, 0, 0.4);
+    transform: translateY(-1px);
+}
+
+.lang-btn i {
+    font-size: 0.75rem;
+    transition: transform 0.25s ease;
+}
+
+.lang-selector:hover .lang-btn i {
+    transform: rotate(180deg);
+}
+
+.lang-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: #fff;
+    border: 1px solid rgba(255, 79, 0, 0.15);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(26, 10, 0, 0.12);
+    min-width: 140px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    overflow: hidden;
+    padding: 6px 0;
+}
+
+.lang-selector:hover .lang-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.lang-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    color: #8b6a44;
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    text-align: left;
+}
+
+.lang-option:hover {
+    background: rgba(255, 79, 0, 0.08);
+    color: #ff4f00;
+}
+
+.lang-option.active {
+    background: rgba(255, 79, 0, 0.12);
+    color: #ff4f00;
+    font-weight: 700;
+}
+
+/* ── Dark Theme Overrides ── */
+[data-theme='dark'] .lang-btn {
+    color: #f5ede0;
+    background: rgba(255, 79, 0, 0.12);
+    border-color: rgba(255, 79, 0, 0.3);
+}
+
+[data-theme='dark'] .lang-dropdown {
+    background: #211a0e;
+    border-color: rgba(255, 79, 0, 0.25);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme='dark'] .lang-option {
+    color: #e8d5c0;
+}
+
+[data-theme='dark'] .lang-option:hover {
+    background: rgba(255, 79, 0, 0.15);
+    color: #ff4f00;
+}
+
+[data-theme='dark'] .lang-option.active {
+    background: rgba(255, 79, 0, 0.2);
+    color: #ff4f00;
+}

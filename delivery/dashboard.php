@@ -20,9 +20,11 @@ $flash_success = $_SESSION['delivery_success'] ?? '';
 $flash_error   = $_SESSION['delivery_error']   ?? '';
 unset($_SESSION['delivery_success'], $_SESSION['delivery_error']);
 
+$rider_id = (int)$_SESSION['user_id'];
+
 // Stats
 $statsRow = $pdo->query("SELECT
-    COUNT(CASE WHEN status IN ('pending','confirmed','preparing','out_for_delivery') THEN 1 END) AS active_count,
+    COUNT(CASE WHEN status IN ('assigned','confirmed','preparing','out_for_delivery') THEN 1 END) AS active_count,
     COUNT(CASE WHEN status = 'out_for_delivery' THEN 1 END) AS in_transit,
     COUNT(CASE WHEN status = 'delivered' AND DATE(updated_at) = CURDATE() THEN 1 END) AS delivered_today
     FROM orders")->fetch(PDO::FETCH_ASSOC);
@@ -33,16 +35,30 @@ $stats = [
     'delivered' => (int)($statsRow['delivered_today'] ?? 0),
 ];
 
-// Active orders (all non-delivered, non-cancelled)
-$activeOrders = $pdo->query("
-    SELECT o.*, 
+// GDODS-46: New assignments waiting for this rider to accept/reject
+$assignedOrders = $pdo->prepare("
+    SELECT o.*,
            COALESCE(GROUP_CONCAT(oi.food_name SEPARATOR ', '), '') AS item_names,
            COUNT(oi.id) AS item_count
     FROM orders o
     LEFT JOIN order_items oi ON oi.order_id = o.id
-    WHERE o.status IN ('pending','confirmed','preparing','out_for_delivery')
+    WHERE o.status = 'assigned' AND o.assigned_rider_id = ?
     GROUP BY o.id
-    ORDER BY FIELD(o.status,'out_for_delivery','preparing','confirmed','pending'), o.created_at ASC
+    ORDER BY o.created_at ASC
+");
+$assignedOrders->execute([$rider_id]);
+$assignedOrders = $assignedOrders->fetchAll(PDO::FETCH_ASSOC);
+
+// GDODS-51: Active orders (confirmed/preparing/out_for_delivery)
+$activeOrders = $pdo->query("
+    SELECT o.*,
+           COALESCE(GROUP_CONCAT(oi.food_name SEPARATOR ', '), '') AS item_names,
+           COUNT(oi.id) AS item_count
+    FROM orders o
+    LEFT JOIN order_items oi ON oi.order_id = o.id
+    WHERE o.status IN ('confirmed','preparing','out_for_delivery')
+    GROUP BY o.id
+    ORDER BY FIELD(o.status,'out_for_delivery','preparing','confirmed'), o.created_at ASC
 ")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
@@ -196,6 +212,16 @@ $activeOrders = $pdo->query("
 
         .btn-save { background: var(--orange); color: #fff; border: none; padding: 12px; border-radius: 14px; font-weight: 800; font-size: 0.9rem; cursor: pointer; width: 100%; font-family: 'DM Sans', sans-serif; transition: opacity .2s; }
         .btn-save:hover { opacity: 0.88; }
+
+        /* ── GDODS-51: Delivery Step Buttons ── */
+        .step-actions { padding: 14px 22px; border-top: 1px solid rgba(255,255,255,0.06); }
+        html:not([data-theme='dark']) .step-actions { border-top-color: rgba(0,0,0,0.06); }
+        .step-label-text { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #8b6a44; margin-bottom: 10px; }
+        .btn-step { width: 100%; padding: 13px; border: none; border-radius: 14px; font-weight: 800; font-size: 0.9rem; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-step:hover { opacity: 0.88; transform: translateY(-1px); }
+        .btn-step:disabled { opacity: 0.4; pointer-events: none; }
+        .btn-pickup  { background: linear-gradient(135deg, #007aff, #5ac8fa); color: #fff; }
+        .btn-deliver { background: linear-gradient(135deg, #1a7a34, #34c759); color: #fff; }
         .btn-locate { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); color: #e8d5c0; padding: 12px; border-radius: 14px; font-weight: 700; font-size: 0.85rem; cursor: pointer; width: 100%; font-family: 'DM Sans', sans-serif; transition: all .2s; }
         .btn-locate:hover { background: rgba(255,79,0,0.12); color: var(--orange); }
         .btn-simulate { background: linear-gradient(135deg, #6c47ff, #a78bfa); border: none; color: #fff; padding: 12px; border-radius: 14px; font-weight: 800; font-size: 0.85rem; cursor: pointer; width: 100%; font-family: 'DM Sans', sans-serif; transition: all .2s; }
@@ -205,6 +231,26 @@ $activeOrders = $pdo->query("
         .sim-progress-bar-bg { height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
         .sim-progress-bar-fill { height: 100%; background: linear-gradient(90deg, #6c47ff, #a78bfa); width: 0%; transition: width 0.4s ease; border-radius: 3px; }
         .sim-status-text { font-size: 0.78rem; color: #a78bfa; font-weight: 600; }
+
+        /* ── GDODS-46: Assigned Order Card ── */
+        .assigned-section { margin-bottom: 28px; }
+        .assigned-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,184,48,0.2); border: 1px solid rgba(255,184,48,0.4); color: #f0b429; padding: 4px 12px; border-radius: 999px; font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; animation: pulse-border 1.5s infinite; }
+        .order-card.new-assignment { border-color: rgba(255,184,48,0.6); box-shadow: 0 0 0 2px rgba(255,184,48,0.15); }
+        .assignment-actions { padding: 16px 22px; border-top: 1px solid rgba(255,255,255,0.06); display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .btn-accept { background: linear-gradient(135deg, #1a7a34, #34c759); color: #fff; border: none; padding: 14px; border-radius: 14px; font-weight: 800; font-size: 0.95rem; cursor: pointer; width: 100%; font-family: 'DM Sans', sans-serif; transition: all .2s; }
+        .btn-accept:hover { opacity: 0.88; transform: translateY(-1px); }
+        .btn-reject { background: rgba(255,59,48,0.15); color: #ff3b30; border: 1px solid rgba(255,59,48,0.35); padding: 14px; border-radius: 14px; font-weight: 800; font-size: 0.95rem; cursor: pointer; width: 100%; font-family: 'DM Sans', sans-serif; transition: all .2s; }
+        .btn-reject:hover { background: rgba(255,59,48,0.3); }
+        .btn-accept:disabled, .btn-reject:disabled { opacity: 0.4; pointer-events: none; }
+
+        /* ── GDODS-51: Delivery Step Buttons ── */
+        .step-actions { padding: 14px 22px; border-top: 1px solid rgba(255,255,255,0.06); }
+        .step-label-text { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #8b6a44; margin-bottom: 10px; }
+        .btn-step { width: 100%; padding: 13px; border: none; border-radius: 14px; font-weight: 800; font-size: 0.9rem; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-step:hover { opacity: 0.88; transform: translateY(-1px); }
+        .btn-step:disabled { opacity: 0.4; pointer-events: none; }
+        .btn-pickup   { background: linear-gradient(135deg, #007aff, #5ac8fa); color: #fff; }
+        .btn-deliver  { background: linear-gradient(135deg, #1a7a34, #34c759); color: #fff; }
 
         /* Live Tracking Banner */
         .live-tracking-banner {
@@ -354,7 +400,67 @@ $activeOrders = $pdo->query("
             </div>
         </div>
 
-        <!-- Orders -->
+        <!-- GDODS-46: New Assignments -->
+        <?php if (!empty($assignedOrders)): ?>
+        <div class="assigned-section">
+            <div class="section-head" style="margin-bottom:12px;">
+                <h2 class="section-title" style="color:#f0b429;"><i class="fa-solid fa-bell"></i> New Assignments</h2>
+                <span class="assigned-badge"><i class="fa-solid fa-circle-exclamation"></i> Action Required</span>
+            </div>
+            <div class="orders-grid">
+                <?php foreach ($assignedOrders as $order): ?>
+                <div class="order-card new-assignment" id="assigned-card-<?php echo (int)$order['id']; ?>">
+                    <div class="card-header">
+                        <div>
+                            <div class="order-id">Order #<?php echo str_pad($order['id'], 5, '0', STR_PAD_LEFT); ?></div>
+                            <div class="order-time"><?php echo date('M d • h:i A', strtotime($order['created_at'])); ?></div>
+                        </div>
+                        <span class="assigned-badge"><i class="fa-solid fa-hourglass-half"></i> Awaiting Response</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-section">
+                            <div class="field-label">Customer</div>
+                            <div class="field-value"><?php echo htmlspecialchars($order['customer_name']); ?></div>
+                            <div class="field-label" style="margin-top:12px;">Phone</div>
+                            <div class="field-value">
+                                <a href="tel:<?php echo htmlspecialchars($order['customer_phone']); ?>" style="color:var(--orange);text-decoration:none;">
+                                    <i class="fa-solid fa-phone"></i> <?php echo htmlspecialchars($order['customer_phone']); ?>
+                                </a>
+                            </div>
+                            <div class="field-label" style="margin-top:12px;">Items (<?php echo $order['item_count']; ?>)</div>
+                            <div class="field-value"><?php echo $order['item_names'] !== '' ? htmlspecialchars(mb_strimwidth($order['item_names'], 0, 60, '...')) : '<span style="color:#8b6a44;font-style:italic;">No items recorded</span>'; ?></div>
+                        </div>
+                        <div class="card-section">
+                            <div class="field-label">Delivery Address</div>
+                            <div class="field-value"><?php echo htmlspecialchars($order['delivery_address']); ?>, <?php echo htmlspecialchars($order['delivery_city']); ?></div>
+                            <div class="field-label" style="margin-top:12px;">Payment</div>
+                            <div class="field-value"><?php echo strtoupper(htmlspecialchars($order['payment_method'])); ?></div>
+                            <div class="field-label" style="margin-top:12px;">Order Total</div>
+                            <div class="field-value highlight">Rs. <?php echo number_format((float)$order['total'], 2); ?></div>
+                        </div>
+                    </div>
+                    <!-- Accept / Reject Buttons -->
+                    <div class="assignment-actions">
+                        <button class="btn-accept"
+                            data-order-id="<?php echo (int)$order['id']; ?>"
+                            data-action="accept"
+                            data-csrf="<?php echo htmlspecialchars(generateCsrfToken()); ?>">
+                            <i class="fa-solid fa-circle-check"></i> Accept Order
+                        </button>
+                        <button class="btn-reject"
+                            data-order-id="<?php echo (int)$order['id']; ?>"
+                            data-action="reject"
+                            data-csrf="<?php echo htmlspecialchars(generateCsrfToken()); ?>">
+                            <i class="fa-solid fa-circle-xmark"></i> Reject Order
+                        </button>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- GDODS-51: Active Orders Queue -->
         <div class="section-head">
             <h2 class="section-title"><i class="fa-solid fa-box"></i> Orders Queue</h2>
             <a class="refresh-btn" href="dashboard.php">🔄 Refresh</a>
@@ -372,7 +478,6 @@ $activeOrders = $pdo->query("
                     $isPriority = $order['status'] === 'out_for_delivery';
                     $statusClass = 's-' . $order['status'];
                     $statusLabels = [
-                        'pending'          => ['<i class="fa-solid fa-hourglass-half" style="color:#f59e0b"></i>', 'Pending'],
                         'confirmed'        => ['👍', 'Confirmed'],
                         'preparing'        => ['🧑‍🍳', 'Preparing'],
                         'out_for_delivery' => ['<i class="fa-solid fa-motorcycle"></i>', 'Out for Delivery'],
@@ -390,39 +495,81 @@ $activeOrders = $pdo->query("
                         <div class="status-pill <?php echo $statusClass; ?>"><?php echo $sIcon . ' ' . $sLabel; ?></div>
                     </div>
 
-                    <!-- Rider + Status form inline fields -->
-                    <form action="../actions/update_order_status.php" method="POST">
-                        <?php echo csrfInput(); ?>
-                        <input type="hidden" name="order_id" value="<?php echo (int)$order['id']; ?>">
-
-                        <div class="form-inline">
-                            <div>
-                                <label class="inp-label">Your Name</label>
-                                <input class="inp" type="text" name="delivery_partner_name"
-                                    value="<?php echo htmlspecialchars($order['delivery_partner_name'] ?? $rider['name']); ?>"
-                                    placeholder="Rider name" required>
-                            </div>
-                            <div>
-                                <label class="inp-label">Your Phone</label>
-                                <input class="inp" type="text" name="delivery_partner_phone"
-                                    value="<?php echo htmlspecialchars($order['delivery_partner_phone'] ?? $rider['phone'] ?? ''); ?>"
-                                    placeholder="98XXXXXXXX" required>
-                            </div>
-                            <div>
-                                <label class="inp-label">Update Status</label>
-                                <select class="sel" name="status" required>
-                                    <?php foreach (['pending','confirmed','preparing','out_for_delivery','delivered','cancelled'] as $s): ?>
-                                        <option value="<?php echo $s; ?>" <?php echo $order['status'] === $s ? 'selected' : ''; ?>>
-                                            <?php echo ucwords(str_replace('_', ' ', $s)); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div style="display:flex;align-items:flex-end;">
-                                <button type="submit" class="btn-save">💾 Save Status</button>
-                            </div>
+                    <!-- Rider Name & Phone (hidden — pre-fills for submission) -->
+                    <div class="form-inline">
+                        <div>
+                            <label class="inp-label">Your Name</label>
+                            <input class="inp rider-name-inp" type="text"
+                                value="<?php echo htmlspecialchars($order['delivery_partner_name'] ?? $rider['name']); ?>"
+                                placeholder="Rider name">
                         </div>
-                    </form>
+                        <div>
+                            <label class="inp-label">Your Phone</label>
+                            <input class="inp rider-phone-inp" type="text"
+                                value="<?php echo htmlspecialchars($order['delivery_partner_phone'] ?? $rider['phone'] ?? ''); ?>"
+                                placeholder="98XXXXXXXX">
+                        </div>
+                    </div>
+
+                    <!-- GDODS-51: Step Buttons -->
+                    <div class="step-actions">
+                        <div class="step-label-text"><i class="fa-solid fa-route"></i> Update Delivery Status</div>
+                        <?php if (in_array($order['status'], ['confirmed', 'preparing'])): ?>
+                            <form action="../actions/update_order_status.php" method="POST">
+                                <?php echo csrfInput(); ?>
+                                <input type="hidden" name="order_id" value="<?php echo (int)$order['id']; ?>">
+                                <input type="hidden" name="status" value="out_for_delivery">
+                                <input type="hidden" name="delivery_partner_name" value="<?php echo htmlspecialchars($order['delivery_partner_name'] ?? $rider['name']); ?>">
+                                <input type="hidden" name="delivery_partner_phone" value="<?php echo htmlspecialchars($order['delivery_partner_phone'] ?? $rider['phone'] ?? ''); ?>">
+                                <button type="submit" class="btn-step btn-pickup">
+                                    <i class="fa-solid fa-bag-shopping"></i> Mark as Picked Up
+                                </button>
+                            </form>
+                        <?php elseif ($order['status'] === 'out_for_delivery'): ?>
+                            <form action="../actions/update_order_status.php" method="POST">
+                                <?php echo csrfInput(); ?>
+                                <input type="hidden" name="order_id" value="<?php echo (int)$order['id']; ?>">
+                                <input type="hidden" name="status" value="delivered">
+                                <input type="hidden" name="delivery_partner_name" value="<?php echo htmlspecialchars($order['delivery_partner_name'] ?? $rider['name']); ?>">
+                                <input type="hidden" name="delivery_partner_phone" value="<?php echo htmlspecialchars($order['delivery_partner_phone'] ?? $rider['phone'] ?? ''); ?>">
+                                <button type="submit" class="btn-step btn-deliver">
+                                    <i class="fa-solid fa-circle-check"></i> Mark as Delivered
+                                </button>
+                            </form>
+                        <?php else: ?>
+                            <div style="color:#8b6a44; font-size:0.85rem; padding:8px 0;">
+                                <i class="fa-solid fa-hourglass-half"></i> Waiting for order to be confirmed before delivery steps begin.
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- GDODS-51: Step Buttons -->
+                    <div class="step-actions">
+                        <div class="step-label-text"><i class="fa-solid fa-route"></i> Update Delivery Status</div>
+                        <?php if (in_array($order['status'], ['confirmed', 'preparing'])): ?>
+                            <form action="../actions/update_order_status.php" method="POST">
+                                <?php echo csrfInput(); ?>
+                                <input type="hidden" name="order_id" value="<?php echo (int)$order['id']; ?>">
+                                <input type="hidden" name="status" value="out_for_delivery">
+                                <input type="hidden" name="delivery_partner_name" value="<?php echo htmlspecialchars($order['delivery_partner_name'] ?? $rider['name']); ?>">
+                                <input type="hidden" name="delivery_partner_phone" value="<?php echo htmlspecialchars($order['delivery_partner_phone'] ?? $rider['phone'] ?? ''); ?>">
+                                <button type="submit" class="btn-step btn-pickup">
+                                    <i class="fa-solid fa-bag-shopping"></i> Mark as Picked Up
+                                </button>
+                            </form>
+                        <?php elseif ($order['status'] === 'out_for_delivery'): ?>
+                            <form action="../actions/update_order_status.php" method="POST">
+                                <?php echo csrfInput(); ?>
+                                <input type="hidden" name="order_id" value="<?php echo (int)$order['id']; ?>">
+                                <input type="hidden" name="status" value="delivered">
+                                <input type="hidden" name="delivery_partner_name" value="<?php echo htmlspecialchars($order['delivery_partner_name'] ?? $rider['name']); ?>">
+                                <input type="hidden" name="delivery_partner_phone" value="<?php echo htmlspecialchars($order['delivery_partner_phone'] ?? $rider['phone'] ?? ''); ?>">
+                                <button type="submit" class="btn-step btn-deliver">
+                                    <i class="fa-solid fa-circle-check"></i> Mark as Delivered
+                                </button>
+                            </form>
+                        <?php endif; ?>
+                    </div>
 
                     <!-- Customer & Order Info -->
                     <div class="card-body">
@@ -439,7 +586,7 @@ $activeOrders = $pdo->query("
                             </div>
 
                             <div class="field-label" style="margin-top:12px;">Items (<?php echo $order['item_count']; ?>)</div>
-                            <div class="field-value"><?php echo htmlspecialchars(mb_strimwidth($order['item_names'], 0, 60, '...')); ?></div>
+                            <div class="field-value"><?php echo $order['item_names'] !== '' ? htmlspecialchars(mb_strimwidth($order['item_names'], 0, 60, '...')) : '<span style="color:#8b6a44;font-style:italic;">No items recorded</span>'; ?></div>
                         </div>
 
                         <div class="card-section">
@@ -535,6 +682,74 @@ $activeOrders = $pdo->query("
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
+// ══════════════════════════════════════════════
+// GDODS-46: Accept / Reject assigned orders
+// ══════════════════════════════════════════════
+document.querySelectorAll('.btn-accept, .btn-reject').forEach(btn => {
+    btn.addEventListener('click', async function () {
+        const orderId  = this.dataset.orderId;
+        const action   = this.dataset.action;
+        const csrf     = this.dataset.csrf;
+        const card     = document.getElementById('assigned-card-' + orderId);
+        const allBtns  = card.querySelectorAll('.btn-accept, .btn-reject');
+
+        allBtns.forEach(b => { b.disabled = true; });
+        this.innerHTML = action === 'accept'
+            ? '<i class="fa-solid fa-spinner fa-spin"></i> Accepting...'
+            : '<i class="fa-solid fa-spinner fa-spin"></i> Rejecting...';
+
+        try {
+            const fd = new FormData();
+            fd.append('order_id',   orderId);
+            fd.append('action',     action);
+            fd.append('csrf_token', csrf);
+
+            const res  = await fetch('../actions/rider_respond_order.php', { method: 'POST', body: fd });
+            const data = await res.json();
+
+            if (data.success) {
+                card.style.transition = 'all 0.4s ease';
+                card.style.opacity    = '0';
+                card.style.transform  = 'scale(0.95)';
+                setTimeout(() => card.remove(), 400);
+
+                // Show toast
+                showRiderToast(
+                    action === 'accept'
+                        ? '<i class="fa-solid fa-circle-check" style="color:#34c759"></i> ' + data.message
+                        : '<i class="fa-solid fa-circle-xmark" style="color:#ff3b30"></i> ' + data.message,
+                    action === 'accept' ? 'success' : 'error'
+                );
+            } else {
+                allBtns.forEach(b => { b.disabled = false; });
+                showRiderToast('<i class="fa-solid fa-triangle-exclamation"></i> ' + data.message, 'error');
+            }
+        } catch (e) {
+            allBtns.forEach(b => { b.disabled = false; });
+            showRiderToast('<i class="fa-solid fa-triangle-exclamation"></i> Network error. Try again.', 'error');
+        }
+    });
+});
+
+// Rider Toast helper
+function showRiderToast(msg, type) {
+    let toast = document.getElementById('rider-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'rider-toast';
+        toast.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);padding:14px 28px;border-radius:999px;font-weight:700;font-size:0.95rem;z-index:10000;opacity:0;transition:all 0.35s;pointer-events:none;white-space:nowrap;box-shadow:0 10px 30px rgba(0,0,0,0.3);color:#fff;';
+        document.body.appendChild(toast);
+    }
+    toast.innerHTML = msg;
+    toast.style.background = type === 'success' ? 'linear-gradient(135deg,#1a7a34,#34c759)' : 'linear-gradient(135deg,#d93025,#ff4136)';
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(20px)';
+    }, 4000);
+}
+
 // ── Live Clock ──
 function updateClock() {
     const now = new Date();
@@ -819,6 +1034,9 @@ document.querySelectorAll('.btn-toggle-tracking').forEach(btn => {
 
 function setTrackingState(orderId, state, title, sub) {
     const banner = document.getElementById('track-banner-' + orderId);
+    const dot    = document.getElementById('track-dot-'    + orderId);
+    const titleEl = document.getElementById('track-title-' + orderId);
+    const subEl   = document.getElementById('track-sub-'   + orderId);
     if (!banner) return;
     banner.className = 'live-tracking-banner ' + state;
     document.getElementById('track-dot-' + orderId).className = 'tracking-dot ' + (state === 'active' ? 'green' : (state === 'error' ? 'red' : ''));
@@ -871,5 +1089,6 @@ if (availToggle) {
     });
 }
 </script>
+<script src="../assets/js/notifications.js"></script>
 </body>
 </html>

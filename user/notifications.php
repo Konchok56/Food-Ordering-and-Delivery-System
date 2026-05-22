@@ -1,8 +1,6 @@
 <?php
-session_start();
-include('../core/db.php');
-include('../core/cart_helper.php');
-include('../core/notification_helper.php');
+require_once '../core/bootstrap.php';
+require_once '../core/notification_helper.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
@@ -19,10 +17,13 @@ markAllNotificationsRead($pdo, $user_id);
 function timeAgo($timestamp) {
     $time = strtotime($timestamp);
     $diff = time() - $time;
-    if ($diff < 60) return 'Just now';
-    if ($diff < 3600) return round($diff / 60) . 'm ago';
-    if ($diff < 86400) return round($diff / 3600) . 'h ago';
-    return date('M d', $time);
+    if ($diff < 60) return __('just_now', 'Just now');
+    if ($diff < 3600) return t_num(round($diff / 60)) . ' ' . __('m_ago', 'm ago');
+    if ($diff < 86400) return t_num(round($diff / 3600)) . ' ' . __('h_ago', 'h ago');
+    
+    $ag_month = date('M', $time);
+    $ag_day = date('d', $time);
+    return __($ag_month, $ag_month) . ' ' . t_num($ag_day);
 }
 ?>
 <!DOCTYPE html>
@@ -30,7 +31,7 @@ function timeAgo($timestamp) {
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Notifications — SwiftBite</title>
+    <title><?php echo __('notifications', 'Notifications'); ?> — SwiftBite</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link rel="stylesheet" href="../assets/css/style.css?v=12" />
@@ -283,22 +284,22 @@ function timeAgo($timestamp) {
         <div class="sb-notif-container">
             
             <header class="sb-notif-header">
-                <h1>Notifications</h1>
-                <span class="sb-notif-badge"><?php echo count($notifications); ?> total</span>
+                <h1><?php echo __('notifications', 'Notifications'); ?></h1>
+                <span class="sb-notif-badge"><?php echo t_num(count($notifications)); ?> <?php echo __('total_count_label', 'total'); ?></span>
             </header>
 
             <nav class="sb-notif-tabs">
-                <button class="sb-notif-tab active" data-filter="all">All</button>
-                <button class="sb-notif-tab" data-filter="order_placed">Orders</button>
-                <button class="sb-notif-tab" data-filter="order_delivered">Delivered</button>
-                <button class="sb-notif-tab" data-filter="order_cancelled">Cancelled</button>
-                <button class="sb-notif-tab" data-filter="order_status">Updates</button>
+                <button class="sb-notif-tab active" data-filter="all"><?php echo __('all', 'All'); ?></button>
+                <button class="sb-notif-tab" data-filter="order_placed"><?php echo __('orders', 'Orders'); ?></button>
+                <button class="sb-notif-tab" data-filter="order_delivered"><?php echo __('delivered', 'Delivered'); ?></button>
+                <button class="sb-notif-tab" data-filter="order_cancelled"><?php echo __('cancelled', 'Cancelled'); ?></button>
+                <button class="sb-notif-tab" data-filter="order_status"><?php echo __('updates', 'Updates'); ?></button>
             </nav>
 
             <?php if (empty($notifications)): ?>
                 <div class="sb-notif-empty">
-                    <h3>No notifications yet</h3>
-                    <p>When you place orders or account updates occur, they'll appear here.</p>
+                    <h3><?php echo __('no_notifications_yet', 'No notifications yet'); ?></h3>
+                    <p><?php echo __('notifications_empty_desc', 'When you place orders or account updates occur, they\'ll appear here.'); ?></p>
                 </div>
             <?php else: ?>
                 <div id="sb-notif-list">
@@ -307,7 +308,13 @@ function timeAgo($timestamp) {
                     foreach ($notifications as $idx => $n):
                         $nDate = date('Y-m-d', strtotime($n['created_at']));
                         if ($nDate !== $lastDate):
-                            $label = ($nDate === date('Y-m-d')) ? 'Today' : date('F j, Y', strtotime($nDate));
+                            if ($nDate === date('Y-m-d')) {
+                                $label = __('today', 'Today');
+                            } else {
+                                $div_month = date('F', strtotime($nDate));
+                                $div_dayyear = date('j, Y', strtotime($nDate));
+                                $label = __($div_month, $div_month) . ' ' . t_num($div_dayyear);
+                            }
                     ?>
                         <div class="sb-date-divider"><?php echo $label; ?></div>
                     <?php 
@@ -316,8 +323,8 @@ function timeAgo($timestamp) {
                     ?>
 
                     <div class="sb-notif-card <?php echo !$n['is_read'] ? 'unread' : ''; ?>" 
-                         data-type="<?php echo htmlspecialchars($n['type']); ?>"
-                         <?php if ($n['link']): ?> onclick="window.location.href='<?php echo htmlspecialchars($n['link']); ?>'" <?php endif; ?>>
+                          data-type="<?php echo htmlspecialchars($n['type']); ?>"
+                          <?php if ($n['link']): ?> onclick="window.location.href='<?php echo htmlspecialchars($n['link']); ?>'" <?php endif; ?>>
                         
                         <?php if ($n['image_path']): ?>
                             <img src="../<?php echo htmlspecialchars($n['image_path']); ?>" class="sb-notif-img" alt="Order image">
@@ -329,10 +336,10 @@ function timeAgo($timestamp) {
 
                         <div class="sb-notif-content">
                             <div class="sb-notif-top">
-                                <span class="sb-notif-title"><?php echo $n['title']; ?></span>
-                                <span class="sb-notif-type"><?php echo str_replace('_', ' ', $n['type']); ?></span>
+                                <span class="sb-notif-title"><?php echo htmlspecialchars(__($n['title'], $n['title'])); ?></span>
+                                <span class="sb-notif-type"><?php echo htmlspecialchars(__('notif_type_' . $n['type'], str_replace('_', ' ', $n['type']))); ?></span>
                             </div>
-                            <p class="sb-notif-msg"><?php echo $n['message']; ?></p>
+                            <p class="sb-notif-msg"><?php echo htmlspecialchars(__($n['message'], $n['message'])); ?></p>
                             <span class="sb-notif-time">
                                 <i class="fa-regular fa-clock"></i> <?php echo timeAgo($n['created_at']); ?>
                             </span>
@@ -378,4 +385,4 @@ function timeAgo($timestamp) {
         });
     </script>
 </body>
-</html>
+</html>l>
