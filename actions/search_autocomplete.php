@@ -39,14 +39,14 @@ try {
     $stmt->execute([$like, $like, $like]);
     foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
         $results['foods'][] = [
-            'id'         => (int) $row['id'],
-            'name'       => $row['name'],
-            'category'   => $row['category'],
-            'price'      => 'Rs. ' . number_format((float) $row['price'], 0),
-            'emoji'      => $row['emoji'] ?? '<i class="fa-solid fa-utensils"></i>',
+            'id' => (int) $row['id'],
+            'name' => $row['name'],
+            'category' => $row['category'],
+            'price' => 'Rs. ' . number_format((float) $row['price'], 0),
+            'emoji' => $row['emoji'] ?? '<i class="fa-solid fa-utensils"></i>',
             'image_path' => $row['image_path'] ?? '',
-            'badge'      => $row['badge'] ?? '',
-            'url'        => 'food_detail.php?id=' . (int) $row['id'],
+            'badge' => $row['badge'] ?? '',
+            'url' => 'food_detail.php?id=' . (int) $row['id'],
         ];
     }
 } catch (PDOException $e) {
@@ -65,14 +65,14 @@ try {
     $stmt2->execute([$like, $like, $like]);
     foreach ($stmt2->fetchAll(PDO::FETCH_ASSOC) as $row) {
         $results['restaurants'][] = [
-            'id'           => (int) $row['id'],
-            'name'         => $row['name'],
-            'city'         => $row['city'] ?? '',
-            'cuisine'      => $row['cuisine_type'] ?? '',
+            'id' => (int) $row['id'],
+            'name' => $row['name'],
+            'city' => $row['city'] ?? '',
+            'cuisine' => $row['cuisine_type'] ?? '',
             'cuisine_type' => $row['cuisine_type'] ?? '',
-            'logo_url'     => $row['image_path'] ?? '',
-            'image_path'   => $row['image_path'] ?? '',
-            'url'          => 'restaurant.php?id=' . (int) $row['id'],
+            'logo_url' => $row['image_path'] ?? '',
+            'image_path' => $row['image_path'] ?? '',
+            'url' => 'restaurant.php?id=' . (int) $row['id'],
         ];
     }
 } catch (PDOException $e) {
@@ -92,9 +92,9 @@ try {
     $stmt3->execute([$like]);
     foreach ($stmt3->fetchAll(PDO::FETCH_ASSOC) as $row) {
         $results['categories'][] = [
-            'name'  => $row['category'],
+            'name' => $row['category'],
             'count' => (int) $row['count'],
-            'url'   => 'menu.php?category=' . urlencode($row['category']),
+            'url' => 'menu.php?category=' . urlencode($row['category']),
         ];
     }
 } catch (PDOException $e) {
