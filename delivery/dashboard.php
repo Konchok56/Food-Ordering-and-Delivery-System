@@ -916,7 +916,7 @@ const miniMaps = {};
             // Update progress bar
             const pct = Math.round((step / (total - 1)) * 100);
             simBar.style.width  = pct + '%';
-            simText.innerHTML = `<i class="fa-solid fa-motorcycle"></i> Simulating... ${pct}% (${step + 1}/${total} points)`;
+            simText.innerHTML   = `<i class="fa-solid fa-motorcycle"></i> Simulating... ${pct}% (${step + 1}/${total} points)`;
             step++;
         }
 

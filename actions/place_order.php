@@ -256,8 +256,9 @@ try {
     exit;
 
 } catch (Exception $e) {
-    $pdo->rollBack();
-    // Log error in real app
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
     die("<h2 style='color:red; text-align:center; margin-top:50px;'>Error placing order: " . htmlspecialchars($e->getMessage()) . "</h2><p><a href='../orders/cart.php'>Back to Cart</a></p>");
 }
 

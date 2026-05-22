@@ -353,10 +353,11 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
             fetch('../actions/cancel_order.php', { method: 'POST', body: formData })
                 .then(r => r.json())
                 .then(data => {
+                    const cancelledId = pendingOrderId;
                     closeModal();
                     if (data.success) {
                         // Animate card out and remove it
-                        const card = document.getElementById('order-card-' + pendingOrderId);
+                        const card = document.getElementById('order-card-' + cancelledId);
                         if (card) {
                             card.style.transition = 'all 0.45s ease';
                             card.style.opacity    = '0';
@@ -383,7 +384,7 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
 
         /* ── Toast Helper ── */
         function showToast(msg, type = '') {
-            toast.innerHTML  = msg;
+            toast.innerHTML    = msg;
             toast.className    = 'order-toast' + (type ? ' ' + type : '');
             void toast.offsetWidth;
             toast.classList.add('show');
