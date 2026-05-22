@@ -107,3 +107,7 @@ function t_delivery_time($time) {
     return $time_translated;
 }
 
+// 3. Define activeLang for inline JavaScript compatibility
+$activeLang = $current_lang;
+
+
