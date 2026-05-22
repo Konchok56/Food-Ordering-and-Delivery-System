@@ -1,4 +1,27 @@
 <?php
+session_start();
+
+//New commit check
+
+// Remember me auto-login
+if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
+    include('core/db.php');
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE remember_token=?");
+    $stmt->execute([$_COOKIE['remember_token']]);
+    $user = $stmt->fetch();
+    if ($user) {
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['user_name'] = $user['name'];
+        $_SESSION['role'] = $user['role'];
+    }
+}
+
+include('core/db.php');
+include('core/cart_helper.php');
+
+// Cart count from DB
+$cartCount = isset($_SESSION['user_id']) ? getCartCount($pdo, $_SESSION['user_id']) : 0;
+
 require_once 'core/bootstrap.php';
 // Get restaurant ID
 $restId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
