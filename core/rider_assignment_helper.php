@@ -71,13 +71,13 @@ function assignNearestRider($pdo, $order_id, $addressString = '') {
         }
         
         if ($nearestRider && $minDist < 50) { // Only assign if within 50km (sanity check)
-            // 4. Assign the rider
+            // 4. Assign the rider — status set to 'assigned' so rider can accept/reject
             $assignStmt = $pdo->prepare("
-                UPDATE orders 
-                SET assigned_rider_id = ?, 
-                    delivery_partner_name = ?, 
+                UPDATE orders
+                SET assigned_rider_id = ?,
+                    delivery_partner_name = ?,
                     delivery_partner_phone = ?,
-                    status = 'confirmed' 
+                    status = 'assigned'
                 WHERE id = ?
             ");
             $assignStmt->execute([
@@ -86,6 +86,21 @@ function assignNearestRider($pdo, $order_id, $addressString = '') {
                 $nearestRider['phone'],
                 $order_id
             ]);
+
+            // Notify the rider of the new assignment
+            if (function_exists('addNotification')) {
+                addNotification(
+                    $pdo,
+                    $nearestRider['id'],
+                    'order_assigned',
+                    'New Order Assigned!',
+                    'Order #' . str_pad($order_id, 5, '0', STR_PAD_LEFT) . ' has been assigned to you. Accept or reject it from your dashboard.',
+                    '<i class="fa-solid fa-motorcycle" style="color:#ff4f00"></i>',
+                    null,
+                    '/food/delivery/dashboard.php'
+                );
+            }
+
             return true;
         }
         

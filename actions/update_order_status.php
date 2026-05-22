@@ -29,7 +29,7 @@ $status = trim((string) ($_POST['status'] ?? ''));
 $deliveryPartnerName = sanitize($_POST['delivery_partner_name'] ?? '');
 $deliveryPartnerPhone = sanitize($_POST['delivery_partner_phone'] ?? '');
 
-$allowedStatuses = ['pending', 'confirmed', 'preparing', 'out_for_delivery', 'delivered', 'cancelled'];
+$allowedStatuses = ['pending', 'assigned', 'confirmed', 'preparing', 'out_for_delivery', 'delivered', 'cancelled'];
 if ($order_id <= 0 || !in_array($status, $allowedStatuses, true)) {
     $_SESSION['delivery_error'] = 'Invalid order or status.';
     header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '../delivery/dashboard.php'));
