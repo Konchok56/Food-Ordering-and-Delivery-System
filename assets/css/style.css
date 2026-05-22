@@ -2452,6 +2452,115 @@ body {
   border-color: var(--orange);
 }
 
+/* ── Language Switcher ── */
+.lang-selector {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.lang-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-main);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.lang-btn:hover {
+  background: rgba(255, 79, 0, 0.08);
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+.lang-btn i {
+  font-size: 0.7rem;
+  transition: transform 0.2s;
+}
+
+.lang-selector.open .lang-btn i {
+  transform: rotate(180deg);
+}
+
+.lang-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--surface);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 6px;
+  min-width: 150px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+  z-index: 9999;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lang-selector.open .lang-dropdown {
+  display: flex;
+}
+
+.lang-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--text-main);
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.15s;
+}
+
+.lang-option:hover {
+  background: rgba(255, 79, 0, 0.08);
+  color: var(--orange);
+}
+
+.lang-option.active {
+  background: rgba(255, 79, 0, 0.1);
+  color: var(--orange);
+  font-weight: 800;
+}
+
+[data-theme="dark"] .lang-btn {
+  color: #e8d5c0;
+  border-color: rgba(255,255,255,0.1);
+}
+[data-theme="dark"] .lang-btn:hover {
+  background: rgba(255,79,0,0.15);
+  border-color: var(--orange);
+  color: var(--orange);
+}
+[data-theme="dark"] .lang-dropdown {
+  background: #1a0a00;
+  border-color: rgba(255,255,255,0.1);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+}
+[data-theme="dark"] .lang-option {
+  color: #e8d5c0;
+}
+[data-theme="dark"] .lang-option:hover {
+  background: rgba(255,79,0,0.15);
+  color: var(--orange);
+}
+[data-theme="dark"] .lang-option.active {
+  background: rgba(255,79,0,0.2);
+  color: var(--orange);
+}
+
 /* ═══════════════════════════════════════════════════════════
    DARK MODE – COMPONENT OVERRIDES
    ═══════════════════════════════════════════════════════════ */

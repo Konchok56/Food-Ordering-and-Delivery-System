@@ -33,6 +33,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// ── Language Translation Support ──────────────────────────
+require_once __DIR__ . '/lang.php';
+
 // ── Database (singleton) ──────────────────────────────────
 if (!isset($GLOBALS['pdo'])) {
     try {

@@ -6,7 +6,7 @@ if (isLoggedIn()) { redirect('index.php'); }
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Sign In — SwiftBite</title>
+    <title><?php echo __('nav_login', 'Sign In'); ?> — SwiftBite</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -188,40 +188,40 @@ if (isLoggedIn()) { redirect('index.php'); }
             <div class="perk">
                 <div class="perk-icon"><i class="fa-solid fa-burger"></i></div>
                 <div class="perk-text">
-                    <strong>100+ Menu Items</strong>
-                    <span>From local favourites to global bites</span>
+                    <strong><?php echo __('perk_items_title', '100+ Menu Items'); ?></strong>
+                    <span><?php echo __('perk_items_desc', 'From local favourites to global bites'); ?></span>
                 </div>
             </div>
             <div class="perk">
                 <div class="perk-icon"><i class="fa-solid fa-motorcycle"></i></div>
                 <div class="perk-text">
-                    <strong>Fast Delivery</strong>
-                    <span>Hot food at your door in 30 mins</span>
+                    <strong><?php echo __('perk_delivery_title', 'Fast Delivery'); ?></strong>
+                    <span><?php echo __('perk_delivery_desc', 'Hot food at your door in 30 mins'); ?></span>
                 </div>
             </div>
             <div class="perk">
                 <div class="perk-icon"><i class="fa-solid fa-tag"></i></div>
                 <div class="perk-text">
-                    <strong>Exclusive Deals</strong>
-                    <span>Members get special promo codes</span>
+                    <strong><?php echo __('perk_deals_title', 'Exclusive Deals'); ?></strong>
+                    <span><?php echo __('perk_deals_desc', 'Members get special promo codes'); ?></span>
                 </div>
             </div>
             <div class="perk">
                 <div class="perk-icon"><i class="fa-solid fa-location-dot"></i></div>
                 <div class="perk-text">
-                    <strong>Live Tracking</strong>
-                    <span>Watch your order arrive in real time</span>
+                    <strong><?php echo __('perk_tracking_title', 'Live Tracking'); ?></strong>
+                    <span><?php echo __('perk_tracking_desc', 'Watch your order arrive in real time'); ?></span>
                 </div>
             </div>
         </div>
 
-        <div class="left-footer">© <?php echo date('Y'); ?> SwiftBite. All rights reserved.</div>
+        <div class="left-footer">© <?php echo date('Y'); ?> SwiftBite. <?php echo __('all_rights_reserved', 'All rights reserved.'); ?></div>
     </div>
 
     <!-- Right -->
     <div class="auth-right">
-        <div class="auth-title">Welcome Back <i class="fa-solid fa-hand-wave" style="color:var(--orange)"></i></div>
-        <div class="auth-subtitle">Sign in to your SwiftBite account</div>
+        <div class="auth-title"><?php echo __('login_welcome_back', 'Welcome Back'); ?> <i class="fa-solid fa-hand-wave" style="color:var(--orange)"></i></div>
+        <div class="auth-subtitle"><?php echo __('login_subtitle', 'Sign in to your SwiftBite account'); ?></div>
 
         <?php echo renderFlash(); ?>
 
@@ -229,29 +229,29 @@ if (isLoggedIn()) { redirect('index.php'); }
             <?php echo csrfInput(); ?>
 
             <div class="auth-field">
-                <label for="email">Email Address</label>
-                <input type="email" name="email" id="email" placeholder="you@example.com" required autocomplete="email">
+                <label for="email"><?php echo __('email_address', 'Email Address'); ?></label>
+                <input type="email" name="email" id="email" placeholder="<?php echo __('email_placeholder', 'you@example.com'); ?>" required autocomplete="email">
             </div>
 
             <div class="auth-field">
-                <label for="password">Password</label>
+                <label for="password"><?php echo __('password', 'Password'); ?></label>
                 <input type="password" name="password" id="password" placeholder="••••••••" required autocomplete="current-password">
             </div>
 
             <div class="auth-options">
-                <label><input type="checkbox" name="remember"> Remember me</label>
-                <a href="forgot_password.php">Forgot password?</a>
+                <label><input type="checkbox" name="remember"> <?php echo __('remember_me', 'Remember me'); ?></label>
+                <a href="forgot_password.php"><?php echo __('forgot_password', 'Forgot password?'); ?></a>
             </div>
 
-            <button class="auth-btn" type="submit">Sign In <i class="fa-solid fa-arrow-right"></i></button>
+            <button class="auth-btn" type="submit"><?php echo __('nav_login', 'Sign In'); ?> <i class="fa-solid fa-arrow-right"></i></button>
         </form>
 
-        <div class="divider"><span>New to SwiftBite?</span></div>
+        <div class="divider"><span><?php echo __('new_to_swiftbite', 'New to SwiftBite?'); ?></span></div>
 
         <div class="auth-footer">
-            <a href="register.php">Create a free account</a>
+            <a href="register.php"><?php echo __('create_free_account', 'Create a free account'); ?></a>
         </div>
-        <a href="../index.php" class="auth-back">← Back to SwiftBite</a>
+        <a href="../index.php" class="auth-back">← <?php echo __('back_to_swiftbite', 'Back to SwiftBite'); ?></a>
     </div>
 </div>
 </body>
