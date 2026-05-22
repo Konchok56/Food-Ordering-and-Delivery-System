@@ -109,9 +109,9 @@ if ($newStatus === 'preparing') {
                         $pdo,
                         (int)$riderId,
                         'order_available',
-                        '🛵 New Delivery Available! ' . $orderLabel,
+                        '<i class="fa-solid fa-motorcycle"></i> New Delivery Available! ' . $orderLabel,
                         'Order ' . $orderLabel . ' from ' . $orderInfo['restaurant_name'] . ' is being prepared. Grab it now!',
-                        '🛵',
+                        '<i class="fa-solid fa-motorcycle"></i>',
                         $oImg,
                         SITE_BASE_URL . '/delivery/dashboard.php'
                     );
