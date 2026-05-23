@@ -29,7 +29,7 @@ if ($order_id <= 0) {
 }
 
 // Fetch the order — must belong to this user
-$stmt = $pdo->prepare("SELECT id, status, created_at, payment_method FROM orders WHERE id = ? AND user_id = ? LIMIT 1");
+$stmt = $pdo->prepare("SELECT id, status, created_at, payment_method, assigned_rider_id FROM orders WHERE id = ? AND user_id = ? LIMIT 1");
 $stmt->execute([$order_id, $user_id]);
 $order = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -38,14 +38,14 @@ if (!$order) {
     exit;
 }
 
-// Only Cash on Delivery (COD) orders can be cancelled by the user
-if ($order['payment_method'] !== 'cod') {
+// Only Cash on Delivery (COD) and eSewa orders can be cancelled by the user
+if ($order['payment_method'] !== 'cod' && $order['payment_method'] !== 'esewa') {
     echo json_encode(['success' => false, 'message' => 'Orders paid via digital payment gateways cannot be cancelled.']);
     exit;
 }
 
-// Only 'pending' orders may be cancelled by the user
-if ($order['status'] !== 'pending') {
+// Only 'pending' or 'assigned' orders may be cancelled by the user
+if ($order['status'] !== 'pending' && $order['status'] !== 'assigned') {
     $statusLabels = [
         'confirmed'        => 'already confirmed',
         'preparing'        => 'already being prepared',
@@ -83,7 +83,21 @@ try {
 
     $pdo->commit();
 
-    // Create cancellation notification
+    // Notify assigned rider if there is one
+    if (!empty($order['assigned_rider_id'])) {
+        addNotification(
+            $pdo,
+            (int)$order['assigned_rider_id'],
+            'order_cancelled',
+            'Order Cancelled',
+            'Order #' . str_pad($order_id, 5, '0', STR_PAD_LEFT) . ' has been cancelled by the customer.',
+            '<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i>',
+            null,
+            SITE_BASE_URL . '/delivery/dashboard.php'
+        );
+    }
+
+    // Create cancellation notification for customer
     $orderLabel = '#' . str_pad($order_id, 5, '0', STR_PAD_LEFT);
     addNotification(
         $pdo, $user_id, 'order_cancelled',
