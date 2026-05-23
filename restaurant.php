@@ -503,7 +503,7 @@ $cuisineEmojis = [
 
         <!-- Hero Banner -->
         <div class="restd-hero">
-            <?php if (!empty($rest['image_path']) && file_exists($rest['image_path'])): ?>
+            <?php if (!empty($rest['image_path']) && file_exists(PROJECT_ROOT . $rest['image_path'])): ?>
                 <div class="restd-hero-bg" style="background-image: url('<?php echo SITE_BASE_URL . '/' . htmlspecialchars($rest['image_path']); ?>'); opacity: 0.35;"></div>
             <?php endif; ?>
             <div class="restd-hero-content">
@@ -622,7 +622,7 @@ $cuisineEmojis = [
                                 <div class="menu-item">
                                     <!-- Image -->
                                     <a href="food_detail.php?id=<?php echo (int)$food['id']; ?>" class="menu-item-img" style="text-decoration:none;">
-                                        <?php if (!empty($food['image_path']) && file_exists($food['image_path'])): ?>
+                                        <?php if (!empty($food['image_path']) && file_exists(PROJECT_ROOT . $food['image_path'])): ?>
                                             <img src="<?php echo SITE_BASE_URL . '/' . htmlspecialchars($food['image_path']); ?>" alt="<?php echo htmlspecialchars(__($food['name'], $food['name'])); ?>">
                                         <?php elseif (!empty($food['image_path'])): ?>
                                             <img src="https://placehold.co/180x180/1a0a00/ff4f00?text=<?php echo urlencode($food['name']); ?>" alt="<?php echo htmlspecialchars(__($food['name'], $food['name'])); ?>">

@@ -27,6 +27,9 @@ define('SITE_NAME',     'SwiftBite');
 define('SITE_TAGLINE',  'Food Delivery, Reinvented');
 define('SITE_BASE_URL', '/food/swiftbite_php_starter'); // no trailing slash
 
+// ── Project root (absolute filesystem path) ───────────────
+define('PROJECT_ROOT', realpath(__DIR__ . '/..') . DIRECTORY_SEPARATOR);
+
 // ── Upload limits ──────────────────────────────────────────
 define('MAX_UPLOAD_MB', 2);
 define('UPLOAD_DIR',    __DIR__ . '/../uploads/');
