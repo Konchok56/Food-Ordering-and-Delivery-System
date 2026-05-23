@@ -21,6 +21,15 @@ if ($responseData && isset($responseData['status']) && $responseData['status'] =
     if ($order && $order['status'] !== 'confirmed') {
         // Officially confirm the order since payment is successful
         $pdo->prepare("UPDATE orders SET status = 'confirmed' WHERE id = ?")->execute([$order['id']]);
+
+        // Assign nearest rider now that payment is confirmed
+        try {
+            include_once('../core/rider_assignment_helper.php');
+            assignNearestRider($pdo, $order['id'], $order['delivery_address']);
+        } catch (Exception $e) {
+            // Non-critical
+        }
+
         header("Location: ../orders/order_confirmation.php?id=" . $order['id'] . "&payment=success");
         exit;
     } else if ($order && $order['status'] === 'confirmed') {
