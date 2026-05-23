@@ -25,7 +25,7 @@ define('DB_CHARSET', env('DB_CHARSET', 'utf8mb4'));
 // ── Site ───────────────────────────────────────────────────
 define('SITE_NAME',     'SwiftBite');
 define('SITE_TAGLINE',  'Food Delivery, Reinvented');
-define('SITE_BASE_URL', '/food'); // no trailing slash
+define('SITE_BASE_URL', '/food/swiftbite_php_starter'); // no trailing slash
 
 // ── Upload limits ──────────────────────────────────────────
 define('MAX_UPLOAD_MB', 2);
