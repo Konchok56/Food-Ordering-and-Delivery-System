@@ -715,7 +715,11 @@ $foods = $foodStmt->fetchAll(PDO::FETCH_ASSOC);
                         <?php if ($editFood && !empty($editFood['image_path'])): ?>
                             <div class="current-image">
                                 <span>Current image:</span>
-                                <img src="../<?php echo htmlspecialchars($editFood['image_path']); ?>" alt="Current">
+                                <?php if (file_exists(__DIR__ . '/../' . $editFood['image_path'])): ?>
+                                    <img src="../<?php echo htmlspecialchars($editFood['image_path']); ?>" alt="Current">
+                                <?php else: ?>
+                                    <img src="https://placehold.co/80x80/1a0a00/ff4f00?text=Missing" alt="Missing" title="File missing on server: <?php echo htmlspecialchars($editFood['image_path']); ?>">
+                                <?php endif; ?>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -779,8 +783,10 @@ $foods = $foodStmt->fetchAll(PDO::FETCH_ASSOC);
                                 <td data-label="Food">
                                     <div class="food-cell">
                                         <div class="food-thumb">
-                                            <?php if (!empty($food['image_path'])): ?>
+                                            <?php if (!empty($food['image_path']) && file_exists(__DIR__ . '/../' . $food['image_path'])): ?>
                                                 <img src="../<?php echo htmlspecialchars($food['image_path']); ?>" alt="<?php echo htmlspecialchars($food['name']); ?>">
+                                            <?php elseif (!empty($food['image_path'])): ?>
+                                                <img src="https://placehold.co/80x80/1a0a00/ff4f00?text=<?php echo urlencode($food['name']); ?>" alt="<?php echo htmlspecialchars($food['name']); ?>">
                                             <?php else: ?>
                                                 <span class="emoji"><?php echo htmlspecialchars($food['emoji']); ?></span>
                                             <?php endif; ?>
