@@ -209,11 +209,15 @@ try {
     $pdo->commit();
 
     // ── GDODS-48: Auto-assign nearest available rider ──
-    try {
-        include_once('../core/rider_assignment_helper.php');
-        assignNearestRider($pdo, $order_id, $address);
-    } catch (Exception $e) {
-        // Non-critical — order still goes through if no rider available
+    // Skip for eSewa: rider assignment is deferred to esewa_success.php after payment is confirmed,
+    // because assignNearestRider sets status='assigned' which breaks the esewa_request.php status='pending' check.
+    if ($payment_method !== 'esewa') {
+        try {
+            include_once('../core/rider_assignment_helper.php');
+            assignNearestRider($pdo, $order_id, $address);
+        } catch (Exception $e) {
+            // Non-critical — order still goes through if no rider available
+        }
     }
 
     // Create notification
