@@ -29,7 +29,7 @@ $csrfToken = generateCsrfToken();
 
 define('CANCEL_WINDOW_SECONDS', 30 * 60);
 $deadline  = strtotime($order['created_at']) + CANCEL_WINDOW_SECONDS;
-$canCancel = ($order['status'] === 'pending') && ($order['payment_method'] === 'cod') && (time() < $deadline);
+$canCancel = in_array($order['status'], ['pending', 'assigned']) && in_array($order['payment_method'], ['cod', 'esewa']) && (time() < $deadline);
 $deadlineMs = $deadline * 1000;
 ?>
 <!DOCTYPE html>

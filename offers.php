@@ -315,7 +315,7 @@ try {
                 <?php foreach ($offers as $off): ?>
                     <div class="offer-card">
                         <div class="offer-banner">
-                            <?php if (!empty($off['image_path']) && file_exists($off['image_path'])): ?>
+                            <?php if (!empty($off['image_path']) && file_exists(PROJECT_ROOT . $off['image_path'])): ?>
                                 <img src="<?php echo SITE_BASE_URL . '/' . htmlspecialchars($off['image_path']); ?>" alt="Offer Banner">
                             <?php elseif (!empty($off['image_path'])): ?>
                                 <img src="https://placehold.co/600x300/1a0a00/ff4f00?text=<?php echo urlencode($off['title'] ?? 'Special Offer'); ?>" alt="Offer Banner">
