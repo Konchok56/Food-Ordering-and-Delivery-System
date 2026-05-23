@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 session_start();
 include('../core/db.php');
 
@@ -575,6 +575,8 @@ $foods = $foodStmt->fetchAll(PDO::FETCH_ASSOC);
             <a href="dashboard.php"><i class="fa-solid fa-chart-bar"></i> Dashboard</a>
             <a href="manage_foods.php" style="color:#fff; background:rgba(255,255,255,0.08);"><i class="fa-solid fa-burger"></i> Menu</a>
             <a href="manage_restaurants.php">🏪 Restaurants</a>
+            <a href="manage_promos.php">💸 Promos</a>
+            <a href="manage_offers.php">🎁 Offers</a>
             <a href="../index.php"><i class="fa-solid fa-house"></i> View Site</a>
         </div>
     </div>
@@ -657,8 +659,8 @@ $foods = $foodStmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
 
                     <div class="form-group">
-                        <label for="emoji">Emoji (fallback) *</label>
-                        <input type="text" id="emoji" name="emoji" required placeholder="<i class="fa-solid fa-burger"></i>"
+                        <label for="emoji">Emoji (fallback)</label>
+                        <input type="text" id="emoji" name="emoji" placeholder="e.g. 🍔 or fa-burger"
                                value="<?php echo $editFood ? htmlspecialchars($editFood['emoji']) : ''; ?>">
                     </div>
 

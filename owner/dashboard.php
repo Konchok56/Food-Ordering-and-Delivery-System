@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once '../core/bootstrap.php';
 
 // Require restaurant or admin role
@@ -64,6 +64,7 @@ $orders = $orderStmt->fetchAll(PDO::FETCH_ASSOC);
 // Status badge styling
 $statusConfig = [
     'pending'   => ['label' => 'Pending',   'color' => '#f59e0b', 'bg' => 'rgba(245,158,11,0.1)'],
+    'assigned'  => ['label' => 'Assigned',  'color' => '#d97706', 'bg' => 'rgba(217,119,6,0.1)'],
     'preparing' => ['label' => 'Preparing', 'color' => '#3b82f6', 'bg' => 'rgba(59,130,246,0.1)'],
     'ready'     => ['label' => 'Ready',     'color' => '#10b981', 'bg' => 'rgba(16,185,129,0.1)'],
     'delivered' => ['label' => 'Delivered', 'color' => '#6b7280', 'bg' => 'rgba(107,114,128,0.1)'],

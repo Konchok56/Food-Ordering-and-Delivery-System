@@ -44,7 +44,7 @@ $nav_current_lang = $_SESSION['lang'] ?? $_COOKIE['lang'] ?? 'en';
         <li><a href="<?php echo $nav_base_url; ?>restaurants.php"><?php echo __('nav_restaurants', 'Restaurants'); ?></a></li>
         <li><a href="<?php echo $nav_base_url; ?>menu.php"><?php echo __('nav_menu', 'Menu'); ?></a></li>
         <li><a href="#categories"><?php echo __('nav_categories', 'Categories'); ?></a></li>
-        <li><a href="#offers"><?php echo __('nav_offers', 'Offers'); ?></a></li>
+        <li><a href="<?php echo $nav_base_url; ?>offers.php"><?php echo __('nav_offers', 'Offers'); ?></a></li>
         <li>
             <a href="<?php echo $nav_base_url; ?>orders/cart.php" class="nav-cart-link">
                 <?php echo __('nav_cart', 'Cart'); ?>

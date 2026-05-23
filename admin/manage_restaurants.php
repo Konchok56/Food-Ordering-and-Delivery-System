@@ -182,6 +182,8 @@ while ($row = $fcStmt->fetch(PDO::FETCH_ASSOC)) {
             <a href="dashboard.php"><i class="fa-solid fa-chart-bar"></i> Dashboard</a>
             <a href="manage_foods.php"><i class="fa-solid fa-burger"></i> Menu</a>
             <a href="manage_restaurants.php" class="active">🏪 Restaurants</a>
+            <a href="manage_promos.php">💸 Promos</a>
+            <a href="manage_offers.php">🎁 Offers</a>
             <a href="../index.php"><i class="fa-solid fa-house"></i> View Site</a>
         </div>
     </div>

@@ -121,9 +121,9 @@ function sendOrderPlacedEmail($to, $customerName, $order_id, $items, $subtotal, 
   if (is_array($items)) {
     foreach ($items as $item) {
       $itemName = htmlspecialchars((string)($item['food_name'] ?? 'Item'));
-      $itemEmoji = (string)($item['food_emoji'] ?? ($item['emoji'] ?? '<i class="fa-solid fa-utensils"></i>'));
-      // Remove FA icons from emoji string if present
-      if (strpos($itemEmoji, '<i') !== false) $itemEmoji = '<i class="fa-solid fa-utensils"></i>';
+      $itemEmoji = (string)($item['food_emoji'] ?? ($item['emoji'] ?? '🍽️'));
+      // Strip any FA HTML icons if present, replace with a safe emoji
+      if (strpos($itemEmoji, '<i') !== false) $itemEmoji = '🍽️';
       
       $qty = (int)($item['quantity'] ?? 1);
       $price = (float)($item['price'] ?? 0);
@@ -148,7 +148,7 @@ function sendOrderPlacedEmail($to, $customerName, $order_id, $items, $subtotal, 
   }
 
   $content = "
-      <h2 style='color:#1a0a00; margin:0 0 10px; font-size:24px;'>Order Confirmed! <i class=\"fa-solid fa-champagne-glasses\" style=\"color:#22c55e\"></i></h2>
+      <h2 style='color:#1a0a00; margin:0 0 10px; font-size:24px;'>Order Confirmed! 🎉</h2>
       <p style='margin:0 0 24px; font-size:16px;'>Hi $firstName, we've received your order <strong>$orderLabel</strong>. Our kitchen is getting ready to serve you!</p>
       
       <div style='border: 1px solid #eee; border-radius:12px; padding:20px; margin-bottom:24px;'>
@@ -171,12 +171,12 @@ function sendOrderPlacedEmail($to, $customerName, $order_id, $items, $subtotal, 
       </div>
 
       <div style='background:#fff9f2; border-radius:12px; padding:20px; text-align:center;'>
-        <p style='margin:0; font-size:14px; color:#5c4023;'><i class=\"fa-solid fa-motorcycle\"></i> Your food will arrive at <strong>" . htmlspecialchars($address) . "</strong>.</p>
+        <p style='margin:0; font-size:14px; color:#5c4023;'>🛵 Your food will arrive at <strong>" . htmlspecialchars($address) . "</strong>.</p>
       </div>
     ";
 
   $body = _swiftbiteEmailWrapper($content);
-  $subject = "<i class=\"fa-solid fa-circle-check\" style=\"color:#22c55e\"></i> Order $orderLabel Confirmed — SwiftBite";
+  $subject = "✅ Order $orderLabel Confirmed — SwiftBite";
   return sendSwiftBiteEmail($to, $subject, $body);
 }
 
@@ -189,7 +189,7 @@ function sendOrderCancelledByCustomerEmail($to, $customerName, $order_id)
   $firstName = htmlspecialchars(explode(' ', trim($customerName))[0]);
 
   $content = "
-      <h2 style='color:#d93025; margin:0 0 10px; font-size:24px;'>Order Cancelled <i class=\"fa-solid fa-trash\"></i></h2>
+      <h2 style='color:#d93025; margin:0 0 10px; font-size:24px;'>Order Cancelled ❌</h2>
       <p style='margin:0 0 24px; font-size:16px;'>Hi $firstName, your order <strong>$orderLabel</strong> has been successfully cancelled as per your request.</p>
       <div style='background:#fff0f0; border-radius:12px; padding:20px; margin-bottom:24px; text-align:center;'>
         <p style='margin:0; color:#c5221f; font-size:14px;'>If this was a mistake or you'd like to order something else, we're ready whenever you are!</p>
@@ -200,7 +200,7 @@ function sendOrderCancelledByCustomerEmail($to, $customerName, $order_id)
     ";
 
   $body = _swiftbiteEmailWrapper($content);
-  $subject = "<i class=\"fa-solid fa-circle-xmark\" style=\"color:#ef4444\"></i> Order $orderLabel Cancelled — SwiftBite";
+  $subject = "❌ Order $orderLabel Cancelled — SwiftBite";
   return sendSwiftBiteEmail($to, $subject, $body);
 }
 
@@ -222,7 +222,7 @@ function sendForgotPasswordOTPEmail($to, $customerName, $otp)
     ";
 
   $body = _swiftbiteEmailWrapper($content);
-  $subject = "<i class=\"fa-solid fa-clock\"></i> $otp is your SwiftBite verification code";
+  $subject = "🔑 $otp is your SwiftBite verification code";
   return sendSwiftBiteEmail($to, $subject, $body);
 }
 
@@ -236,13 +236,13 @@ function sendOrderStatusEmail($to, $customerName, $order_id, $status, $riderName
   
   $statusConfig = [
     'preparing' => ['🧑‍🍳', 'Kitchen is Preparing', 'Our chefs are working their magic on your order right now.'],
-    'ready'     => ['<i class="fa-solid fa-bowl-rice"></i>', 'Ready for Pickup', 'Your order is packed and ready to go!'],
-    'out_for_delivery' => ['<i class="fa-solid fa-motorcycle"></i>', 'Out for Delivery', 'Your order is on its way! Our delivery partner ' . ($riderName ?: 'is') . ' arriving soon.'],
-    'delivered' => ['<i class="fa-solid fa-champagne-glasses" style="color:#22c55e"></i>', 'Enjoy Your Meal!', 'Your order has been delivered. We hope you love it!'],
-    'cancelled' => ['<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i>', 'Order Cancelled', 'Your order has been cancelled. Please contact support if you have questions.']
+    'ready'     => ['🥡', 'Ready for Pickup', 'Your order is packed and ready to go!'],
+    'out_for_delivery' => ['🛵', 'Out for Delivery', 'Your order is on its way! Our delivery partner ' . ($riderName ?: 'is') . ' arriving soon.'],
+    'delivered' => ['🎉', 'Enjoy Your Meal!', 'Your order has been delivered. We hope you love it!'],
+    'cancelled' => ['❌', 'Order Cancelled', 'Your order has been cancelled. Please contact support if you have questions.']
   ];
 
-  $cfg = $statusConfig[$status] ?? ['<i class="fa-solid fa-box"></i>', 'Order Update', 'Your order status has been updated to ' . $status];
+  $cfg = $statusConfig[$status] ?? ['📦', 'Order Update', 'Your order status has been updated to ' . $status];
   
   $content = "
       <h2 style='color:#1a0a00; margin:0 0 10px; font-size:24px;'>$cfg[0] $cfg[1]</h2>

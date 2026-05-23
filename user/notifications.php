@@ -326,11 +326,17 @@ function timeAgo($timestamp) {
                           data-type="<?php echo htmlspecialchars($n['type']); ?>"
                           <?php if ($n['link']): ?> onclick="window.location.href='<?php echo htmlspecialchars($n['link']); ?>'" <?php endif; ?>>
                         
-                        <?php if ($n['image_path']): ?>
+                        <?php if (!empty($n['image_path']) && file_exists(__DIR__ . '/../' . $n['image_path'])): ?>
                             <img src="../<?php echo htmlspecialchars($n['image_path']); ?>" class="sb-notif-img" alt="Order image">
                         <?php else: ?>
                             <div class="sb-notif-icon-wrap">
-                                <?php echo $n['icon']; ?>
+                                <?php 
+                                $displayIcon = $n['icon'] ?? '<i class="fa-solid fa-bell"></i>';
+                                if (strpos($displayIcon, '<') === 0 && substr(trim($displayIcon), -1) !== '>') {
+                                    $displayIcon = '<i class="fa-solid fa-bell"></i>';
+                                }
+                                echo $displayIcon;
+                                ?>
                             </div>
                         <?php endif; ?>
 

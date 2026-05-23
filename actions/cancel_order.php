@@ -29,12 +29,18 @@ if ($order_id <= 0) {
 }
 
 // Fetch the order — must belong to this user
-$stmt = $pdo->prepare("SELECT id, status, created_at FROM orders WHERE id = ? AND user_id = ? LIMIT 1");
+$stmt = $pdo->prepare("SELECT id, status, created_at, payment_method FROM orders WHERE id = ? AND user_id = ? LIMIT 1");
 $stmt->execute([$order_id, $user_id]);
 $order = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$order) {
     echo json_encode(['success' => false, 'message' => 'Order not found.']);
+    exit;
+}
+
+// Only Cash on Delivery (COD) orders can be cancelled by the user
+if ($order['payment_method'] !== 'cod') {
+    echo json_encode(['success' => false, 'message' => 'Orders paid via digital payment gateways cannot be cancelled.']);
     exit;
 }
 
@@ -83,7 +89,7 @@ try {
         $pdo, $user_id, 'order_cancelled',
         'Order Cancelled',
         'Your order ' . $orderLabel . ' has been cancelled successfully.',
-        '<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i>',
+        '❌',
         $cancelImage,
         SITE_BASE_URL . '/user/order_history.php'
     );
