@@ -21,12 +21,12 @@ if (!$order) {
 $restaurantLat = 27.7172; // Kathmandu default
 $restaurantLng = 85.3240;
 if (!empty($order['restaurant_id'])) {
-    $rStmt = $pdo->prepare("SELECT lat, lng FROM restaurants WHERE id = ? LIMIT 1");
+    $rStmt = $pdo->prepare("SELECT latitude, longitude FROM restaurants WHERE id = ? LIMIT 1");
     $rStmt->execute([$order['restaurant_id']]);
     $rest = $rStmt->fetch(PDO::FETCH_ASSOC);
-    if ($rest && $rest['lat'] && $rest['lng']) {
-        $restaurantLat = (float)$rest['lat'];
-        $restaurantLng = (float)$rest['lng'];
+    if ($rest && $rest['latitude'] && $rest['longitude']) {
+        $restaurantLat = (float)$rest['latitude'];
+        $restaurantLng = (float)$rest['longitude'];
     }
 }
 ?>
@@ -322,12 +322,12 @@ if (!empty($order['restaurant_id'])) {
                 updateSteps(data.status);
 
                 if (data.status === 'out_for_delivery') {
-                    document.getElementById('eta-val').textContent = '<i class="fa-solid fa-rocket"></i> <?php echo __('arriving_soon', 'Arriving Soon'); ?>';
+                    document.getElementById('eta-val').innerHTML = '<i class="fa-solid fa-rocket"></i> <?php echo __('arriving_soon', 'Arriving Soon'); ?>';
                 } else if (data.status === 'delivered') {
-                    document.getElementById('eta-val').textContent = '✓ <?php echo __('status_delivered', 'Delivered!'); ?>';
+                    document.getElementById('eta-val').innerHTML = '✓ <?php echo __('status_delivered', 'Delivered!'); ?>';
                     clearInterval(trackingInterval);
                 } else {
-                    document.getElementById('eta-val').textContent = '<?php echo __('status_preparing', 'Preparing...'); ?>';
+                    document.getElementById('eta-val').innerHTML = '<?php echo __('status_preparing', 'Preparing...'); ?>';
                 }
 
                 riderLat = lat; riderLng = lng;
