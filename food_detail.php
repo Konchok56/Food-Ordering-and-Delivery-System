@@ -553,8 +553,10 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
         <div class="detail-main">
             <!-- Left: Image -->
             <div class="detail-image-wrap">
-                <?php if (!empty($food['image_path'])): ?>
-                    <img src="<?php echo htmlspecialchars($food['image_path']); ?>" alt="<?php echo htmlspecialchars(__($food['name'], $food['name'])); ?>">
+                <?php if (!empty($food['image_path']) && file_exists($food['image_path'])): ?>
+                    <img src="<?php echo SITE_BASE_URL . '/' . htmlspecialchars($food['image_path']); ?>" alt="<?php echo htmlspecialchars(__($food['name'], $food['name'])); ?>">
+                <?php elseif (!empty($food['image_path'])): ?>
+                    <img src="https://placehold.co/600x400/1a0a00/ff4f00?text=<?php echo urlencode($food['name']); ?>" alt="<?php echo htmlspecialchars(__($food['name'], $food['name'])); ?>">
                 <?php else: ?>
                     <div class="detail-emoji"><?php echo htmlspecialchars($food['emoji']); ?></div>
                 <?php endif; ?>
@@ -751,8 +753,10 @@ $notDelivered = isset($_GET['not_delivered']) ? true : false;
                     <a href="food_detail.php?id=<?php echo (int) $rel['id']; ?>" class="food-card-link">
                         <article class="food-card">
                             <div class="food-img">
-                                <?php if (!empty($rel['image_path'])): ?>
-                                    <img src="<?php echo htmlspecialchars($rel['image_path']); ?>" alt="<?php echo htmlspecialchars(__($rel['name'], $rel['name'])); ?>" class="food-photo">
+                                <?php if (!empty($rel['image_path']) && file_exists($rel['image_path'])): ?>
+                                    <img src="<?php echo SITE_BASE_URL . '/' . htmlspecialchars($rel['image_path']); ?>" alt="<?php echo htmlspecialchars(__($rel['name'], $rel['name'])); ?>" class="food-photo">
+                                <?php elseif (!empty($rel['image_path'])): ?>
+                                    <img src="https://placehold.co/400x300/1a0a00/ff4f00?text=<?php echo urlencode($rel['name']); ?>" alt="<?php echo htmlspecialchars(__($rel['name'], $rel['name'])); ?>" class="food-photo">
                                 <?php else: ?>
                                     <?php echo htmlspecialchars($rel['emoji']); ?>
                                 <?php endif; ?>

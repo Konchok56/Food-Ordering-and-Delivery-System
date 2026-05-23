@@ -16,12 +16,13 @@ if (!empty($recommended_foods)):
         <a href="food_detail.php?id=<?php echo (int) $food['id']; ?>" class="food-card-link">
           <article class="food-card reveal-on-scroll" style="border: 1px solid var(--accent);">
             <div class="food-img">
-                  <?php if (!empty($food['image_path'])): ?>
-                <img src="<?php echo htmlspecialchars($food['image_path']); ?>"
-                  alt="<?php echo htmlspecialchars(__($food['name'])); ?>" class="food-photo">
-                  <?php else: ?>
-                    <?php echo htmlspecialchars($food['emoji']); ?>
-                  <?php endif; ?>
+              <?php if (!empty($food['image_path']) && file_exists($food['image_path'])): ?>
+                <img src="<?php echo SITE_BASE_URL . '/' . htmlspecialchars($food['image_path']); ?>" alt="<?php echo htmlspecialchars(__($food['name'])); ?>" class="food-photo">
+              <?php elseif (!empty($food['image_path'])): ?>
+                <img src="https://placehold.co/400x300/1a0a00/ff4f00?text=<?php echo urlencode($food['name']); ?>" alt="<?php echo htmlspecialchars(__($food['name'])); ?>" class="food-photo">
+              <?php else: ?>
+                <?php echo htmlspecialchars($food['emoji']); ?>
+              <?php endif; ?>
               <span class="food-badge new"><?php echo __('recommended_for_you', 'Recommended'); ?></span>
               <div class="food-fav"><?php echo $food['is_favorite'] ? '<i class="fa-solid fa-heart" style="color:#ef4444"></i>' : '<i class="fa-regular fa-heart"></i>'; ?></div>
             </div>
