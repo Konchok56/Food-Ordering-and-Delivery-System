@@ -303,10 +303,14 @@ while ($row = $fcStmt->fetch(PDO::FETCH_ASSOC)) {
                         <div id="uploadPreview" class="upload-preview">
                             <img id="previewImg" src="#" alt="Preview">
                         </div>
-                        <?php if ($editRest && $editRest['image_path']): ?>
+                        <?php if ($editRest && !empty($editRest['image_path'])): ?>
                             <div style="margin-top:12px;">
                                 <p style="font-size:0.8rem; color:var(--muted); margin-bottom:4px;">Current image:</p>
-                                <img src="../<?php echo $editRest['image_path']; ?>" style="width:100px; height:100px; object-fit:cover; border-radius:12px; border:1px solid var(--cream2);">
+                                <?php if (file_exists(__DIR__ . '/../' . $editRest['image_path'])): ?>
+                                    <img src="../<?php echo htmlspecialchars($editRest['image_path']); ?>" style="width:100px; height:100px; object-fit:cover; border-radius:12px; border:1px solid var(--cream2);">
+                                <?php else: ?>
+                                    <img src="https://placehold.co/100x100/1a0a00/ff4f00?text=Missing" style="width:100px; height:100px; object-fit:cover; border-radius:12px; border:1px solid var(--cream2);" title="File missing on server: <?php echo htmlspecialchars($editRest['image_path']); ?>">
+                                <?php endif; ?>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -339,8 +343,10 @@ while ($row = $fcStmt->fetch(PDO::FETCH_ASSOC)) {
                 <?php foreach ($restaurants as $r): ?>
                     <div class="rest-admin-card">
                         <div class="rest-admin-banner">
-                            <?php if ($r['image_path']): ?>
+                            <?php if (!empty($r['image_path']) && file_exists(__DIR__ . '/../' . $r['image_path'])): ?>
                                 <img src="../<?php echo htmlspecialchars($r['image_path']); ?>" alt="">
+                            <?php elseif (!empty($r['image_path'])): ?>
+                                <img src="https://placehold.co/400x250/1a0a00/ff4f00?text=<?php echo urlencode($r['name']); ?>" alt="">
                             <?php else: ?>
                                 <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:3.5rem; background:var(--cream2);"><?php echo htmlspecialchars($r['logo_emoji'] ?: '🏪'); ?></div>
                             <?php endif; ?>

@@ -667,7 +667,11 @@ $offers = $pdo->query("SELECT * FROM offers ORDER BY created_at DESC")->fetchAll
                         <?php if ($editOffer && !empty($editOffer['image_path'])): ?>
                             <div class="current-image">
                                 <span>Current banner:</span>
-                                <img src="../<?php echo htmlspecialchars($editOffer['image_path']); ?>" alt="Current">
+                                <?php if (file_exists(__DIR__ . '/../' . $editOffer['image_path'])): ?>
+                                    <img src="../<?php echo htmlspecialchars($editOffer['image_path']); ?>" alt="Current">
+                                <?php else: ?>
+                                    <img src="https://placehold.co/120x60/1a0a00/ff4f00?text=Missing" alt="Missing" title="File missing on server: <?php echo htmlspecialchars($editOffer['image_path']); ?>">
+                                <?php endif; ?>
                             </div>
                         <?php endif; ?>
                     </div>

@@ -367,8 +367,10 @@ function menuUrl($extra=[]) {
                         <a href="food_detail.php?id=<?php echo (int)$food['id']; ?>" class="food-card-link">
                         <article class="food-card">
                             <div class="food-img">
-                                <?php if (!empty($food['image_path'])): ?>
-                                    <img src="<?php echo htmlspecialchars($food['image_path']); ?>" alt="<?php echo htmlspecialchars($food['name']); ?>" class="food-photo">
+                                <?php if (!empty($food['image_path']) && file_exists($food['image_path'])): ?>
+                                    <img src="<?php echo SITE_BASE_URL . '/' . htmlspecialchars($food['image_path']); ?>" alt="<?php echo htmlspecialchars($food['name']); ?>" class="food-photo">
+                                <?php elseif (!empty($food['image_path'])): ?>
+                                    <img src="https://placehold.co/400x300/1a0a00/ff4f00?text=<?php echo urlencode($food['name']); ?>" alt="<?php echo htmlspecialchars($food['name']); ?>" class="food-photo">
                                 <?php else: ?>
                                     <?php echo htmlspecialchars($food['emoji']); ?>
                                 <?php endif; ?>

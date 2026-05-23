@@ -35,8 +35,10 @@ if (!empty($featuredRests)):
       <a href="restaurant.php?id=<?php echo (int) $rest['id']; ?>" class="rest-card-link">
         <div class="rest-home-card">
           <div class="rest-home-cover">
-            <?php if (!empty($rest['image_path'])): ?>
-              <img src="<?php echo htmlspecialchars($rest['image_path']); ?>" alt="<?php echo htmlspecialchars($rest['name']); ?>">
+            <?php if (!empty($rest['image_path']) && file_exists($rest['image_path'])): ?>
+              <img src="<?php echo SITE_BASE_URL . '/' . htmlspecialchars($rest['image_path']); ?>" alt="<?php echo htmlspecialchars($rest['name']); ?>">
+            <?php elseif (!empty($rest['image_path'])): ?>
+              <img src="https://placehold.co/400x250/1a0a00/ff4f00?text=<?php echo urlencode($rest['name']); ?>" alt="<?php echo htmlspecialchars($rest['name']); ?>">
             <?php else: ?>
               <span class="rest-home-emoji"><?php echo htmlspecialchars($rest['logo_emoji']); ?></span>
             <?php endif; ?>
