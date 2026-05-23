@@ -35,7 +35,7 @@
             align-items: flex-start !important;
             pointer-events: auto !important;
             cursor: pointer !important;
-            transform: translateX(120%) !important;
+            transform: translateY(-20px) !important;
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease !important;
             opacity: 0 !important;
             position: relative !important;
@@ -51,7 +51,7 @@
             background: linear-gradient(to bottom, #ff4f00, #ff2400) !important;
         }
         .sb-toast.show {
-            transform: translateX(0) !important;
+            transform: translateY(0) !important;
             opacity: 1 !important;
         }
         .sb-toast-icon {

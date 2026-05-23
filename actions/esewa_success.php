@@ -12,12 +12,12 @@ $responseData = json_decode($decodedData, true);
 
 if ($responseData && isset($responseData['status']) && $responseData['status'] === 'COMPLETE') {
     $transaction_uuid = $responseData['transaction_uuid'] ?? '';
-    
+
     // Find order
     $stmt = $pdo->prepare("SELECT * FROM orders WHERE transaction_id = ?");
     $stmt->execute([$transaction_uuid]);
     $order = $stmt->fetch();
-    
+
     if ($order && $order['status'] !== 'confirmed') {
         // Officially confirm the order since payment is successful
         $pdo->prepare("UPDATE orders SET status = 'confirmed' WHERE id = ?")->execute([$order['id']]);
@@ -45,4 +45,3 @@ echo "<p>Something went wrong with the payment validation. Your order is still p
 echo "<a href='../orders/cart.php' style='color:#ff4f00; font-weight:bold;'>Return to Cart</a>";
 echo "</div>";
 ?>
-
