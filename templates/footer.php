@@ -25,8 +25,8 @@
       <h4><?php echo __('footer_col_foryou', 'For You'); ?></h4>
       <ul>
         <li><a href="#menu"><?php echo __('footer_col_foryou_menu', 'Browse Menu'); ?></a></li>
-        <li><a href="orders/cart.php"><?php echo __('footer_col_foryou_track', 'Track Order'); ?></a></li>
-        <li><a href="#offers"><?php echo __('footer_col_foryou_offers', 'Offers & Deals'); ?></a></li>
+        <li><a href="<?php echo !file_exists('core/db.php') ? '../' : ''; ?>orders/cart.php"><?php echo __('footer_col_foryou_track', 'Track Order'); ?></a></li>
+        <li><a href="<?php echo !file_exists('core/db.php') ? '../' : ''; ?>offers.php"><?php echo __('footer_col_foryou_offers', 'Offers & Deals'); ?></a></li>
         <li><a href="#"><?php echo __('footer_col_foryou_cards', 'Gift Cards'); ?></a></li>
       </ul>
     </div>

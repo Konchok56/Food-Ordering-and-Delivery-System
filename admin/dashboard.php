@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 session_start();
 include('../core/db.php');
 
@@ -85,6 +85,7 @@ try {
         .btn-sky    { background: linear-gradient(135deg, #0ea5e9, #38bdf8); }
         .btn-dark   { background: linear-gradient(135deg, #1a1004, #3d2600); }
         .btn-purple { background: linear-gradient(135deg, #6c47ff, #a78bfa); }
+        .btn-violet { background: linear-gradient(135deg, #a855f7, #7c3aed); }
         .pending-badge {
             position: absolute;
             top: -8px; right: -8px;
@@ -126,6 +127,11 @@ try {
             <a href="manage_promos.php" class="btn btn-blue">
                 <span class="icon">💸</span>
                 Promos
+            </a>
+
+            <a href="manage_offers.php" class="btn btn-violet">
+                <span class="icon">🎁</span>
+                Offers
             </a>
 
             <a href="delivery_partner.php" class="btn btn-sky">

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once '../core/bootstrap.php';
 
 if (!isset($_SESSION['user_id'])) {
@@ -543,33 +543,6 @@ $activeOrders = $pdo->query("
                         <?php endif; ?>
                     </div>
 
-                    <!-- GDODS-51: Step Buttons -->
-                    <div class="step-actions">
-                        <div class="step-label-text"><i class="fa-solid fa-route"></i> Update Delivery Status</div>
-                        <?php if (in_array($order['status'], ['confirmed', 'preparing'])): ?>
-                            <form action="../actions/update_order_status.php" method="POST">
-                                <?php echo csrfInput(); ?>
-                                <input type="hidden" name="order_id" value="<?php echo (int)$order['id']; ?>">
-                                <input type="hidden" name="status" value="out_for_delivery">
-                                <input type="hidden" name="delivery_partner_name" value="<?php echo htmlspecialchars($order['delivery_partner_name'] ?? $rider['name']); ?>">
-                                <input type="hidden" name="delivery_partner_phone" value="<?php echo htmlspecialchars($order['delivery_partner_phone'] ?? $rider['phone'] ?? ''); ?>">
-                                <button type="submit" class="btn-step btn-pickup">
-                                    <i class="fa-solid fa-bag-shopping"></i> Mark as Picked Up
-                                </button>
-                            </form>
-                        <?php elseif ($order['status'] === 'out_for_delivery'): ?>
-                            <form action="../actions/update_order_status.php" method="POST">
-                                <?php echo csrfInput(); ?>
-                                <input type="hidden" name="order_id" value="<?php echo (int)$order['id']; ?>">
-                                <input type="hidden" name="status" value="delivered">
-                                <input type="hidden" name="delivery_partner_name" value="<?php echo htmlspecialchars($order['delivery_partner_name'] ?? $rider['name']); ?>">
-                                <input type="hidden" name="delivery_partner_phone" value="<?php echo htmlspecialchars($order['delivery_partner_phone'] ?? $rider['phone'] ?? ''); ?>">
-                                <button type="submit" class="btn-step btn-deliver">
-                                    <i class="fa-solid fa-circle-check"></i> Mark as Delivered
-                                </button>
-                            </form>
-                        <?php endif; ?>
-                    </div>
 
                     <!-- Customer & Order Info -->
                     <div class="card-body">

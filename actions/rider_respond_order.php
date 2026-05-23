@@ -64,7 +64,7 @@ try {
             $pdo, (int)$order['user_id'], 'order_status',
             'Rider Accepted Your Order!',
             'Great news! ' . htmlspecialchars($rider['name']) . ' has accepted order ' . $orderLabel . ' and is heading to the restaurant.',
-            '<i class="fa-solid fa-motorcycle" style="color:#ff4f00"></i>',
+            '🏍️',
             null,
             SITE_BASE_URL . '/user/order_details.php?id=' . $order_id
         );
@@ -88,7 +88,7 @@ try {
             $pdo, (int)$order['user_id'], 'order_status',
             'Finding Another Rider',
             'Your order ' . $orderLabel . ' is being reassigned to another rider. Sorry for the wait!',
-            '<i class="fa-solid fa-hourglass-half" style="color:#f59e0b"></i>',
+            '⏳',
             null,
             SITE_BASE_URL . '/user/order_details.php?id=' . $order_id
         );

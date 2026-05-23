@@ -29,7 +29,7 @@ $csrfToken = generateCsrfToken();
 
 define('CANCEL_WINDOW_SECONDS', 30 * 60);
 $deadline  = strtotime($order['created_at']) + CANCEL_WINDOW_SECONDS;
-$canCancel = ($order['status'] === 'pending') && (time() < $deadline);
+$canCancel = ($order['status'] === 'pending') && ($order['payment_method'] === 'cod') && (time() < $deadline);
 $deadlineMs = $deadline * 1000;
 ?>
 <!DOCTYPE html>
@@ -259,8 +259,8 @@ $deadlineMs = $deadline * 1000;
                     <?php foreach ($items as $item): ?>
                         <div class="item-row">
                             <div class="item-img">
-                                <?php if (!empty($item['image_path'])): ?>
-                                    <img src="<?php echo SITE_BASE_URL . '/' . htmlspecialchars($item['image_path']); ?>" alt="">
+                                <?php if (!empty($item['image_path']) && file_exists(__DIR__ . '/../' . $item['image_path'])): ?>
+                                    <img src="../<?php echo htmlspecialchars($item['image_path']); ?>" alt="">
                                 <?php else: ?>
                                     <?php echo htmlspecialchars($item['emoji']); ?>
                                 <?php endif; ?>

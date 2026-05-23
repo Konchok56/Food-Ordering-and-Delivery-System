@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 session_start();
 include('../core/db.php');
 
@@ -122,6 +122,8 @@ $users = $pdo->query("SELECT id, name, email, phone, role, created_at, status, i
             <a href="manage_foods.php"><i class="fa-solid fa-burger"></i> Menu</a>
             <a href="manage_restaurants.php">🏪 Restaurants</a>
             <a href="manage_users.php" style="color:#fff; background:rgba(255,255,255,0.08);">👥 Users</a>
+            <a href="manage_promos.php">💸 Promos</a>
+            <a href="manage_offers.php">🎁 Offers</a>
             <a href="../index.php"><i class="fa-solid fa-house"></i> View Site</a>
         </div>
     </div>

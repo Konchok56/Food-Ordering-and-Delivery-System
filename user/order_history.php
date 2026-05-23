@@ -199,7 +199,7 @@ define('CANCEL_WINDOW_SECONDS', 30 * 60); // 30-minute cancellation window
                         $s = $statusMap[$order['status']] ?? ['icon' => '<i class="fa-solid fa-box"></i>', 'text' => __($order['status'], ucfirst($order['status']))];
 
                         $deadline       = strtotime($order['created_at']) + CANCEL_WINDOW_SECONDS;
-                        $canCancel      = ($order['status'] === 'pending') && (time() < $deadline);
+                        $canCancel      = ($order['status'] === 'pending') && ($order['payment_method'] === 'cod') && (time() < $deadline);
                         $deadlineMs     = $deadline * 1000; // JS uses ms
                     ?>
                     <div class="order-card" id="order-card-<?php echo $order['id']; ?>">
