@@ -72,11 +72,20 @@ foreach ($cart as $item) {
     }
 }
 
-// 2. Calculate Totals
+// 2. Calculate Totals — 🔒 re-verify prices from the foods table (defense in depth)
 $subtotal = 0;
-foreach ($cart as $item) {
+foreach ($cart as &$item) {
+    if (!empty($item['food_id'])) {
+        $priceStmt = $pdo->prepare("SELECT price FROM foods WHERE id = ? LIMIT 1");
+        $priceStmt->execute([$item['food_id']]);
+        $dbPrice = $priceStmt->fetchColumn();
+        if ($dbPrice !== false) {
+            $item['price'] = (float) $dbPrice;
+        }
+    }
     $subtotal += $item['price'] * $item['quantity'];
 }
+unset($item); // break reference
 $deliveryFee = $subtotal > 0 ? 50 : 0;
 $total = $subtotal + $deliveryFee;
 

@@ -58,11 +58,28 @@ switch ($action) {
         break;
 }
 
-// Calculate item subtotal
-$itemSubtotal = ($newQty ?? 0) * (float) $item['price'];
+// Calculate real-time item price using safe database checks
+$dbPrice = (float) $item['price'];
+if (!empty($item['food_id'])) {
+    $priceStmt = $pdo->prepare("SELECT price FROM foods WHERE id = ? LIMIT 1");
+    $priceStmt->execute([$item['food_id']]);
+    $priceVal = $priceStmt->fetchColumn();
+    if ($priceVal !== false) {
+        $dbPrice = (float) $priceVal;
+        // Sync the cart price with the database price
+        $pdo->prepare("UPDATE cart SET price = ? WHERE id = ?")->execute([$dbPrice, $cart_id]);
+    }
+}
 
-// Get new totals
-$totalStmt = $pdo->prepare("SELECT COALESCE(SUM(price * quantity), 0) as total FROM cart WHERE user_id = ?");
+$itemSubtotal = ($newQty ?? 0) * $dbPrice;
+
+// Get new totals using safe database checks (joining with foods table to prevent any price manipulation)
+$totalStmt = $pdo->prepare("
+    SELECT COALESCE(SUM(COALESCE(f.price, c.price) * c.quantity), 0) as total 
+    FROM cart c 
+    LEFT JOIN foods f ON c.food_id = f.id 
+    WHERE c.user_id = ?
+");
 $totalStmt->execute([$user_id]);
 $cartTotal = (float) $totalStmt->fetchColumn();
 
@@ -78,4 +95,6 @@ echo json_encode([
     'cart_count'    => $cartCount,
     'is_empty'      => $cartCount === 0,
 ]);
+exit;
+
 

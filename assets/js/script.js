@@ -123,4 +123,51 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fallback: just show everything
     revealItems.forEach((el) => el.classList.add('revealed'));
   }
+
+  // ── "See More" / "See Less" for long food card descriptions to maintain consistent layout ──
+  const foodDescs = document.querySelectorAll('.food-desc');
+  const CHAR_LIMIT = 85;
+
+  foodDescs.forEach((desc) => {
+    const fullText = desc.textContent.trim();
+    if (fullText.length <= CHAR_LIMIT) return;
+
+    const truncatedText = fullText.slice(0, CHAR_LIMIT) + '...';
+    
+    // Clear and build structured content
+    desc.innerHTML = '';
+    
+    const textSpan = document.createElement('span');
+    textSpan.className = 'desc-text';
+    textSpan.textContent = truncatedText;
+    desc.appendChild(textSpan);
+
+    const toggleBtn = document.createElement('span');
+    toggleBtn.className = 'desc-toggle';
+    toggleBtn.textContent = ' See More';
+    toggleBtn.style.color = 'var(--orange)';
+    toggleBtn.style.fontWeight = '700';
+    toggleBtn.style.cursor = 'pointer';
+    toggleBtn.style.whiteSpace = 'nowrap';
+    toggleBtn.style.marginLeft = '4px';
+    toggleBtn.style.transition = 'color 0.2s';
+    desc.appendChild(toggleBtn);
+
+    // Hover effect on the toggle button
+    toggleBtn.addEventListener('mouseenter', () => toggleBtn.style.color = '#ff2400');
+    toggleBtn.addEventListener('mouseleave', () => toggleBtn.style.color = 'var(--orange)');
+
+    toggleBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (toggleBtn.textContent === ' See More') {
+        textSpan.textContent = fullText;
+        toggleBtn.textContent = ' See Less';
+      } else {
+        textSpan.textContent = truncatedText;
+        toggleBtn.textContent = ' See More';
+      }
+    });
+  });
 });

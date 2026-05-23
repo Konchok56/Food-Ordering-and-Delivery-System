@@ -826,6 +826,9 @@ nav {
   border-radius: 28px;
   overflow: hidden;
   box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 /* Card link wrapper – makes entire food card clickable */
@@ -844,6 +847,7 @@ nav {
   display: block;
   border-radius: 28px;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
+  height: 100%;
 }
 .food-card-link:hover {
   transform: translateY(-6px);
@@ -910,6 +914,9 @@ nav {
 
 .food-info {
   padding: 22px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 .food-meta,
@@ -951,6 +958,7 @@ nav {
 }
 
 .food-desc {
+  flex-grow: 1;
   min-height: 54px;
   line-height: 1.6;
   color: var(--muted);
