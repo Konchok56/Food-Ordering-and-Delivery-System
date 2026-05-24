@@ -30,7 +30,7 @@ $todayEnd   = date('Y-m-d 23:59:59');
 $statStmt = $pdo->prepare("
     SELECT
         COUNT(*) AS total_orders,
-        SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) AS pending,
+        SUM(CASE WHEN status IN ('pending', 'confirmed', 'assigned') THEN 1 ELSE 0 END) AS pending,
         SUM(CASE WHEN status = 'preparing' THEN 1 ELSE 0 END) AS preparing,
         SUM(CASE WHEN status = 'ready' THEN 1 ELSE 0 END) AS ready,
         COALESCE(SUM(total), 0) AS revenue
@@ -52,8 +52,12 @@ $orderSql = "SELECT o.*, GROUP_CONCAT(oi.food_name, ' x', oi.quantity ORDER BY o
 $params = [$restaurant_id];
 
 if ($filter !== 'all') {
-    $orderSql .= " AND o.status = ?";
-    $params[] = $filter;
+    if ($filter === 'pending') {
+        $orderSql .= " AND o.status IN ('pending', 'confirmed', 'assigned')";
+    } else {
+        $orderSql .= " AND o.status = ?";
+        $params[] = $filter;
+    }
 }
 
 $orderSql .= " GROUP BY o.id ORDER BY o.created_at DESC LIMIT 50";
@@ -63,12 +67,14 @@ $orders = $orderStmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Status badge styling
 $statusConfig = [
-    'pending'   => ['label' => 'Pending',   'color' => '#f59e0b', 'bg' => 'rgba(245,158,11,0.1)'],
-    'assigned'  => ['label' => 'Assigned',  'color' => '#d97706', 'bg' => 'rgba(217,119,6,0.1)'],
-    'preparing' => ['label' => 'Preparing', 'color' => '#3b82f6', 'bg' => 'rgba(59,130,246,0.1)'],
-    'ready'     => ['label' => 'Ready',     'color' => '#10b981', 'bg' => 'rgba(16,185,129,0.1)'],
-    'delivered' => ['label' => 'Delivered', 'color' => '#6b7280', 'bg' => 'rgba(107,114,128,0.1)'],
-    'cancelled' => ['label' => 'Cancelled', 'color' => '#ef4444', 'bg' => 'rgba(239,68,68,0.1)'],
+    'pending'          => ['label' => 'Pending',          'color' => '#f59e0b', 'bg' => 'rgba(245,158,11,0.1)'],
+    'assigned'         => ['label' => 'Assigned',         'color' => '#d97706', 'bg' => 'rgba(217,119,6,0.1)'],
+    'confirmed'        => ['label' => 'Confirmed',        'color' => '#06b6d4', 'bg' => 'rgba(6,182,212,0.1)'],
+    'preparing'        => ['label' => 'Preparing',        'color' => '#3b82f6', 'bg' => 'rgba(59,130,246,0.1)'],
+    'ready'            => ['label' => 'Ready',            'color' => '#10b981', 'bg' => 'rgba(16,185,129,0.1)'],
+    'out_for_delivery' => ['label' => 'Out For Delivery', 'color' => '#ff4f00', 'bg' => 'rgba(255,79,0,0.1)'],
+    'delivered'        => ['label' => 'Delivered',        'color' => '#6b7280', 'bg' => 'rgba(107,114,128,0.1)'],
+    'cancelled'        => ['label' => 'Cancelled',        'color' => '#ef4444', 'bg' => 'rgba(239,68,68,0.1)'],
 ];
 ?>
 <!DOCTYPE html>
@@ -211,7 +217,7 @@ $statusConfig = [
                         </span>
                     </td>
                     <td>
-                        <?php if ($o['status'] === 'pending'): ?>
+                        <?php if (in_array($o['status'], ['pending', 'confirmed', 'assigned'], true)): ?>
                             <button class="btn-status btn-preparing" onclick="updateStatus(<?php echo $o['id']; ?>, 'preparing')">Accept</button>
                         <?php elseif ($o['status'] === 'preparing'): ?>
                             <button class="btn-status btn-ready" onclick="updateStatus(<?php echo $o['id']; ?>, 'ready')">Ready</button>
@@ -229,8 +235,6 @@ $statusConfig = [
 
 <script>
 function updateStatus(orderId, status) {
-    if(!confirm("Change order status to " + status + "?")) return;
-    
     fetch('update_order_status.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
